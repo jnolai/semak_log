@@ -46,11 +46,45 @@
             }
         }
     </script>
+
+    <!-- Gaya CSS untuk Mod Skrin Penuh (Full Screen) Kad Dashboard -->
+    <style>
+        .dashboard-card {
+            cursor: zoom-in;
+            transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .dashboard-card:hover {
+            border-color: rgba(79, 70, 229, 0.45);
+        }
+        .dashboard-card.is-fullscreen {
+            position: fixed !important;
+            inset: 1rem !important;
+            z-index: 60 !important;
+            width: auto !important;
+            height: auto !important;
+            max-width: none !important;
+            max-height: none !important;
+            margin: 0 !important;
+            cursor: default !important;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.55) !important;
+            border-color: #4f46e5 !important;
+            overflow-y: auto !important;
+        }
+        .dashboard-card.is-fullscreen .max-h-\[340px\] {
+            max-height: calc(100vh - 11rem) !important;
+        }
+        .dashboard-card.is-fullscreen .min-h-\[290px\] {
+            min-height: calc(100vh - 10rem) !important;
+        }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
 
     <!-- Notifikasi Toast (Pengganti alert()) -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Latar Belakang Gelap Apabila Kad Dibesarkan ke Skrin Penuh -->
+    <div id="card-fullscreen-backdrop" onclick="closeCardFullscreen()" class="fixed inset-0 bg-slate-950/75 backdrop-blur-xs z-50 hidden transition-opacity"></div>
 
     <!-- Tindanan Memuatkan Data (Loading Overlay untuk 87,000+ rekod) -->
     <div id="loading-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
@@ -157,7 +191,7 @@
                 </div>
             </div>
 
-            <!-- Bar Tab Sumber & Lencana Status Setiap Sheet (A, B, C & D) -->
+            <!-- Bar Tab Sumber & Lencana Status Setiap Sheet (A, B, C, D & E) -->
             <div class="pt-2.5 border-t border-slate-100 dark:border-slate-800 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
                 <!-- Tab Penukar Paparan Utama -->
                 <div class="inline-flex flex-wrap p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200/80 dark:border-slate-800 gap-1" role="tablist">
@@ -506,7 +540,7 @@
                 </div>
             </section>
 
-            <!-- Bahagian 3: 4 Visualisasi Carta Interaktif (Chart.js) -->
+            <!-- Bahagian 3: 4 Visualisasi Carta Interaktif (Chart.js - Klik Kad untuk Skrin Penuh) -->
             <section aria-label="Visualisasi Carta" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <!-- Carta 1: Taburan Log Mengikut Jabatan (Padanan Sheet D) -->
@@ -514,7 +548,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                         <div>
                             <h2 class="text-base font-bold font-display text-slate-900 dark:text-white">Taburan Log Mengikut Jabatan (Sheet D)</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Klik pada bar jabatan untuk menapis log jabatan tersebut</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Klik pada bar jabatan untuk menapis, atau klik kad untuk skrin penuh</p>
                         </div>
                     </div>
                     <div class="relative flex-1 min-h-[290px] w-full">
@@ -575,15 +609,15 @@
                 
                 <!-- Kad 1: Senarai ID Pengguna Tidak Aktif (Sheet D - 0 Log) -->
                 <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col overflow-hidden">
-                    <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-amber-50/40 dark:bg-amber-950/20">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h2 class="text-sm sm:text-base font-bold font-display text-slate-900 dark:text-white">Senarai ID Pengguna Tidak Aktif (Sheet D)</h2>
-                                <span id="dash-inactive-users-badge" class="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300">0</span>
+                    <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-start justify-between gap-3 bg-amber-50/40 dark:bg-amber-950/20">
+                        <div class="space-y-1 min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <h2 class="text-sm sm:text-base font-bold font-display text-slate-900 dark:text-white leading-snug">Senarai ID Pengguna Tidak Aktif (Sheet D)</h2>
+                                <span id="dash-inactive-users-badge" class="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300 whitespace-nowrap">0</span>
                             </div>
                             <p class="text-xs text-slate-500 dark:text-slate-400">Pegawai berdaftar di Sheet D yang mempunyai <strong>0 rekod log</strong> (A/B/C)</p>
                         </div>
-                        <button onclick="openInactiveUsersTab()" class="px-3 py-1.5 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-xl transition shrink-0">
+                        <button onclick="openInactiveUsersTab()" class="px-3 py-1.5 text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white rounded-xl transition shrink-0 whitespace-nowrap">
                             Lihat Semua &rarr;
                         </button>
                     </div>
@@ -607,17 +641,19 @@
 
                 <!-- Kad 2: Senarai Terminal Tidak Aktif & Kurang Digunakan (Sheet E) -->
                 <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col overflow-hidden">
-                    <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-rose-50/40 dark:bg-rose-950/20">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h2 class="text-sm sm:text-base font-bold font-display text-slate-900 dark:text-white">Terminal Tidak Aktif &amp; Kurang Digunakan (Sheet E)</h2>
-                                <span id="dash-low-terms-badge" class="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300">0</span>
+                    <div class="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-3 bg-rose-50/40 dark:bg-rose-950/20">
+                        <div class="flex flex-wrap items-start justify-between gap-2">
+                            <div class="space-y-1 min-w-0 flex-1">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h2 class="text-sm sm:text-base font-bold font-display text-slate-900 dark:text-white leading-snug">Terminal Tidak Aktif &amp; Kurang Digunakan (Sheet E)</h2>
+                                    <span id="dash-low-terms-badge" class="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/60 dark:text-rose-300 whitespace-nowrap">0</span>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Peranti Sheet E dengan <strong>0 log (Tidak Aktif)</strong> atau <strong>&le; 5 log (Kurang Digunakan)</strong></p>
                             </div>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Peranti Sheet E dengan <strong>0 log (Tidak Aktif)</strong> atau <strong>&le; 5 log (Kurang Digunakan)</strong></p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <input type="text" id="widget-term-search" oninput="renderDashboardAuditWidgets()" placeholder="Cari No Terminal..." class="w-32 sm:w-36 px-2.5 py-1.5 text-xs font-mono bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none uppercase">
-                            <button onclick="openLowUsageTerminalsTab()" class="px-3 py-1.5 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl transition shrink-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <input type="text" id="widget-term-search" oninput="renderDashboardAuditWidgets()" placeholder="Cari No Terminal (cth: P5851)..." class="flex-1 min-w-[150px] px-3 py-1.5 text-xs font-mono bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none uppercase">
+                            <button onclick="openLowUsageTerminalsTab()" class="px-3.5 py-1.5 text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white rounded-xl transition shrink-0 whitespace-nowrap">
                                 Audit Sheet E &rarr;
                             </button>
                         </div>
@@ -988,9 +1024,6 @@
         // 3. PENORMALAN NAMA, NOMBOR TELEFON & PEMADANAN SHEET D
         // =========================================================================
 
-        /**
-         * Menormalkan nama (uppercase, trim, buang double spaces) untuk padanan tepat
-         */
         function normalizeNameKey(rawName) {
             if (!rawName) return '';
             return String(rawName)
@@ -999,30 +1032,20 @@
                 .trim();
         }
 
-        /**
-         * Menormalkan nombor telefon Malaysia daripada Sheet D:
-         * Contoh: '176989591' -> '017-6989591', '1164909004' -> '011-64909004', '0 175632344' -> '017-5632344'
-         * Mengembalikan { displayPhone, waDigits, isValid }
-         */
         function normalizeMalaysiaPhone(rawPhone) {
             if (!rawPhone) return { displayPhone: '-', waDigits: '', isValid: false };
 
-            // Buang semua aksara bukan digit
             let digits = String(rawPhone).replace(/\D/g, '');
             if (!digits) return { displayPhone: '-', waDigits: '', isValid: false };
 
-            // Jika bermula dengan '60', tukar kepada '0...'
             if (digits.startsWith('60') && digits.length >= 10) {
                 digits = '0' + digits.slice(2);
             } else if (digits.startsWith('1') && digits.length >= 8 && digits.length <= 10) {
-                // Tambah '0' di hadapan jika bermula dengan '1' (cth: 176989591 -> 0176989591)
                 digits = '0' + digits;
             }
 
-            // Sahkan nombor mudah alih Malaysia (01X-XXXXXXX / 011-XXXXXXXX)
             const isValid = digits.startsWith('01') && digits.length >= 10 && digits.length <= 11;
 
-            // Format paparan dengan sengkang supaya kemas dibaca
             let displayPhone = digits;
             if (digits.startsWith('011') && digits.length === 11) {
                 displayPhone = `${digits.slice(0, 3)}-${digits.slice(3)}`;
@@ -1034,18 +1057,12 @@
             return { displayPhone, waDigits, isValid };
         }
 
-        /**
-         * Menghurai Sheet D (Bil | Nama | ID Pengguna | ID Ezpay | No Telefon | Jabatan | Peranan)
-         * Mengendalikan nama yang muncul 2 kali dengan peranan berbeza (contoh: AKMALAILA BINTI YAHYA)
-         * dan mengutamakan peranan lapangan ('Pegawai Kutipan' / 'JPK Tunai' / 'Pegawai Print Resit') sebagai profil utama.
-         */
         function buildDirectoryFromSheetD(rows) {
             directoryLookupMap = new Map();
             directoryProfiles = [];
 
             if (!rows || rows.length === 0) return;
 
-            // Kesan baris pengepala secara dinamik
             let headerIdx = -1;
             let col = { bil: 0, nama: 1, idPengguna: 2, idEzpay: 3, telefon: 4, jabatan: 5, peranan: 6 };
 
@@ -1099,7 +1116,6 @@
                         displayName: normKey,
                         bil,
                         entries: [entryRecord],
-                        // Medan ringkasan (akan dikemas kini selepas semua baris dikumpul)
                         primaryIdPengguna: idPengguna,
                         allIdsDisplay: idPengguna,
                         primaryIdEzpay: idEzpay,
@@ -1109,7 +1125,6 @@
                         combinedRoleDisplay: peranan,
                         isMultiRole: false,
                         phoneObj,
-                        // Statistik audit log sebenar (dikira semasa pemadanan)
                         logCount: 0,
                         terminalsUsed: new Set(),
                         lastLogDisplay: '-',
@@ -1120,9 +1135,7 @@
                 }
             }
 
-            // Susun keutamaan profil bagi pegawai yang mempunyai lebih dari 1 baris di Sheet D
             directoryLookupMap.forEach(profile => {
-                // Susun entries berdasarkan keutamaan peranan lapangan
                 profile.entries.sort((a, b) => {
                     const idxA = FIELD_ROLE_PRIORITY.indexOf(a.peranan.toUpperCase());
                     const idxB = FIELD_ROLE_PRIORITY.indexOf(b.peranan.toUpperCase());
@@ -1137,11 +1150,9 @@
                 profile.primaryJabatan = primary.jabatan;
                 profile.primaryPeranan = primary.peranan;
 
-                // Pilih nombor telefon sah pertama jika ada
                 const validPhoneEntry = profile.entries.find(e => e.phoneObj.isValid) || primary;
                 profile.phoneObj = validPhoneEntry.phoneObj;
 
-                // Gabungkan ID Pengguna & Peranan jika berbilang baris
                 const uniqueIds = [...new Set(profile.entries.map(e => e.idPengguna).filter(Boolean))];
                 const uniqueEzpays = [...new Set(profile.entries.map(e => e.idEzpay).filter(Boolean))];
                 const uniqueRoles = [...new Set(profile.entries.map(e => e.peranan).filter(Boolean))];
@@ -1160,14 +1171,9 @@
                 directoryProfiles.push(profile);
             });
 
-            // Susun direktori mengikut Bil asal Sheet D
             directoryProfiles.sort((a, b) => a.bil - b.bil);
         }
 
-        /**
-         * Menghurai Sheet E (Direktori Master Terminal) secara fleksibel
-         * Mengesan lajur ID Terminal (cth: P5894), No Siri, Model, Jabatan, Lokasi/Unit, dan Status secara automatik
-         */
         function buildTerminalsFromSheetE(rows) {
             terminalLookupMap = new Map();
             terminalProfiles = [];
@@ -1195,7 +1201,6 @@
                 }
             }
 
-            // Jika tiada baris pengepala dikesan, cari lajur yang mengandungi kod seperti P5894 secara automatik
             if (col.terminal === -1) {
                 for (let r = 0; r < Math.min(10, rows.length); r++) {
                     const idx = rows[r].findIndex(c => /^P\d{3,}$/i.test(String(c).trim()));
@@ -1224,7 +1229,6 @@
                 const lokasi = col.lokasi !== -1 ? (r[col.lokasi] || '').trim() : '';
                 const statusDevice = col.status !== -1 ? (r[col.status] || '').trim() : '';
 
-                // Kumpul lajur tambahan lain jika struktur jadual berbeza
                 const extraParts = [];
                 for (let c = 0; c < r.length; c++) {
                     if ([col.bil, col.terminal, col.serial, col.model, col.jabatan, col.lokasi, col.status].includes(c)) continue;
@@ -1244,7 +1248,6 @@
                         lokasi: lokasi || '-',
                         statusDevice: statusDevice || 'Berdaftar',
                         metaLabel,
-                        // Statistik audit log sebenar (dikira dalam enrichLogsAndDetectAnomalies)
                         logCount: 0,
                         usersSet: new Set(),
                         lastLogDisplay: '-',
@@ -1407,7 +1410,6 @@
                     hour24: parsedDate.hour24,
                     session: parsedDate.session,
                     epochMinutes: parsedDate.epochMinutes,
-                    // Medan padanan Sheet D (diisi dalam enrichLogsAndDetectAnomalies)
                     isMatched: false,
                     dirProfile: null,
                     jabatan: 'Tiada Padanan / Tidak Berdaftar',
@@ -1415,13 +1417,11 @@
                     idPenggunaDisplay: '-',
                     idEzpayDisplay: '-',
                     isMultiRole: false,
-                    // Medan padanan Sheet E (diisi dalam enrichLogsAndDetectAnomalies)
                     isTermMatched: false,
                     termProfile: null,
                     termJabatan: 'Tiada dalam Sheet E',
                     termMeta: '-',
                     isDeptMismatch: false,
-                    // Medan anomali
                     isSharedDaily: false,
                     isRapid5Min: false
                 });
@@ -1430,11 +1430,7 @@
             return normalized;
         }
 
-        /**
-         * Memadankan semua rekod log (A, B, C) dengan Direktori Pengguna (Sheet D) & Direktori Terminal (Sheet E)
-         */
         function enrichLogsAndDetectAnomalies(logs) {
-            // Reset kaunter penggunaan dalam directoryProfiles (Sheet D)
             directoryProfiles.forEach(p => {
                 p.logCount = 0;
                 p.terminalsUsed = new Set();
@@ -1443,7 +1439,6 @@
             });
             unregisteredLogUsers = new Set();
 
-            // Reset kaunter penggunaan dalam terminalProfiles (Sheet E)
             terminalProfiles.forEach(t => {
                 t.logCount = 0;
                 t.usersSet = new Set();
@@ -1455,7 +1450,6 @@
             const termDateUserMap = new Map();
             const sharedTermDates = new Set();
 
-            // Langkah 1: Padanan silang O(1) bagi setiap baris log dengan Sheet D & Sheet E
             for (let i = 0; i < logs.length; i++) {
                 const rec = logs[i];
                 const profile = directoryLookupMap.get(rec.nama);
@@ -1469,7 +1463,6 @@
                     rec.idEzpayDisplay = profile.primaryIdEzpay;
                     rec.isMultiRole = profile.isMultiRole;
 
-                    // Kemaskini statistik audit pada profil Sheet D
                     profile.logCount++;
                     if (rec.terminal && rec.terminal !== '-') {
                         profile.terminalsUsed.add(rec.terminal);
@@ -1489,7 +1482,6 @@
                     unregisteredLogUsers.add(rec.nama);
                 }
 
-                // Padanan silang O(1) dengan Sheet E (Direktori Master Terminal)
                 const termProf = terminalLookupMap.get(rec.terminal);
                 if (termProf) {
                     rec.isTermMatched = true;
@@ -1513,7 +1505,6 @@
                     }
                 }
 
-                // Semak percanggahan jabatan antara Pengguna (Sheet D) dan Terminal (Sheet E)
                 rec.isDeptMismatch = Boolean(
                     rec.isMatched &&
                     rec.isTermMatched &&
@@ -1524,7 +1515,6 @@
                     rec.jabatan.toUpperCase() !== rec.termJabatan.toUpperCase()
                 );
 
-                // Kumpul maklumat perkongsian terminal harian
                 if (rec.terminal && rec.terminal !== '-' && rec.isoDate) {
                     const key = rec.terminal + '|' + rec.isoDate;
                     const existingUser = termDateUserMap.get(key);
@@ -1536,14 +1526,12 @@
                 }
             }
 
-            // Langkah 2: Tandakan perkongsian terminal harian
             for (let i = 0; i < logs.length; i++) {
                 const rec = logs[i];
                 rec.isSharedDaily = sharedTermDates.has(rec.terminal + '|' + rec.isoDate);
                 rec.isRapid5Min = false;
             }
 
-            // Langkah 3: Kesan log rapat <= 5 minit menggunakan indeks tersusun O(N log N)
             if (logs.length > 1) {
                 const indices = new Int32Array(logs.length);
                 for (let i = 0; i < logs.length; i++) indices[i] = i;
@@ -1572,7 +1560,7 @@
         }
 
         // =========================================================================
-        // 5. SAMBUNGAN LANGSUNG GOOGLE SHEETS (A, B, C & D) & MUAT NAIK EXCEL
+        // 5. SAMBUNGAN LANGSUNG GOOGLE SHEETS (A, B, C, D & E) & MUAT NAIK EXCEL
         // =========================================================================
 
         async function fetchSingleGoogleSheet(spreadsheetId, sheetName) {
@@ -1614,7 +1602,6 @@
             if (successCount > 0) {
                 document.getElementById('fallback-alert').classList.add('hidden');
 
-                // Proses Sheet D dahulu supaya Direktori Master Pengguna sedia untuk pemadanan
                 const resD = sheetMap['D'];
                 if (resD && resD.ok) {
                     buildDirectoryFromSheetD(resD.rows);
@@ -1628,7 +1615,6 @@
                     sheetStatusMap.D = { count: 0, status: 'error', label: 'D: Gagal dimuat' };
                 }
 
-                // Proses Sheet E (Direktori Master Terminal)
                 const resE = sheetMap['E'];
                 if (resE && resE.ok) {
                     buildTerminalsFromSheetE(resE.rows);
@@ -1642,7 +1628,6 @@
                     sheetStatusMap.E = { count: 0, status: 'error', label: 'E: Gagal dimuat' };
                 }
 
-                // Proses Sheet A, B, C
                 let combinedLogs = [];
                 LOG_SHEETS.forEach(s => {
                     const res = sheetMap[s];
@@ -1670,7 +1655,6 @@
                     }
                 }, 35);
             } else {
-                // Sambungan internet/CORS gagal -> Muatkan data sampel terbina dalam dengan amaran jelas
                 setLoadingState(false);
                 loadEmbeddedSampleDataset(false);
                 document.getElementById('fallback-alert').classList.remove('hidden');
@@ -1715,12 +1699,10 @@
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
 
-                    // Reset status
                     ALL_SHEETS.forEach(s => {
                         sheetStatusMap[s] = { count: 0, status: 'empty', label: `${s}: Tiada` };
                     });
 
-                    // Cari Sheet D dahulu
                     const sheetDName = workbook.SheetNames.find(n => n.trim().toUpperCase() === 'D' || n.toUpperCase().includes('MASTER') || n.toUpperCase().includes('PENGGUNA'));
                     if (sheetDName) {
                         const rowsD = XLSX.utils.sheet_to_json(workbook.Sheets[sheetDName], { header: 1, raw: false, defval: '' });
@@ -1734,7 +1716,6 @@
                         buildDirectoryFromSheetD([]);
                     }
 
-                    // Cari Sheet E (Direktori Master Terminal)
                     const sheetEName = workbook.SheetNames.find(n => n.trim().toUpperCase() === 'E' || n.toUpperCase().includes('TERMINAL') || n.toUpperCase().includes('PERANTI'));
                     if (sheetEName) {
                         const rowsE = XLSX.utils.sheet_to_json(workbook.Sheets[sheetEName], { header: 1, raw: false, defval: '' });
@@ -1748,7 +1729,6 @@
                         buildTerminalsFromSheetE([]);
                     }
 
-                    // Baca Sheet A, B, C
                     let combinedLogs = [];
                     workbook.SheetNames.forEach(name => {
                         const upper = name.trim().toUpperCase();
@@ -1847,7 +1827,6 @@
         }
 
         function populateDynamicFilterDropdowns() {
-            // 1. Dropdown Jabatan
             const deptSelect = document.getElementById('filter-department');
             const deptSet = new Set();
             directoryProfiles.forEach(p => { if (p.primaryJabatan) deptSet.add(p.primaryJabatan); });
@@ -1865,7 +1844,6 @@
             unregDeptOpt.textContent = 'Tiada Padanan / Tidak Berdaftar';
             deptSelect.appendChild(unregDeptOpt);
 
-            // 2. Dropdown Peranan
             const roleSelect = document.getElementById('filter-role');
             const roleSet = new Set();
             directoryProfiles.forEach(p => {
@@ -1885,8 +1863,6 @@
             unregRoleOpt.textContent = 'Tiada Padanan';
             roleSelect.appendChild(unregRoleOpt);
 
-            // 3. Dropdown Terminal (Gabungan log + Sheet E)
-            // 3. Datalist Cadangan No Terminal (Gabungan log + Sheet E)
             const termDatalist = document.getElementById('terminal-datalist');
             const termSet = new Set();
             for (let i = 0; i < enrichedLogRecords.length; i++) {
@@ -1903,7 +1879,6 @@
                 }).join('');
             }
 
-            // 4. Julat Tarikh Min/Max
             let minD = '', maxD = '';
             for (let i = 0; i < enrichedLogRecords.length; i++) {
                 const d = enrichedLogRecords[i].isoDate;
@@ -1920,6 +1895,7 @@
         }
 
         function selectViewTab(tabKey) {
+            if (activeFullscreenCard) closeCardFullscreen();
             activeViewTab = tabKey;
 
             ['ALL', 'A', 'B', 'C', 'DIR_D', 'DIR_E'].forEach(k => {
@@ -2037,9 +2013,6 @@
             renderLogsTablePage();
         }
 
-        /**
-         * Memaparkan panel khusus (Nama Pengguna, Jabatan, Tarikh) apabila Carian No Terminal dipilih/ditaip
-         */
         function renderSelectedTerminalPanel(termQuery) {
             const panel = document.getElementById('selected-terminal-panel');
             if (!panel) return;
@@ -2058,7 +2031,6 @@
 
             if (badgeEl) badgeEl.textContent = termQuery;
 
-            // Semak maklumat peranti daripada Sheet E jika tepat dengan satu terminal
             const exactTerm = terminalLookupMap.get(termQuery);
             if (metaEl) {
                 if (exactTerm) {
@@ -2088,7 +2060,6 @@
                 return;
             }
 
-            // Paparkan sehingga 200 rekod teratas dalam panel ringkas ini supaya pantas
             const maxPreview = Math.min(filteredLogRecords.length, 200);
             const rows = [];
             for (let i = 0; i < maxPreview; i++) {
@@ -2162,7 +2133,7 @@
             const hourCounts = new Int32Array(24);
             const deptCounts = new Map();
             const termCounts = new Map();
-            const userCounts = new Map(); // Map<nama, { count, jabatan, isMatched }>
+            const userCounts = new Map();
 
             for (let i = 0; i < total; i++) {
                 const r = filteredLogRecords[i];
@@ -2198,24 +2169,20 @@
                 }
             }
 
-            // KPI 1: Jumlah Rekod Log
             document.getElementById('kpi-total-logs').textContent = total.toLocaleString();
             document.getElementById('kpi-match-split').textContent =
                 `Padan: ${matchedCount.toLocaleString()} | Tiada: ${unmatchedCount.toLocaleString()}`;
 
-            // KPI 2: Terminal Unik
             document.getElementById('kpi-unique-terminals').textContent = uniqueTerminals.size.toLocaleString();
             const topTerm = Array.from(termCounts.entries()).sort((a, b) => b[1] - a[1])[0];
             document.getElementById('kpi-top-terminal-sub').textContent = topTerm
                 ? `Teratas: ${topTerm[0]} (${topTerm[1].toLocaleString()} log)`
                 : 'Teratas: -';
 
-            // KPI 3: Pengguna Unik & Liputan Sheet D
             document.getElementById('kpi-unique-users').textContent = uniqueUsers.size.toLocaleString();
             document.getElementById('kpi-dir-coverage').textContent =
                 `Berdaftar D: ${matchedUniqueUsers.size} | Tiada: ${unmatchedUniqueUsers.size}`;
 
-            // KPI 4: Jabatan Paling Aktif (utamakan jabatan berdaftar jika ada)
             const sortedDepts = Array.from(deptCounts.entries()).sort((a, b) => b[1] - a[1]);
             const topRegisteredDept = sortedDepts.find(d => d[0] !== 'Tiada Padanan / Tidak Berdaftar') || sortedDepts[0];
             if (topRegisteredDept) {
@@ -2226,7 +2193,6 @@
                 document.getElementById('kpi-top-dept-count').textContent = '0 log';
             }
 
-            // KPI 5: Waktu Kemuncak
             let peakH = 0, maxH = 0;
             for (let h = 0; h < 24; h++) {
                 if (hourCounts[h] > maxH) { maxH = hourCounts[h]; peakH = h; }
@@ -2241,7 +2207,6 @@
                 document.getElementById('kpi-peak-count').textContent = '0 log (0%)';
             }
 
-            // KPI 6: Anomali Dikesan
             const totalAnomalies = unmatchedCount + sharedLogCount + rapidLogCount;
             document.getElementById('kpi-anomaly-count').textContent = totalAnomalies.toLocaleString();
             document.getElementById('kpi-anomaly-sub').textContent =
@@ -2260,15 +2225,12 @@
         }
 
         function renderAllCharts(agg) {
-            // Elak ralat Chart.js 'ctx.save() on null' jika tab carta sedang tersembunyi
             const logsView = document.getElementById('logs-analytics-view');
             if (logsView && logsView.classList.contains('hidden')) {
                 return;
             }
 
             const theme = getChartTheme();
-
-            // Helper untuk sahkan instans Chart.js masih memiliki konteks kanvas yang aktif
             const isChartAlive = (inst) => Boolean(inst && inst.ctx && inst.canvas && document.body.contains(inst.canvas));
 
             const safeDestroy = (instance) => {
@@ -2276,16 +2238,12 @@
                     try {
                         instance.stop();
                         instance.destroy();
-                    } catch (e) {
-                        // Abaikan ralat pembersihan dalaman
-                    }
+                    } catch (e) {}
                 }
                 return null;
             };
 
-            // -----------------------------------------------------------------
             // CARTA 1: TABURAN LOG MENGIKUT JABATAN (PADANAN SHEET D)
-            // -----------------------------------------------------------------
             const deptCanvas = document.getElementById('deptChart');
             if (deptCanvas) {
                 const sortedDepts = Array.from(agg.deptCounts.entries())
@@ -2362,9 +2320,7 @@
                 }
             }
 
-            // -----------------------------------------------------------------
             // CARTA 2: KEKERAPAN LOG MENGIKUT ID TERMINAL (TOP 15)
-            // -----------------------------------------------------------------
             const termCanvas = document.getElementById('terminalChart');
             if (termCanvas) {
                 const top15Terms = Array.from(agg.termCounts.entries())
@@ -2428,9 +2384,7 @@
                 }
             }
 
-            // -----------------------------------------------------------------
             // CARTA 3: TABURAN AKTIVITI MENGIKUT JAM (00:00 - 23:00)
-            // -----------------------------------------------------------------
             const hourCanvas = document.getElementById('hourlyChart');
             if (hourCanvas) {
                 const hourLabels = [];
@@ -2490,9 +2444,7 @@
                 }
             }
 
-            // -----------------------------------------------------------------
             // CARTA 4: TOP 12 PENGGUNA PALING AKTIF (LENGKAP DENGAN JABATAN)
-            // -----------------------------------------------------------------
             const userCanvas = document.getElementById('userChart');
             if (userCanvas) {
                 const top12Users = Array.from(agg.userCounts.entries())
@@ -2580,7 +2532,7 @@
         }
 
         // =========================================================================
-        // 8. PEMAPARAN JADUAL LOG BERPADANAN (PAGINATION) & JADUAL DIREKTORI D
+        // 8. PEMAPARAN JADUAL LOG BERPADANAN (PAGINATION) & JADUAL DIREKTORI D / E
         // =========================================================================
 
         function escapeHTML(str) {
@@ -2631,33 +2583,28 @@
                 const r = filteredLogRecords[i];
                 const p = r.dirProfile;
 
-                // Lencana Sheet
                 const sheetBadgeClass = r.sheet === 'A'
                     ? 'bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300'
                     : r.sheet === 'B'
                         ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300'
                         : 'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300';
 
-                // Kolum ID Pengguna & ID Ezpay
                 const idCellHtml = r.isMatched && p
                     ? `<div class="font-mono font-semibold text-slate-800 dark:text-slate-200">ID: ${escapeHTML(p.allIdsDisplay)}</div>
                        <div class="font-mono text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[175px]" title="${escapeHTML(p.allEzpayIds.join(', '))}">${escapeHTML(p.primaryIdEzpay)}</div>`
                     : `<span class="text-slate-400 italic">-</span>`;
 
-                // Kolum Jabatan & Peranan
                 const deptRoleHtml = r.isMatched && p
                     ? `<div class="font-medium text-slate-800 dark:text-slate-200 line-clamp-1 max-w-[200px]" title="${escapeHTML(p.primaryJabatan)}">${escapeHTML(p.primaryJabatan)}</div>
                        <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-[10px] font-semibold">${escapeHTML(p.combinedRoleDisplay)}</span>`
                     : `<span class="text-rose-600 dark:text-rose-400 font-medium">Tiada dalam Sheet D</span>`;
 
-                // Kolum No Telefon + Pautan WhatsApp
                 const phoneHtml = r.isMatched && p
                     ? (p.phoneObj.isValid && p.phoneObj.waDigits
                         ? `<a href="https://wa.me/${p.phoneObj.waDigits}" target="_blank" rel="noopener" class="font-mono text-emerald-700 dark:text-emerald-400 hover:underline font-medium">${escapeHTML(p.phoneObj.displayPhone)} &nearr;</a>`
                         : `<span class="font-mono text-slate-500">${escapeHTML(p.phoneObj.displayPhone)}</span>`)
                     : `<span class="text-slate-400">-</span>`;
 
-                // Kolum Terminal + Info Padanan Sheet E
                 const tp = r.termProfile;
                 const terminalCellHtml = r.isTermMatched && tp
                     ? `<div class="font-mono font-bold text-brand-700 dark:text-brand-300">${escapeHTML(r.terminal)}</div>
@@ -2666,7 +2613,6 @@
                     : `<div class="font-mono font-bold text-rose-600 dark:text-rose-400">${escapeHTML(r.terminal)}</div>
                        <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 text-[10px] font-medium">Tiada di Sheet E</span>`;
 
-                // Lencana Status / Anomali
                 const badges = [];
                 if (r.isMatched && r.isTermMatched) {
                     badges.push(`<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">Sah (D + E)</span>`);
@@ -2832,12 +2778,7 @@
             });
         }
 
-        /**
-         * Memaparkan senarai ID Pengguna Tidak Aktif (Sheet D - 0 Log) dan
-         * Terminal Tidak Aktif (0 Log) / Kurang Digunakan (<= 5 Log) terus di Dashboard Utama
-         */
         function renderDashboardAuditWidgets() {
-            // 1. Senarai ID Pengguna Tidak Aktif (Sheet D dengan 0 log)
             const inactiveUsersBody = document.getElementById('dash-inactive-users-body');
             const inactiveUsersBadge = document.getElementById('dash-inactive-users-badge');
             if (inactiveUsersBody && inactiveUsersBadge) {
@@ -2871,7 +2812,6 @@
                 }
             }
 
-            // 2. Senarai Terminal Tidak Aktif (0 log) & Kurang Digunakan (1 - 5 log) dari Sheet E
             const lowTermsBody = document.getElementById('dash-low-terms-body');
             const lowTermsBadge = document.getElementById('dash-low-terms-badge');
             if (lowTermsBody && lowTermsBadge) {
@@ -2916,6 +2856,7 @@
         }
 
         function openInactiveUsersTab() {
+            if (activeFullscreenCard) closeCardFullscreen();
             selectViewTab('DIR_D');
             const actSel = document.getElementById('dir-filter-activity');
             if (actSel) {
@@ -2925,6 +2866,7 @@
         }
 
         function openLowUsageTerminalsTab() {
+            if (activeFullscreenCard) closeCardFullscreen();
             selectViewTab('DIR_E');
             const statSel = document.getElementById('term-filter-status');
             if (statSel) {
@@ -3059,8 +3001,120 @@
         }
 
         // =========================================================================
-        // 9. KAWALAN UI (LOADING OVERLAY, MODAL, DARK MODE, SYNC PILL & TOAST)
+        // 9. KAWALAN UI (SKRIN PENUH KAD DASHBOARD, LOADING, MODAL, DARK MODE)
         // =========================================================================
+
+        let activeFullscreenCard = null;
+
+        function initExpandableDashboardCards() {
+            const cardSections = document.querySelectorAll(
+                'section[aria-label="Visualisasi Carta"] > div, section[aria-label="Audit ID Tidak Aktif dan Terminal Kurang Digunakan"] > div'
+            );
+
+            cardSections.forEach(card => {
+                card.classList.add('dashboard-card');
+
+                const headerRow = card.firstElementChild;
+                if (headerRow) {
+                    const actionWrap = document.createElement('div');
+                    actionWrap.className = 'flex items-center gap-1.5 shrink-0 self-start';
+                    actionWrap.innerHTML = `
+                        <button type="button" data-fs-toggle title="Skrin Penuh / Tutup (ESC)" class="p-1.5 rounded-lg bg-slate-100/90 hover:bg-brand-100 text-slate-600 hover:text-brand-700 dark:bg-slate-800 dark:hover:bg-brand-900/60 dark:text-slate-300 transition flex items-center gap-1 text-[11px] font-semibold">
+                            <svg class="w-4 h-4 icon-expand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                            <svg class="w-4 h-4 icon-compress hidden text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            <span class="label-fs hidden sm:inline">Skrin Penuh</span>
+                        </button>
+                    `;
+
+                    if (headerRow.classList.contains('flex-col') && headerRow.firstElementChild) {
+                        headerRow.firstElementChild.classList.add('flex', 'items-start', 'justify-between', 'gap-2');
+                        headerRow.firstElementChild.appendChild(actionWrap);
+                    } else {
+                        headerRow.appendChild(actionWrap);
+                    }
+
+                    const toggleBtn = actionWrap.querySelector('[data-fs-toggle]');
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleCardFullscreen(card);
+                    });
+                }
+
+                card.addEventListener('click', (e) => {
+                    if (card.classList.contains('is-fullscreen')) return;
+                    if (e.target.closest('button, a, input, select, canvas')) return;
+                    toggleCardFullscreen(card);
+                });
+            });
+        }
+
+        function toggleCardFullscreen(card) {
+            if (activeFullscreenCard === card) {
+                closeCardFullscreen();
+                return;
+            }
+            if (activeFullscreenCard) {
+                closeCardFullscreen();
+            }
+
+            const backdrop = document.getElementById('card-fullscreen-backdrop');
+            if (backdrop) backdrop.classList.remove('hidden');
+
+            card.classList.add('is-fullscreen');
+            document.body.classList.add('overflow-hidden');
+            activeFullscreenCard = card;
+
+            updateCardFullscreenButtonUI(card, true);
+            resizeAllCharts();
+        }
+
+        function closeCardFullscreen() {
+            if (!activeFullscreenCard) return;
+
+            const backdrop = document.getElementById('card-fullscreen-backdrop');
+            if (backdrop) backdrop.classList.add('hidden');
+
+            activeFullscreenCard.classList.remove('is-fullscreen');
+            document.body.classList.remove('overflow-hidden');
+            updateCardFullscreenButtonUI(activeFullscreenCard, false);
+
+            activeFullscreenCard = null;
+            resizeAllCharts();
+        }
+
+        function updateCardFullscreenButtonUI(card, isFull) {
+            const btn = card.querySelector('[data-fs-toggle]');
+            if (!btn) return;
+            const expandIcon = btn.querySelector('.icon-expand');
+            const compressIcon = btn.querySelector('.icon-compress');
+            const labelEl = btn.querySelector('.label-fs');
+
+            if (isFull) {
+                expandIcon?.classList.add('hidden');
+                compressIcon?.classList.remove('hidden');
+                if (labelEl) labelEl.textContent = 'Tutup (ESC)';
+            } else {
+                expandIcon?.classList.remove('hidden');
+                compressIcon?.classList.add('hidden');
+                if (labelEl) labelEl.textContent = 'Skrin Penuh';
+            }
+        }
+
+        function resizeAllCharts() {
+            requestAnimationFrame(() => {
+                [deptChartInstance, terminalChartInstance, hourlyChartInstance, userChartInstance].forEach(inst => {
+                    if (inst && typeof inst.resize === 'function') {
+                        inst.resize();
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && activeFullscreenCard) {
+                closeCardFullscreen();
+            }
+        });
 
         function setLoadingState(isLoading, title = 'Memuatkan Data...', subtitle = 'Sila tunggu sebentar...') {
             const overlay = document.getElementById('loading-overlay');
@@ -3134,8 +3188,9 @@
             }, 3600);
         }
 
-        // Mulakan penyegerakan langsung Sheet A, B, C & D sebaik halaman dimuatkan
+        // Mulakan penyegerakan langsung Sheet A, B, C, D & E serta fungsi Skrin Penuh kad sebaik halaman dimuatkan
         window.addEventListener('DOMContentLoaded', () => {
+            initExpandableDashboardCards();
             syncAllGoogleSheets(false);
         });
     </script>
