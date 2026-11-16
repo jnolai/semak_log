@@ -76,6 +76,9 @@
         .dashboard-card.is-fullscreen .min-h-\[290px\] {
             min-height: calc(100vh - 10rem) !important;
         }
+        .dashboard-card.is-fullscreen #terminal-chart-inner {
+            min-width: 2100px !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
@@ -556,20 +559,22 @@
                     </div>
                 </div>
 
-                <!-- Carta 2: Kekerapan Log Mengikut ID Terminal (Top 15) -->
+                <!-- Carta 2: Kekerapan Log Mengikut ID Terminal (Top 70) -->
                 <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-2xs flex flex-col">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                         <div>
-                            <h2 class="text-base font-bold font-display text-slate-900 dark:text-white">Kekerapan Log Mengikut ID Terminal (Top 15)</h2>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Klik bar terminal untuk menapis rekod peranti tersebut</p>
+                            <h2 class="text-base font-bold font-display text-slate-900 dark:text-white">Kekerapan Log Mengikut ID Terminal (Top 70)</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Skrol mendatar untuk melihat 70 terminal atau klik bar untuk menapis</p>
                         </div>
-                        <div class="flex items-center gap-2 text-[11px] font-medium">
+                        <div class="flex items-center gap-2 text-[11px] font-medium shrink-0">
                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-rose-500 inline-block"></span> Berkongsi</span>
                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-sm bg-brand-600 inline-block"></span> Tunggal</span>
                         </div>
                     </div>
-                    <div class="relative flex-1 min-h-[290px] w-full">
-                        <canvas id="terminalChart"></canvas>
+                    <div class="relative flex-1 min-h-[290px] w-full overflow-x-auto pb-1">
+                        <div id="terminal-chart-inner" class="relative h-full min-h-[280px] min-w-[1600px]">
+                            <canvas id="terminalChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -2320,15 +2325,21 @@
                 }
             }
 
-            // CARTA 2: KEKERAPAN LOG MENGIKUT ID TERMINAL (TOP 15)
+            // CARTA 2: KEKERAPAN LOG MENGIKUT ID TERMINAL (TOP 70)
             const termCanvas = document.getElementById('terminalChart');
             if (termCanvas) {
-                const top15Terms = Array.from(agg.termCounts.entries())
+                const top70Terms = Array.from(agg.termCounts.entries())
                     .sort((a, b) => b[1] - a[1])
-                    .slice(0, 15);
-                const termLabels = top15Terms.map(t => t[0]);
-                const termValues = top15Terms.map(t => t[1]);
+                    .slice(0, 70);
+                const termLabels = top70Terms.map(t => t[0]);
+                const termValues = top70Terms.map(t => t[1]);
                 const termColors = termLabels.map(t => agg.sharedTerminalsSet.has(t) ? '#f43f5e' : '#4f46e5');
+
+                const termInnerEl = document.getElementById('terminal-chart-inner');
+                if (termInnerEl) {
+                    const dynamicMinWidth = Math.max(600, termLabels.length * 26);
+                    termInnerEl.style.minWidth = `${dynamicMinWidth}px`;
+                }
 
                 if (isChartAlive(terminalChartInstance)) {
                     terminalChartInstance.$termLabels = termLabels;
@@ -2339,6 +2350,7 @@
                     terminalChartInstance.options.scales.x.ticks.color = theme.textColor;
                     terminalChartInstance.options.scales.y.ticks.color = theme.textColor;
                     terminalChartInstance.options.scales.y.grid.color = theme.gridColor;
+                    terminalChartInstance.resize();
                     terminalChartInstance.update('none');
                 } else {
                     terminalChartInstance = safeDestroy(terminalChartInstance);
@@ -2352,7 +2364,7 @@
                                     label: 'Jumlah Log',
                                     data: termValues,
                                     backgroundColor: termColors,
-                                    borderRadius: 6
+                                    borderRadius: 4
                                 }]
                             },
                             options: {
@@ -2371,10 +2383,30 @@
                                 },
                                 plugins: {
                                     legend: { display: false },
-                                    tooltip: { backgroundColor: theme.tooltipBg, padding: 10, cornerRadius: 8 }
+                                    tooltip: {
+                                        backgroundColor: theme.tooltipBg,
+                                        padding: 10,
+                                        cornerRadius: 8,
+                                        callbacks: {
+                                            title: (items) => {
+                                                const idx = items[0].dataIndex;
+                                                const label = items[0].label;
+                                                return `#${idx + 1} • Terminal ${label}`;
+                                            }
+                                        }
+                                    }
                                 },
                                 scales: {
-                                    x: { ticks: { color: theme.textColor, font: { family: 'JetBrains Mono', size: 10, weight: '600' } }, grid: { display: false } },
+                                    x: {
+                                        ticks: {
+                                            color: theme.textColor,
+                                            autoSkip: false,
+                                            maxRotation: 45,
+                                            minRotation: 45,
+                                            font: { family: 'JetBrains Mono', size: 10, weight: '600' }
+                                        },
+                                        grid: { display: false }
+                                    },
                                     y: { beginAtZero: true, ticks: { color: theme.textColor }, grid: { color: theme.gridColor } }
                                 }
                             }
