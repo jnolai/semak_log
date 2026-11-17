@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
   <meta name="theme-color" content="#0f172a" />
-  <title>IMS eZpay 2026 • Padanan Berangkai Sheet D ➔ A,B,C ➔ Sheet E Master</title>
+  <title>IMS eZpay 2026 • Padanan Berangkai Sheet D ➔ A,B,C ➔ Sheet E & F Master</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -44,10 +44,10 @@
           <div class="flex items-center gap-2">
             <h1 class="text-sm sm:text-lg font-bold tracking-tight truncate">IMS eZpay 2026 • DBKL</h1>
             <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shrink-0">
-              Padanan D ➔ A,B,C ➔ E
+              Padanan D ➔ A,B,C ➔ E & F
             </span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal Master (E)</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal (E) & Siri Aset (F)</p>
         </div>
       </div>
 
@@ -93,7 +93,7 @@
         <div class="flex items-start sm:items-center gap-2.5 min-w-0">
           <div id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 sm:mt-0 shrink-0 animate-pulse"></div>
           <div class="text-xs sm:text-sm min-w-0">
-            <span id="statusTitle" class="font-semibold text-slate-800 block sm:inline">Data Sedia & Disegerakkan (Sheet A, B, C, D & E)</span>
+            <span id="statusTitle" class="font-semibold text-slate-800 block sm:inline">Data Sedia & Disegerakkan (Sheet A, B, C, D, E & F)</span>
             <span id="statusDesc" class="text-[11px] sm:text-xs text-slate-500 block sm:inline sm:ml-1.5">• Sumber: LOG PERANTI EZPAY 2026</span>
           </div>
         </div>
@@ -107,10 +107,17 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <a href="https://docs.google.com/spreadsheets/d/1G_KQVUCY5q-YhA_XIm4my44nMXgYAc0CW5NDe6qLqK8/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center gap-1.5 min-h-[36px] text-xs font-medium text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2.5 py-1.5 rounded-lg border border-indigo-100 touch-manipulation">
-              <i data-lucide="external-link" class="w-3.5 h-3.5 shrink-0"></i>
+            <!-- Butang Google Sheet (Dinyahaktifkan / Disabled) -->
+            <button
+              type="button"
+              disabled
+              aria-disabled="true"
+              title="Pautan terus Google Sheet dinyahaktifkan"
+              class="inline-flex items-center justify-center gap-1.5 min-h-[36px] text-xs font-medium text-slate-400 bg-slate-100/80 px-2.5 py-1.5 rounded-lg border border-slate-200 opacity-50 cursor-not-allowed select-none"
+            >
+              <i data-lucide="external-link" class="w-3.5 h-3.5 shrink-0 text-slate-400"></i>
               <span>Google Sheet</span>
-            </a>
+            </button>
             <button onclick="exportCurrentCSV()" class="inline-flex items-center justify-center gap-1.5 min-h-[36px] text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition touch-manipulation">
               <i data-lucide="download" class="w-3.5 h-3.5 shrink-0"></i>
               <span>Eksport CSV</span>
@@ -119,7 +126,7 @@
         </div>
       </div>
 
-      <!-- Visual 2-Stage Pipeline Diagram -->
+      <!-- Visual Pipeline Diagram -->
       <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
         <span class="font-semibold text-slate-500 uppercase tracking-wider mr-1 w-full sm:w-auto">Aliran Padanan:</span>
         <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-100 text-slate-800 font-semibold border border-slate-200">
@@ -134,7 +141,7 @@
         <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
         <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-purple-50 text-purple-800 font-semibold border border-purple-200">
           <i data-lucide="server" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
-          <span>Sheet E (Master Terminal)</span>
+          <span>Sheet E (Terminal) & Sheet F (No. Siri Aset)</span>
         </span>
       </div>
     </div>
@@ -190,13 +197,13 @@
 
       <div onclick="switchTab('master_e')" class="bg-white rounded-xl border border-purple-200 p-3.5 sm:p-4 shadow-sm cursor-pointer hover:border-purple-400 active:scale-[0.99] transition touch-manipulation">
         <div class="flex items-center justify-between mb-1">
-          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-purple-700 leading-tight">Master Sheet E</span>
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-purple-700 leading-tight">Master Sheet E & F</span>
           <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
             <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
           </div>
         </div>
         <div class="text-xl sm:text-2xl font-extrabold text-purple-600" id="kpiTotalE">0</div>
-        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Terminal Induk Sheet E</p>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Terminal Induk & Aset</p>
       </div>
     </div>
 
@@ -314,7 +321,7 @@
           2. ⚠️ Tiada di MasterData (<span id="badge-unmatched_e">0</span>)
         </button>
         <button onclick="switchTab('unmatched_abc')" id="tab-unmatched_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-amber-700 whitespace-nowrap transition shrink-0 touch-manipulation">
-          3. ⏳ Rekod ID Tidak Log (<span id="badge-unmatched_abc">0</span>)
+          3. ⏳ Rekod ID Tiada Aktiviti (<span id="badge-unmatched_abc">0</span>)
         </button>
         <button onclick="switchTab('master_e')" id="tab-master_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-purple-700 whitespace-nowrap transition shrink-0 touch-manipulation">
           4. 🗄️ Maklumat Peranti (<span id="badge-master_e">0</span>)
@@ -344,7 +351,7 @@
               type="text"
               id="searchInput"
               oninput="handleSearch()"
-              placeholder="Cari Nama, TID/Terminal, Siri..."
+              placeholder="Cari Nama, TID, No. Siri Aset (F)..."
               class="w-full min-h-[38px] pl-9 sm:pl-8 pr-3 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
             />
           </div>
@@ -390,7 +397,7 @@
 
       <!-- Contextual Info Bar for Active Tab -->
       <div id="tabContextBar" class="px-3.5 sm:px-4 py-2.5 bg-emerald-50/60 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-        <span id="tabContextText" class="leading-relaxed">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal di Master Data Sheet E.</span>
+        <span id="tabContextText" class="leading-relaxed">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & No. Siri Aset (Sheet F).</span>
         <span id="resultCountLabel" class="font-bold text-slate-800 shrink-0">0 rekod dipaparkan</span>
       </div>
 
@@ -429,7 +436,7 @@
     <div class="bg-white rounded-t-2xl sm:rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden fade-in max-h-[92vh] sm:max-h-[90vh] flex flex-col">
       <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-900 text-white flex items-center justify-between gap-3">
         <div class="min-w-0">
-          <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-300 block">Perincian Padanan Berangkai 3 Lapisan</span>
+          <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-300 block">Perincian Padanan Berangkai (Sheet D, A/B/C, E & F)</span>
           <h3 id="modalUserName" class="text-sm sm:text-base font-bold mt-0.5 truncate">NAMA PENGGUNA</h3>
         </div>
         <button onclick="closeDetailModal()" class="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white shrink-0 touch-manipulation">
@@ -537,6 +544,9 @@
       { terminal: "P5914", tidBank: "P5914", noSiriDBKL: "DBKL/JKEW/01/H/2024/75(S)", noSiriMuamalat: "PB0B22CU20042", imei: "862318060146647", sim: "8944502401191693260", jabatan: "JABATAN PELESENAN DAN PEMBANGUNAN PERNIAGAAN", status: "AKTIF" },
       { terminal: "P5915", tidBank: "P5915", noSiriDBKL: "DBKL/JKEW/01/H/2024/76(S)", noSiriMuamalat: "PB0B22CU20947", imei: "862318060164723", sim: "8944502401191693252", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", status: "AKTIF" }
     ];
+
+    // 2B. MASTER DATA SHEET F (NO SIRI ASET ➔ No. Siri Pendaftaran DBKL)
+    let sheetF_Assets = [];
 
     // 3. LOG PENGGUNAAN SHEET A, B, C (Nama Pengguna + Mobile)
     let logRecordsABC = [
@@ -650,6 +660,10 @@
       return clean;
     }
 
+    function normalizeSerialKey(str) {
+      return (str || '').toString().toUpperCase().replace(/\s+/g, '').trim();
+    }
+
     function escapeAttr(str) {
       return (str || '').toString()
         .replace(/&/g, '&amp;')
@@ -677,6 +691,29 @@
       });
 
       return { deptByTerminal, deptByName };
+    }
+
+    // Padanan No. Siri Pendaftaran DBKL = Sheet F NO SIRI ASET
+    function buildSheetFAssetLookup() {
+      const assetByTerminal = new Map();
+      const assetByMuamalat = new Map();
+
+      sheetF_Assets.forEach(f => {
+        const siriAset = (f.noSiriAset || '').toString().trim();
+        if (!siriAset || siriAset === '-') return;
+
+        const termKey = normalizeTerminal(f.terminal);
+        if (termKey && !assetByTerminal.has(termKey)) {
+          assetByTerminal.set(termKey, siriAset);
+        }
+
+        const serialKey = normalizeSerialKey(f.noSiriMuamalat);
+        if (serialKey && serialKey !== '-' && !assetByMuamalat.has(serialKey)) {
+          assetByMuamalat.set(serialKey, siriAset);
+        }
+      });
+
+      return { assetByTerminal, assetByMuamalat };
     }
 
     function populateJabatanDropdown() {
@@ -711,10 +748,12 @@
         : logRecordsABC.filter(r => r.sheet === selectedLogSheet);
 
       const { deptByTerminal, deptByName } = buildSheetDDepartmentLookup();
+      const { assetByTerminal, assetByMuamalat } = buildSheetFAssetLookup();
 
       const mapE = new Map();
       const enrichedMasterE = sheetE_Terminals.map((item, idx) => {
         const keyTerm = normalizeTerminal(item.terminal);
+        const keyMuamalat = normalizeSerialKey(item.noSiriMuamalat);
         const termLogs = filteredLogs.filter(l => normalizeTerminal(l.mobile) === keyTerm);
         const usersInLogs = [...new Set(termLogs.map(l => l.namaPengguna))];
 
@@ -732,15 +771,20 @@
 
         const resolvedTID = (item.tidBank && item.tidBank !== '-') ? item.tidBank : (item.terminal || '-');
 
+        // Keutamaan No. Siri Pendaftaran DBKL daripada Sheet F (NO SIRI ASET)
+        const siriFromSheetF = assetByTerminal.get(keyTerm) || assetByMuamalat.get(keyMuamalat) || '';
+        const resolvedSiriDBKL = siriFromSheetF || item.noSiriDBKL || '-';
+
         const enriched = {
           index: idx + 1,
           ...item,
           tidBank: resolvedTID,
+          noSiriDBKL: resolvedSiriDBKL,
           jabatan: resolvedJabatan,
           status: (item.status || 'AKTIF').toUpperCase(),
           totalLogs: termLogs.length,
           usersInLogs,
-          _searchIndex: `${item.terminal} ${resolvedTID} ${item.noSiriDBKL} ${item.noSiriMuamalat} ${item.imei} ${resolvedJabatan} ${item.jabatan} ${usersInLogs.join(' ')}`.toUpperCase()
+          _searchIndex: `${item.terminal} ${resolvedTID} ${resolvedSiriDBKL} ${item.noSiriMuamalat} ${item.imei} ${resolvedJabatan} ${item.jabatan} ${usersInLogs.join(' ')}`.toUpperCase()
         };
 
         if (keyTerm) mapE.set(keyTerm, enriched);
@@ -1305,7 +1349,7 @@
       const contexts = {
         full_match: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-emerald-50/70 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
-          txt: '✅ Sepadan Penuh: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal di Master Data Sheet E.'
+          txt: '✅ Sepadan Penuh: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & No. Siri Aset (Sheet F).'
         },
         unmatched_e: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-orange-50/80 border-b border-orange-100 text-xs text-orange-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
@@ -1317,7 +1361,7 @@
         },
         master_e: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-purple-50/80 border-b border-purple-100 text-xs text-purple-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
-          txt: '🗄️ Master Data Sheet E: Senarai induk Terminal berdaftar (TID = TERMINAL, Serial Number Muamalat, Jabatan Diseragamkan, IMEI, SIM & Status).'
+          txt: '🗄️ Master Data Sheet E & F: Senarai induk Terminal (TID = TERMINAL, No. Siri Pendaftaran DBKL = Sheet F NO SIRI ASET, Serial Number Muamalat & Jabatan).'
         },
         orphan_abc: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-rose-50/80 border-b border-rose-100 text-xs text-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
@@ -1441,7 +1485,7 @@
           <tr>
             <th class="px-4 py-3">No</th>
             <th class="px-4 py-3">Terminal / TID (Sheet E)</th>
-            <th class="px-4 py-3">No. Siri Pendaftaran DBKL</th>
+            <th class="px-4 py-3">No. Siri Pendaftaran DBKL (Sheet F)</th>
             <th class="px-4 py-3">No. Siri Muamalat (Serial Number)</th>
             <th class="px-4 py-3">Jabatan (Diseragamkan)</th>
             <th class="px-4 py-3">Status Master E</th>
@@ -1464,7 +1508,7 @@
               </span>
               <span class="block text-[10px] text-slate-500 mt-0.5">TID: ${escapeAttr(row.tidBank || row.terminal || '-')}</span>
             </td>
-            <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${escapeAttr(row.noSiriDBKL || '-')}</td>
+            <td class="px-4 py-3 font-mono text-[11px] font-semibold text-indigo-800">${escapeAttr(row.noSiriDBKL || '-')}</td>
             <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${escapeAttr(row.noSiriMuamalat || '-')}</td>
             <td class="px-4 py-3 text-slate-600 max-w-xs truncate" title="${escapeAttr(row.jabatan)}">${escapeAttr(row.jabatan || '-')}</td>
             <td class="px-4 py-3">
@@ -1495,7 +1539,7 @@
             </div>
             <div class="font-semibold text-slate-800 leading-snug">${escapeAttr(row.jabatan || '-')}</div>
             <div class="grid grid-cols-1 gap-1 bg-slate-50 p-2 rounded-lg border border-slate-100 text-[11px] text-slate-600">
-              <div><span class="text-slate-400">Siri DBKL:</span> <span class="font-mono font-medium text-slate-800">${escapeAttr(row.noSiriDBKL || '-')}</span></div>
+              <div><span class="text-slate-400">No. Siri Aset (F):</span> <span class="font-mono font-semibold text-indigo-800">${escapeAttr(row.noSiriDBKL || '-')}</span></div>
               <div><span class="text-slate-400">Muamalat:</span> <span class="font-mono font-medium text-slate-800">${escapeAttr(row.noSiriMuamalat || '-')}</span></div>
             </div>
             <div class="text-[11px] pt-0.5">
@@ -1587,7 +1631,7 @@
           <th class="px-4 py-3">No</th>
           <th class="px-4 py-3">Kunci Utama: Nama & Jabatan (Sheet D)</th>
           <th class="px-4 py-3">Peringkat 1: Padanan A/B/C (Mobile)</th>
-          <th class="px-4 py-3">Peringkat 2: Padanan Master Sheet E (Terminal)</th>
+          <th class="px-4 py-3">Peringkat 2: Terminal (E) & No. Siri Aset (F)</th>
           <th class="px-4 py-3">Status Keseluruhan</th>
           <th class="px-4 py-3 text-right">Tindakan</th>
         </tr>
@@ -1631,7 +1675,7 @@
                 <div class="flex flex-col gap-0.5 mb-1 last:mb-0">
                   <div class="flex items-center gap-1 flex-wrap">
                     <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold text-[11px]">${escapeAttr(tm.masterE.terminal)}</span>
-                    ${subInfo ? `<span class="text-[11px] font-mono text-slate-600">${escapeAttr(subInfo)}</span>` : ''}
+                    ${subInfo ? `<span class="text-[11px] font-mono font-medium text-indigo-800">${escapeAttr(subInfo)}</span>` : ''}
                     ${statusBadge}
                   </div>
                 </div>
@@ -1695,7 +1739,7 @@
                 ${stage1HTML}
               </div>
               <div class="pt-1.5 border-t border-slate-200/70">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Peringkat 2 • Master Sheet E</span>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Peringkat 2 • Master Sheet E & F</span>
                 ${stage2HTML}
               </div>
             </div>
@@ -1773,7 +1817,7 @@
                     </span>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700 pt-1">
-                    <div><span class="text-slate-400">No. Siri DBKL:</span> <strong class="font-mono break-all">${escapeAttr(e.noSiriDBKL || '-')}</strong></div>
+                    <div><span class="text-slate-400">No. Siri DBKL (Sheet F):</span> <strong class="font-mono text-indigo-800 break-all">${escapeAttr(e.noSiriDBKL || '-')}</strong></div>
                     <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono break-all">${escapeAttr(displayMuamalat)}</strong></div>
                     <div><span class="text-slate-400">TID Bank (Terminal):</span> <strong>${escapeAttr(displayTID)}</strong></div>
                     <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono break-all">${escapeAttr(e.imei || '-')}</strong></div>
@@ -1843,7 +1887,7 @@
           </div>
         </div>
         <div class="space-y-3">
-          <h4 class="font-bold text-slate-800">Hasil Padanan Master Data Sheet E (Terminal)</h4>
+          <h4 class="font-bold text-slate-800">Hasil Padanan Master Data Sheet E & No. Siri Aset Sheet F</h4>
           ${masterCards}
         </div>
         ${logsTable}
@@ -1962,8 +2006,8 @@
 
           const siriDBKLVal = pickCol(
             r,
-            ['NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO. SIRI DBKL', 'NO SIRI', 'NO. SIRI'],
-            ['PENDAFTARAN', 'DBKL', 'SIRI']
+            ['NO SIRI ASET', 'NO. SIRI ASET', 'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO. SIRI DBKL', 'NO SIRI', 'NO. SIRI'],
+            ['ASET', 'PENDAFTARAN', 'DBKL', 'SIRI']
           ) || '-';
 
           const jabSheetE = normalizeDepartmentName(pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN'], ['JABATAN', 'BAHAGIAN']));
@@ -1983,6 +2027,38 @@
         }).filter(x => x.terminal);
 
         if (mapped.length > 0) { sheetE_Terminals = mapped; return true; }
+
+      } else if (sheetName === 'F') {
+        const mapped = rows.map(r => {
+          const termVal = pickCol(
+            r,
+            ['TERMINAL', 'TID', 'NO PERANTI', 'NO. PERANTI', 'MOBILE', "TID(0000') BANK"],
+            ['TERMINAL', 'TID', 'PERANTI', 'MOBILE']
+          ) || '';
+
+          const muamalatVal = pickCol(
+            r,
+            ['SERIAL NUMBER', 'SERAIL NUMBER', 'NO SIRI MUAMALAT', 'NO. SIRI MUAMALAT'],
+            ['SERIAL', 'SERAIL', 'MUAMALAT']
+          ) || '';
+
+          const siriAsetVal = pickCol(
+            r,
+            ['NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET', 'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO SIRI'],
+            ['NO SIRI ASET', 'SIRI ASET', 'ASET', 'DBKL', 'SIRI']
+          ) || '';
+
+          return {
+            terminal: termVal,
+            noSiriMuamalat: muamalatVal,
+            noSiriAset: siriAsetVal
+          };
+        }).filter(x => x.noSiriAset && (x.terminal || x.noSiriMuamalat));
+
+        if (mapped.length > 0) {
+          sheetF_Assets = mapped;
+          return true;
+        }
 
       } else if (['A', 'B', 'C'].includes(sheetName)) {
         const mapped = rows.map(r => ({
@@ -2009,7 +2085,7 @@
       const statusDesc = document.getElementById('statusDesc');
       icon.classList.add('animate-spin');
 
-      const sheets = ['D', 'E', 'A', 'B', 'C'];
+      const sheets = ['D', 'E', 'F', 'A', 'B', 'C'];
       let syncedCount = 0;
       const cacheBuster = Date.now();
 
@@ -2034,10 +2110,10 @@
 
       const timeStr = new Date().toLocaleTimeString('ms-MY');
       if (syncedCount > 0) {
-        statusTitle.textContent = `Sync Langsung Berjaya (${syncedCount})`;
+        statusTitle.textContent = `Sync Langsung Berjaya (${syncedCount} Sheet)`;
         statusDesc.textContent = `• Auto-Sync setiap 1 minit • Kemas kini: ${timeStr}`;
       } else {
-        statusTitle.textContent = `Menggunakan Data Tempatan Disegerakkan (Sheet A, B, C, D & E)`;
+        statusTitle.textContent = `Menggunakan Data Tempatan Disegerakkan (Sheet A, B, C, D, E & F)`;
         statusDesc.textContent = `• Auto-Sync setiap 1 minit aktif • Semakan terakhir: ${timeStr}`;
       }
 
@@ -2078,7 +2154,7 @@
     function exportCurrentCSV() {
       const filtered = getFilteredList();
       if (activeTab === 'master_e') {
-        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri DBKL', 'No Siri Muamalat (Serial Number)', 'IMEI', 'SIM', 'Jabatan (Diseragamkan)', 'Status', 'Bil Log'];
+        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri Pendaftaran DBKL (Sheet F)', 'No Siri Muamalat (Serial Number)', 'IMEI', 'SIM', 'Jabatan (Diseragamkan)', 'Status', 'Bil Log'];
         const lines = [headers.join(',')];
         filtered.forEach(r => {
           lines.push([
@@ -2086,11 +2162,11 @@
             `"${r.imei}"`, `"${r.sim}"`, `"${r.jabatan}"`, `"${r.status}"`, r.totalLogs
           ].join(','));
         });
-        downloadCSVFile(lines.join('\n'), `Master_Sheet_E_eZpay2026.csv`);
+        downloadCSVFile(lines.join('\n'), `Master_Sheet_E_F_eZpay2026.csv`);
         return;
       }
 
-      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Diseragamkan)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri DBKL', 'Status Terminal', 'Status Keseluruhan'];
+      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Diseragamkan)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri Pendaftaran DBKL (Sheet F)', 'Status Terminal', 'Status Keseluruhan'];
       const lines = [headers.join(',')];
 
       filtered.forEach((r, idx) => {
