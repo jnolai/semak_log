@@ -47,7 +47,7 @@
               Padanan D ➔ A,B,C ➔ E & F
             </span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal (E) & Siri Aset (F)</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal (E) & No. Siri Aset (F)</p>
         </div>
       </div>
 
@@ -141,7 +141,7 @@
         <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
         <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-purple-50 text-purple-800 font-semibold border border-purple-200">
           <i data-lucide="server" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
-          <span>Sheet E (Terminal) & Sheet F (No. Siri Aset)</span>
+          <span>Sheet E (Terminal) & Sheet F (NO SIRI ASET)</span>
         </span>
       </div>
     </div>
@@ -397,7 +397,7 @@
 
       <!-- Contextual Info Bar for Active Tab -->
       <div id="tabContextBar" class="px-3.5 sm:px-4 py-2.5 bg-emerald-50/60 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-        <span id="tabContextText" class="leading-relaxed">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & No. Siri Aset (Sheet F).</span>
+        <span id="tabContextText" class="leading-relaxed">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & NO SIRI ASET (Sheet F).</span>
         <span id="resultCountLabel" class="font-bold text-slate-800 shrink-0">0 rekod dipaparkan</span>
       </div>
 
@@ -507,7 +507,7 @@
       { no: 44, nama: "KHAIRUDIN BIN RAMLI", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5915" }
     ];
 
-    // 2. MASTER DATA SHEET E (TID = TERMINAL, No. Siri Muamalat = SERIAL NUMBER, Jabatan = Jabatan Sheet D)
+    // 2. MASTER DATA SHEET E (TID = TERMINAL, No. Siri Muamalat = SERIAL NUMBER)
     let sheetE_Terminals = [
       { terminal: "P5846", tidBank: "P5846", noSiriDBKL: "DBKL/JKEW/01/H/2024/07(S)", noSiriMuamalat: "PB0B22CU20514", imei: "862318060158709", sim: "8944502401191693096", jabatan: "Bahagian Hasil", status: "AKTIF" },
       { terminal: "P5847", tidBank: "P5847", noSiriDBKL: "DBKL/JKEW/01/H/2024/08(S)", noSiriMuamalat: "PB0B22CU20868", imei: "862318060166223", sim: "8944502401191693088", jabatan: "Bahagian Hasil", status: "AKTIF" },
@@ -657,11 +657,21 @@
       let clean = (str || '').toString().toUpperCase().replace(/\s+/g, '').trim();
       if (!clean) return '';
       if (/^\d{4}$/.test(clean)) return 'P' + clean;
+      const matchP = clean.match(/\bP\d{4}\b/);
+      if (matchP) return matchP[0];
       return clean;
     }
 
+    // Menyeragamkan nombor siri Muamalat (termasuk kes typo awalan berganda seperti PPB0B2... vs PB0B2...)
     function normalizeSerialKey(str) {
-      return (str || '').toString().toUpperCase().replace(/\s+/g, '').trim();
+      let clean = (str || '').toString().toUpperCase().replace(/[^A-Z0-9]/g, '').trim();
+      if (!clean || clean === '-') return '';
+      if (clean.startsWith('PPB')) clean = clean.slice(1);
+      return clean;
+    }
+
+    function normalizeDigitsKey(str) {
+      return (str || '').toString().replace(/\D/g, '').trim();
     }
 
     function escapeAttr(str) {
@@ -697,6 +707,8 @@
     function buildSheetFAssetLookup() {
       const assetByTerminal = new Map();
       const assetByMuamalat = new Map();
+      const assetByImei = new Map();
+      const assetBySim = new Map();
 
       sheetF_Assets.forEach(f => {
         const siriAset = (f.noSiriAset || '').toString().trim();
@@ -708,12 +720,22 @@
         }
 
         const serialKey = normalizeSerialKey(f.noSiriMuamalat);
-        if (serialKey && serialKey !== '-' && !assetByMuamalat.has(serialKey)) {
+        if (serialKey && !assetByMuamalat.has(serialKey)) {
           assetByMuamalat.set(serialKey, siriAset);
+        }
+
+        const imeiKey = normalizeDigitsKey(f.imei);
+        if (imeiKey && imeiKey.length >= 8 && !assetByImei.has(imeiKey)) {
+          assetByImei.set(imeiKey, siriAset);
+        }
+
+        const simKey = normalizeDigitsKey(f.sim);
+        if (simKey && simKey.length >= 8 && !assetBySim.has(simKey)) {
+          assetBySim.set(simKey, siriAset);
         }
       });
 
-      return { assetByTerminal, assetByMuamalat };
+      return { assetByTerminal, assetByMuamalat, assetByImei, assetBySim };
     }
 
     function populateJabatanDropdown() {
@@ -748,12 +770,15 @@
         : logRecordsABC.filter(r => r.sheet === selectedLogSheet);
 
       const { deptByTerminal, deptByName } = buildSheetDDepartmentLookup();
-      const { assetByTerminal, assetByMuamalat } = buildSheetFAssetLookup();
+      const { assetByTerminal, assetByMuamalat, assetByImei, assetBySim } = buildSheetFAssetLookup();
 
       const mapE = new Map();
       const enrichedMasterE = sheetE_Terminals.map((item, idx) => {
         const keyTerm = normalizeTerminal(item.terminal);
         const keyMuamalat = normalizeSerialKey(item.noSiriMuamalat);
+        const keyImei = normalizeDigitsKey(item.imei);
+        const keySim = normalizeDigitsKey(item.sim);
+
         const termLogs = filteredLogs.filter(l => normalizeTerminal(l.mobile) === keyTerm);
         const usersInLogs = [...new Set(termLogs.map(l => l.namaPengguna))];
 
@@ -771,8 +796,14 @@
 
         const resolvedTID = (item.tidBank && item.tidBank !== '-') ? item.tidBank : (item.terminal || '-');
 
-        // Keutamaan No. Siri Pendaftaran DBKL daripada Sheet F (NO SIRI ASET)
-        const siriFromSheetF = assetByTerminal.get(keyTerm) || assetByMuamalat.get(keyMuamalat) || '';
+        // Padanan No. Siri Pendaftaran DBKL daripada Sheet F (NO SIRI ASET)
+        const siriFromSheetF =
+          assetByTerminal.get(keyTerm) ||
+          assetByMuamalat.get(keyMuamalat) ||
+          assetByImei.get(keyImei) ||
+          assetBySim.get(keySim) ||
+          '';
+
         const resolvedSiriDBKL = siriFromSheetF || item.noSiriDBKL || '-';
 
         const enriched = {
@@ -1349,7 +1380,7 @@
       const contexts = {
         full_match: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-emerald-50/70 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
-          txt: '✅ Sepadan Penuh: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & No. Siri Aset (Sheet F).'
+          txt: '✅ Sepadan Penuh: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & NO SIRI ASET (Sheet F).'
         },
         unmatched_e: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-orange-50/80 border-b border-orange-100 text-xs text-orange-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
@@ -1887,7 +1918,7 @@
           </div>
         </div>
         <div class="space-y-3">
-          <h4 class="font-bold text-slate-800">Hasil Padanan Master Data Sheet E & No. Siri Aset Sheet F</h4>
+          <h4 class="font-bold text-slate-800">Hasil Padanan Master Data Sheet E & NO SIRI ASET Sheet F</h4>
           ${masterCards}
         </div>
         ${logsTable}
@@ -1956,24 +1987,123 @@
       }
 
       if (rows.length < 2) return [];
-      const headers = rows[0].map(h => h.toUpperCase().trim());
-      return rows.slice(1).map(vals => {
+
+      // Kesan baris pengepala sebenar dalam 15 baris teratas (jika helaian mempunyai tajuk laporan di baris 1)
+      const knownHeaderTokens = [
+        'NAMA', 'NAMA PENGGUNA', 'NAMA PEGAWAI',
+        'TERMINAL', 'TID', 'MOBILE', 'NO PERANTI', 'NO. PERANTI',
+        'SERIAL NUMBER', 'SERAIL NUMBER', 'NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET'
+      ];
+
+      let headerRowIdx = 0;
+      let bestScore = -1;
+      const scanLimit = Math.min(rows.length, 15);
+      for (let rIdx = 0; rIdx < scanLimit; rIdx++) {
+        const upperCells = rows[rIdx].map(c => c.toUpperCase().replace(/\s+/g, ' ').trim());
+        let score = 0;
+        upperCells.forEach(cell => {
+          if (knownHeaderTokens.some(tok => cell === tok || cell.includes(tok))) {
+            score++;
+          }
+        });
+        if (score > bestScore && score >= 1) {
+          bestScore = score;
+          headerRowIdx = rIdx;
+        }
+      }
+
+      const headers = rows[headerRowIdx].map((h, idx) => {
+        const cleanH = h.toUpperCase().replace(/\s+/g, ' ').trim();
+        return cleanH || `COL_${idx}`;
+      });
+
+      return rows.slice(headerRowIdx + 1).map(vals => {
         const obj = {};
-        headers.forEach((h, idx) => { obj[h] = vals[idx] || ''; });
+        headers.forEach((h, idx) => { obj[h] = (vals[idx] || '').trim(); });
+        obj._rawValues = vals.map(v => (v || '').trim());
         return obj;
       });
     }
 
     function pickCol(rowObj, exactKeys, partialPatterns = []) {
+      const normalizedMap = new Map();
+      Object.keys(rowObj).forEach(k => {
+        if (k === '_rawValues') return;
+        const normK = k.toUpperCase().replace(/\s+/g, ' ').trim();
+        normalizedMap.set(normK, rowObj[k]);
+      });
+
       for (const k of exactKeys) {
-        if (rowObj[k] !== undefined && rowObj[k].toString().trim() !== '') {
-          return rowObj[k].toString().trim();
+        const normTarget = k.toUpperCase().replace(/\s+/g, ' ').trim();
+        if (normalizedMap.has(normTarget) && normalizedMap.get(normTarget) !== '') {
+          return normalizedMap.get(normTarget);
         }
       }
-      const keys = Object.keys(rowObj);
       for (const pat of partialPatterns) {
-        const foundKey = keys.find(k => k.includes(pat) && rowObj[k].toString().trim() !== '');
-        if (foundKey) return rowObj[foundKey].toString().trim();
+        const normPat = pat.toUpperCase().replace(/\s+/g, ' ').trim();
+        for (const [k, val] of normalizedMap.entries()) {
+          if (k.includes(normPat) && val !== '') return val;
+        }
+      }
+      return '';
+    }
+
+    // Imbas sel baris Sheet F untuk mengesan nilai No. Siri Aset DBKL walaupun nama lajur berbeza
+    function extractDBKLAssetNumber(rowObj) {
+      const explicitVal = pickCol(
+        rowObj,
+        [
+          'NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET', 'NO SIRI ASET DBKL',
+          'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL',
+          'NO SIRI DBKL', 'NO. SIRI DBKL', 'NO SIRI', 'NO. SIRI'
+        ],
+        ['NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET', 'ASET', 'PENDAFTARAN']
+      );
+      if (explicitVal && explicitVal !== '-') return explicitVal;
+
+      const vals = rowObj._rawValues || Object.values(rowObj);
+      for (const v of vals) {
+        if (typeof v === 'string' && /DBKL\//i.test(v)) {
+          return v.trim();
+        }
+      }
+      return '';
+    }
+
+    function extractTerminalFromRow(rowObj) {
+      const explicitTerm = pickCol(
+        rowObj,
+        ['TERMINAL', 'TID', 'NO PERANTI', 'NO. PERANTI', 'MOBILE', "TID(0000') BANK", 'TID BANK'],
+        ['TERMINAL', 'TID', 'PERANTI', 'MOBILE']
+      );
+      if (explicitTerm) {
+        const norm = normalizeTerminal(explicitTerm);
+        if (norm) return norm;
+      }
+
+      const vals = rowObj._rawValues || Object.values(rowObj);
+      for (const v of vals) {
+        if (typeof v === 'string') {
+          const m = v.toUpperCase().match(/\bP\d{4}\b/);
+          if (m) return m[0];
+        }
+      }
+      return '';
+    }
+
+    function extractMuamalatSerialFromRow(rowObj) {
+      const explicitSerial = pickCol(
+        rowObj,
+        ['SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SERIAL NUMBER', 'NO SERIAL NUMBER', 'NO SIRI MUAMALAT', 'NO. SIRI MUAMALAT', 'S/N', 'SN'],
+        ['SERIAL', 'SERAIL', 'MUAMALAT', 'S/N']
+      );
+      if (explicitSerial) return explicitSerial;
+
+      const vals = rowObj._rawValues || Object.values(rowObj);
+      for (const v of vals) {
+        if (typeof v === 'string' && /^P{1,2}B0B/i.test(v.trim())) {
+          return v.trim();
+        }
       }
       return '';
     }
@@ -1984,7 +2114,7 @@
       if (sheetName === 'D') {
         const mapped = rows.map((r, i) => ({
           no: i + 1,
-          nama: pickCol(r, ['NAMA', 'NAMA PENGGUNA', 'NAMA PEGAWAI'], ['NAMA']) || Object.values(r)[1] || Object.values(r)[0] || '',
+          nama: pickCol(r, ['NAMA', 'NAMA PENGGUNA', 'NAMA PEGAWAI'], ['NAMA']) || (r._rawValues && (r._rawValues[1] || r._rawValues[0])) || '',
           jabatan: pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN', 'JABATAN / UNIT'], ['JABATAN', 'BAHAGIAN', 'UNIT']) || '-',
           perantiRujukan: pickCol(r, ['NO PERANTI', 'NO. PERANTI', 'MOBILE', 'TERMINAL', 'TID'], ['PERANTI', 'TERMINAL', 'MOBILE']) || '-'
         })).filter(x => x.nama);
@@ -1993,21 +2123,17 @@
       } else if (sheetName === 'E') {
         const { deptByTerminal } = buildSheetDDepartmentLookup();
         const mapped = rows.map(r => {
-          const termVal = pickCol(r, ['TERMINAL', 'NO PERANTI', 'NO. PERANTI', 'MOBILE', 'TID'], ['TERMINAL', 'PERANTI']) || Object.values(r)[0] || '';
+          const termVal = pickCol(r, ['TERMINAL', 'NO PERANTI', 'NO. PERANTI', 'MOBILE', 'TID'], ['TERMINAL', 'PERANTI']) || (r._rawValues && r._rawValues[0]) || '';
           const normTerm = normalizeTerminal(termVal);
 
           const tidVal = termVal || pickCol(r, ["TID(0000') BANK", 'TID BANK', 'TID'], ['TID']) || '-';
 
-          const muamalatVal = pickCol(
-            r,
-            ['SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SERIAL NUMBER', 'NO SERIAL NUMBER', 'NO SIRI MUAMALAT', 'NO. SIRI MUAMALAT'],
-            ['SERIAL', 'SERAIL', 'MUAMALAT']
-          ) || '-';
+          const muamalatVal = extractMuamalatSerialFromRow(r) || '-';
 
           const siriDBKLVal = pickCol(
             r,
-            ['NO SIRI ASET', 'NO. SIRI ASET', 'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO. SIRI DBKL', 'NO SIRI', 'NO. SIRI'],
-            ['ASET', 'PENDAFTARAN', 'DBKL', 'SIRI']
+            ['NO SIRI ASET', 'NO. SIRI ASET', 'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO. SIRI DBKL'],
+            ['ASET', 'PENDAFTARAN', 'DBKL']
           ) || '-';
 
           const jabSheetE = normalizeDepartmentName(pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN'], ['JABATAN', 'BAHAGIAN']));
@@ -2030,30 +2156,20 @@
 
       } else if (sheetName === 'F') {
         const mapped = rows.map(r => {
-          const termVal = pickCol(
-            r,
-            ['TERMINAL', 'TID', 'NO PERANTI', 'NO. PERANTI', 'MOBILE', "TID(0000') BANK"],
-            ['TERMINAL', 'TID', 'PERANTI', 'MOBILE']
-          ) || '';
-
-          const muamalatVal = pickCol(
-            r,
-            ['SERIAL NUMBER', 'SERAIL NUMBER', 'NO SIRI MUAMALAT', 'NO. SIRI MUAMALAT'],
-            ['SERIAL', 'SERAIL', 'MUAMALAT']
-          ) || '';
-
-          const siriAsetVal = pickCol(
-            r,
-            ['NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET', 'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO SIRI'],
-            ['NO SIRI ASET', 'SIRI ASET', 'ASET', 'DBKL', 'SIRI']
-          ) || '';
+          const siriAsetVal = extractDBKLAssetNumber(r);
+          const termVal = extractTerminalFromRow(r);
+          const muamalatVal = extractMuamalatSerialFromRow(r);
+          const imeiVal = pickCol(r, ['IMEI1', 'IMEI 1', 'IMEI', 'NO IMEI', 'NO. IMEI'], ['IMEI']) || '';
+          const simVal = pickCol(r, ['SIMCARD NUMBER', 'SIM CARD NUMBER', 'NO SIM', 'NO. SIM', 'SIM', 'ICCID'], ['SIM', 'ICCID']) || '';
 
           return {
             terminal: termVal,
             noSiriMuamalat: muamalatVal,
+            imei: imeiVal,
+            sim: simVal,
             noSiriAset: siriAsetVal
           };
-        }).filter(x => x.noSiriAset && (x.terminal || x.noSiriMuamalat));
+        }).filter(x => x.noSiriAset && (x.terminal || x.noSiriMuamalat || x.imei || x.sim));
 
         if (mapped.length > 0) {
           sheetF_Assets = mapped;
@@ -2063,9 +2179,9 @@
       } else if (['A', 'B', 'C'].includes(sheetName)) {
         const mapped = rows.map(r => ({
           sheet: sheetName,
-          namaPengguna: pickCol(r, ['NAMA PENGGUNA', 'NAMA', 'USER'], ['NAMA']) || Object.values(r)[1] || '',
-          mobile: pickCol(r, ['MOBILE', 'TERMINAL', 'TID', 'NO PERANTI'], ['MOBILE', 'TERMINAL']) || Object.values(r)[2] || '',
-          tarikh: pickCol(r, ['TARIKH', 'TARIKH & MASA', 'TIMESTAMP', 'DATE'], ['TARIKH', 'DATE', 'MASA']) || Object.values(r)[4] || '-'
+          namaPengguna: pickCol(r, ['NAMA PENGGUNA', 'NAMA', 'USER'], ['NAMA']) || (r._rawValues && r._rawValues[1]) || '',
+          mobile: pickCol(r, ['MOBILE', 'TERMINAL', 'TID', 'NO PERANTI'], ['MOBILE', 'TERMINAL']) || (r._rawValues && r._rawValues[2]) || '',
+          tarikh: pickCol(r, ['TARIKH', 'TARIKH & MASA', 'TIMESTAMP', 'DATE'], ['TARIKH', 'DATE', 'MASA']) || (r._rawValues && r._rawValues[4]) || '-'
         })).filter(x => x.namaPengguna);
 
         if (mapped.length > 0) {
@@ -2110,7 +2226,7 @@
 
       const timeStr = new Date().toLocaleTimeString('ms-MY');
       if (syncedCount > 0) {
-        statusTitle.textContent = `Sync Langsung Berjaya (${syncedCount} Sheet)`;
+        statusTitle.textContent = `Sync Langsung Berjaya (${syncedCount} Sheet • ${sheetF_Assets.length} Rekod Aset F)`;
         statusDesc.textContent = `• Auto-Sync setiap 1 minit • Kemas kini: ${timeStr}`;
       } else {
         statusTitle.textContent = `Menggunakan Data Tempatan Disegerakkan (Sheet A, B, C, D, E & F)`;
