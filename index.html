@@ -1794,3 +1794,171 @@
           const muamalatVal = pickCol(
             r,
             ['SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SERIAL NUMBER', 'NO SERIAL NUMBER', 'NO SIRI MUAMALAT', 'NO. SIRI MUAMALAT'],
+            ['SERIAL', 'SERAIL', 'MUAMALAT']
+          ) || '-';
+
+          const siriDBKLVal = pickCol(
+            r,
+            ['NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO. SIRI DBKL', 'NO SIRI', 'NO. SIRI'],
+            ['PENDAFTARAN', 'DBKL', 'SIRI']
+          ) || '-';
+
+          const jabSheetE = pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN'], ['JABATAN', 'BAHAGIAN']);
+          const jabFromD = deptByTerminal.get(normTerm) || '';
+          const finalJabatan = jabSheetE || jabFromD || '-';
+
+          return {
+            terminal: termVal,
+            tidBank: tidVal,
+            noSiriDBKL: siriDBKLVal,
+            noSiriMuamalat: muamalatVal,
+            imei: pickCol(r, ['IMEI1', 'IMEI 1', 'IMEI', 'NO IMEI', 'NO. IMEI'], ['IMEI']) || '-',
+            sim: pickCol(r, ['SIMCARD NUMBER', 'SIM CARD NUMBER', 'NO SIM', 'NO. SIM', 'SIM', 'ICCID'], ['SIM', 'ICCID']) || '-',
+            jabatan: finalJabatan,
+            status: (pickCol(r, ['STATUS', 'STATUS PERANTI'], ['STATUS']) || 'AKTIF').toUpperCase()
+          };
+        }).filter(x => x.terminal);
+
+        if (mapped.length > 0) { sheetE_Terminals = mapped; return true; }
+
+      } else if (['A', 'B', 'C'].includes(sheetName)) {
+        const mapped = rows.map(r => ({
+          sheet: sheetName,
+          namaPengguna: pickCol(r, ['NAMA PENGGUNA', 'NAMA', 'USER'], ['NAMA']) || Object.values(r)[1] || '',
+          mobile: pickCol(r, ['MOBILE', 'TERMINAL', 'TID', 'NO PERANTI'], ['MOBILE', 'TERMINAL']) || Object.values(r)[2] || '',
+          tarikh: pickCol(r, ['TARIKH', 'TARIKH & MASA', 'TIMESTAMP', 'DATE'], ['TARIKH', 'DATE', 'MASA']) || Object.values(r)[4] || '-'
+        })).filter(x => x.namaPengguna);
+
+        if (mapped.length > 0) {
+          logRecordsABC = logRecordsABC.filter(x => x.sheet !== sheetName).concat(mapped);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function processUploadedCSV() {
+      const target = document.getElementById('uploadTargetSheet').value;
+      const fileInput = document.getElementById('csvFileInput');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Sila pilih fail CSV terlebih dahulu.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const rows = parseCSV(e.target.result);
+        const ok = applyParsedSheetData(target, rows);
+        if (ok) {
+          document.getElementById('statusTitle').textContent = `Berjaya Import ${rows.length} rekod ke Sheet ${target}`;
+          runChainedMatching();
+          closeUploadModal();
+        } else {
+          alert('Format kolum CSV tidak sepadan. Pastikan baris pertama mengandungi pengepala (Nama / Mobile / Terminal).');
+        }
+      };
+      reader.readAsText(fileInput.files[0]);
+    }
+
+    async function syncGoogleSheets(manual = false) {
+      const icon = document.getElementById('syncIcon');
+      const statusTitle = document.getElementById('statusTitle');
+      const statusDesc = document.getElementById('statusDesc');
+      icon.classList.add('animate-spin');
+
+      const sheets = ['D', 'E', 'A', 'B', 'C'];
+      let syncedCount = 0;
+
+      for (const s of sheets) {
+        try {
+          const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(s)}`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const text = await res.text();
+            if (!text.trim().startsWith('<!DOCTYPE')) {
+              const rows = parseCSV(text);
+              if (applyParsedSheetData(s, rows)) syncedCount++;
+            }
+          }
+        } catch (err) {
+          // Fallback silently to embedded dataset
+        }
+      }
+
+      icon.classList.remove('animate-spin');
+      if (syncedCount > 0) {
+        statusTitle.textContent = `Segerak Langsung Berjaya (${syncedCount}/5 Helaian Google Sheet)`;
+        statusDesc.textContent = `• Dikemas kini pada ${new Date().toLocaleTimeString('ms-MY')}`;
+      } else if (manual) {
+        statusTitle.textContent = `Menggunakan Data Tempatan Disegerakkan (Sheet A, B, C, D & E)`;
+        statusDesc.textContent = `• Akses terus G-Sheet memerlukan tetapan "Anyone with link" atau muat naik CSV`;
+      }
+
+      runChainedMatching();
+    }
+
+    function exportCurrentCSV() {
+      const filtered = getFilteredList();
+      if (activeTab === 'master_e') {
+        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri DBKL', 'No Siri Muamalat (Serial Number)', 'IMEI', 'SIM', 'Jabatan (Sheet D/E)', 'Status', 'Bil Log'];
+        const lines = [headers.join(',')];
+        filtered.forEach(r => {
+          lines.push([
+            r.index, `"${r.terminal}"`, `"${r.tidBank || r.terminal}"`, `"${r.noSiriDBKL}"`, `"${r.noSiriMuamalat}"`,
+            `"${r.imei}"`, `"${r.sim}"`, `"${r.jabatan}"`, `"${r.status}"`, r.totalLogs
+          ].join(','));
+        });
+        downloadCSVFile(lines.join('\n'), `Master_Sheet_E_eZpay2026.csv`);
+        return;
+      }
+
+      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Sheet D)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri DBKL', 'Status Terminal', 'Status Keseluruhan'];
+      const lines = [headers.join(',')];
+
+      filtered.forEach((r, idx) => {
+        const nama = r.namaD || r.namaPengguna || '-';
+        const jab = r.jabatanD || r.jabatanInferred || '-';
+        const mob = (r.mobilesFromABC || []).join(' | ') || '-';
+        const termE = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.terminal : 'TIADA').join(' | ') || '-';
+        const muamalat = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.noSiriMuamalat : '-').join(' | ') || '-';
+        const statusTerm = (r.terminalStatuses || []).join(' | ') || '-';
+        const siriDBKL = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.noSiriDBKL : '-').join(' | ') || '-';
+        const statusLabel = r.overallStatus === 'FULL_MATCH'
+          ? 'Sepadan Penuh'
+          : (r.overallStatus === 'UNMATCHED_E' ? 'Tiada Rekod Handheld di MasterData' : (r.overallStatus === 'UNMATCHED_ABC' ? 'Tiada Rekod di A/B/C' : 'Tiada di Sheet D'));
+
+        lines.push([
+          r.index || (idx + 1),
+          `"${nama}"`,
+          `"${jab}"`,
+          r.stage1Status || 'ORPHAN_ABC',
+          `"${mob}"`,
+          r.totalLogs || 0,
+          r.stage2Status || '-',
+          `"${termE}"`,
+          `"${muamalat}"`,
+          `"${siriDBKL}"`,
+          `"${statusTerm}"`,
+          `"${statusLabel}"`
+        ].join(','));
+      });
+
+      downloadCSVFile(lines.join('\n'), `Padanan_eZpay2026_${activeTab}.csv`);
+    }
+
+    function downloadCSVFile(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      runChainedMatching();
+      switchTab('full_match');
+      syncGoogleSheets(false);
+    });
+  </script>
+</body>
+</html>
