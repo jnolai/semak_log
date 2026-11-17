@@ -2,7 +2,8 @@
 <html lang="ms">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <meta name="theme-color" content="#0f172a" />
   <title>IMS eZpay 2026 • Padanan Berangkai Sheet D ➔ A,B,C ➔ Sheet E Master</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,11 +14,17 @@
       font-family: 'Inter', sans-serif;
       background-color: #f8fafc;
       color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Sembunyikan scrollbar pada bar tab mudah alih tetapi kekalkan fungsi tatal */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
     .fade-in { animation: fadeIn 0.2s ease-out; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
@@ -25,28 +32,28 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col overflow-x-hidden">
 
-  <!-- Top Header -->
+  <!-- Top Header (Responsif: Telefon, Tablet & Desktop) -->
   <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-0 sm:h-16 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 shrink-0">
           <i data-lucide="git-merge" class="w-5 h-5 text-white"></i>
         </div>
-        <div>
+        <div class="min-w-0">
           <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-bold tracking-tight">IMS eZpay 2026 • DBKL</h1>
-            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30">
+            <h1 class="text-sm sm:text-lg font-bold tracking-tight truncate">IMS eZpay 2026 • DBKL</h1>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shrink-0">
               Padanan D ➔ A,B,C ➔ E
             </span>
           </div>
-          <p class="text-[11px] text-slate-400">Kunci Nama (Sheet D) ➔ Mobile (Sheet A,B,C) ➔ Terminal Master (Sheet E)</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal Master (E)</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Sheet Log Selector -->
+      <div class="flex items-center gap-2 shrink-0 ml-auto">
+        <!-- Sheet Log Selector (Desktop/Tablet) -->
         <div class="hidden md:flex items-center bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs">
           <span class="text-slate-400 mr-2 font-medium">Sumber Log:</span>
           <select id="logSheetFilter" onchange="handleFilterChange()" class="bg-transparent text-white font-semibold focus:outline-none cursor-pointer">
@@ -57,148 +64,148 @@
           </select>
         </div>
 
-        <button onclick="openUploadModal()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-200 transition">
-          <i data-lucide="upload-cloud" class="w-3.5 h-3.5 text-indigo-400"></i>
+        <button onclick="openUploadModal()" class="inline-flex items-center justify-center gap-1.5 min-h-[36px] px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 active:bg-slate-600 border border-slate-700 text-xs font-medium text-slate-200 transition touch-manipulation" title="Muat Naik CSV">
+          <i data-lucide="upload-cloud" class="w-4 h-4 sm:w-3.5 sm:h-3.5 text-indigo-400"></i>
           <span class="hidden sm:inline">Muat Naik CSV</span>
         </button>
 
-        <button onclick="syncGoogleSheets(true)" id="syncBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow-sm transition">
+        <button onclick="syncGoogleSheets(true)" id="syncBtn" class="inline-flex items-center justify-center gap-1.5 min-h-[36px] px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-xs font-semibold text-white shadow-sm transition touch-manipulation">
           <i data-lucide="refresh-cw" id="syncIcon" class="w-3.5 h-3.5"></i>
-          <span>Segerak G-Sheet</span>
+          <span>Segerak</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
 
     <!-- Connection Status Banner + Flow Explanation -->
-    <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="flex items-start sm:items-center gap-3">
-          <div id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5 sm:mt-0 shrink-0 animate-pulse"></div>
-          <div class="text-xs sm:text-sm">
-            <span id="statusTitle" class="font-semibold text-slate-800">Data Sedia & Disegerakkan (Sheet A, B, C, D & E)</span>
-            <span id="statusDesc" class="text-slate-500 block sm:inline sm:ml-1.5">• Sumber: LOG PERANTI EZPAY 2026</span>
+    <div class="bg-white border border-slate-200 rounded-xl p-3.5 sm:p-4 shadow-sm space-y-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+        <div class="flex items-start sm:items-center gap-2.5">
+          <div id="statusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 sm:mt-0 shrink-0 animate-pulse"></div>
+          <div class="text-xs sm:text-sm min-w-0">
+            <span id="statusTitle" class="font-semibold text-slate-800 block sm:inline">Data Sedia & Disegerakkan (Sheet A, B, C, D & E)</span>
+            <span id="statusDesc" class="text-[11px] sm:text-xs text-slate-500 block sm:inline sm:ml-1.5">• Sumber: LOG PERANTI EZPAY 2026</span>
           </div>
         </div>
-        <div class="flex items-center gap-2 self-end sm:self-auto">
-          <a href="https://docs.google.com/spreadsheets/d/1G_KQVUCY5q-YhA_XIm4my44nMXgYAc0CW5NDe6qLqK8/edit?usp=sharing" target="_blank" class="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2.5 py-1.5 rounded-lg border border-indigo-100">
-            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-            Buka Google Sheet
+        <div class="grid grid-cols-2 sm:flex items-center gap-2 w-full sm:w-auto">
+          <a href="https://docs.google.com/spreadsheets/d/1G_KQVUCY5q-YhA_XIm4my44nMXgYAc0CW5NDe6qLqK8/edit?usp=sharing" target="_blank" class="inline-flex items-center justify-center gap-1.5 min-h-[36px] text-xs font-medium text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-2.5 py-1.5 rounded-lg border border-indigo-100 touch-manipulation">
+            <i data-lucide="external-link" class="w-3.5 h-3.5 shrink-0"></i>
+            <span>Google Sheet</span>
           </a>
-          <button onclick="exportCurrentCSV()" class="inline-flex items-center gap-1 text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition">
-            <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            Eksport CSV
+          <button onclick="exportCurrentCSV()" class="inline-flex items-center justify-center gap-1.5 min-h-[36px] text-xs font-medium text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition touch-manipulation">
+            <i data-lucide="download" class="w-3.5 h-3.5 shrink-0"></i>
+            <span>Eksport CSV</span>
           </button>
         </div>
       </div>
 
       <!-- Visual 2-Stage Pipeline Diagram -->
-      <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-2 text-[11px] sm:text-xs">
-        <span class="font-semibold text-slate-500 uppercase tracking-wider mr-1">Aliran Padanan:</span>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 font-semibold border border-slate-200">
-          <i data-lucide="user-check" class="w-3.5 h-3.5 text-indigo-600"></i>
-          Sheet D (Kunci: NAMA & JABATAN)
+      <div class="pt-2.5 border-t border-slate-100 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs">
+        <span class="font-semibold text-slate-500 uppercase tracking-wider mr-1 w-full sm:w-auto">Aliran Padanan:</span>
+        <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-100 text-slate-800 font-semibold border border-slate-200">
+          <i data-lucide="user-check" class="w-3.5 h-3.5 text-indigo-600 shrink-0"></i>
+          <span>Sheet D (Nama & Jabatan)</span>
         </span>
-        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400"></i>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 font-semibold border border-blue-200">
-          <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-600"></i>
-          Sheet A, B, C (Padan Nama ➔ Ambil MOBILE)
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+        <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-blue-50 text-blue-800 font-semibold border border-blue-200">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+          <span>Sheet A,B,C (Mobile)</span>
         </span>
-        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400"></i>
-        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-50 text-purple-800 font-semibold border border-purple-200">
-          <i data-lucide="server" class="w-3.5 h-3.5 text-purple-600"></i>
-          Master Data Sheet E (TID = TERMINAL, SERIAL NUMBER)
+        <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+        <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-purple-50 text-purple-800 font-semibold border border-purple-200">
+          <i data-lucide="server" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
+          <span>Sheet E (Master Terminal)</span>
         </span>
       </div>
     </div>
 
-    <!-- 5 Summary KPI Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-      <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:border-slate-300 transition">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Kunci Utama Sheet D</span>
-          <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
+    <!-- 5 Summary KPI Cards (Grid 2-kolum pada telefon, 3 pada tablet, 5 pada desktop) -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
+      <div class="col-span-2 sm:col-span-1 bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 shadow-sm hover:border-slate-300 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500">Kunci Utama Sheet D</span>
+          <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
             <i data-lucide="users" class="w-3.5 h-3.5"></i>
           </div>
         </div>
-        <div class="text-2xl font-extrabold text-slate-900" id="kpiTotalD">0</div>
-        <p class="text-[11px] text-slate-500 mt-1">Jumlah Nama dalam Sheet D</p>
+        <div class="text-xl sm:text-2xl font-extrabold text-slate-900" id="kpiTotalD">0</div>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Jumlah Nama dalam Sheet D</p>
       </div>
 
-      <div onclick="switchTab('full_match')" class="bg-white rounded-xl border-2 border-emerald-500/80 p-4 shadow-sm cursor-pointer hover:bg-emerald-50/30 transition">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Sepadan Penuh (D➔ABC➔E)</span>
-          <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+      <div onclick="switchTab('full_match')" class="bg-white rounded-xl border-2 border-emerald-500/80 p-3.5 sm:p-4 shadow-sm cursor-pointer hover:bg-emerald-50/30 active:scale-[0.99] transition touch-manipulation">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700 leading-tight">Sepadan Penuh</span>
+          <div class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
             <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
           </div>
         </div>
-        <div class="flex items-baseline gap-2">
-          <span class="text-2xl font-extrabold text-emerald-600" id="kpiFullMatch">0</span>
-          <span class="text-xs font-semibold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded" id="kpiFullMatchPct">0%</span>
+        <div class="flex items-baseline gap-1.5 sm:gap-2">
+          <span class="text-xl sm:text-2xl font-extrabold text-emerald-600" id="kpiFullMatch">0</span>
+          <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded" id="kpiFullMatchPct">0%</span>
         </div>
-        <p class="text-[11px] text-slate-500 mt-1">Nama sah & Terminal ada di Sheet E</p>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Sah di D, A/B/C & E</p>
       </div>
 
-      <div onclick="switchTab('unmatched_e')" class="bg-white rounded-xl border border-orange-200 p-4 shadow-sm cursor-pointer hover:border-orange-400 transition">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-orange-700">Tiada Rekod Handheld di MasterData</span>
-          <div class="w-7 h-7 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center">
+      <div onclick="switchTab('unmatched_e')" class="bg-white rounded-xl border border-orange-200 p-3.5 sm:p-4 shadow-sm cursor-pointer hover:border-orange-400 active:scale-[0.99] transition touch-manipulation">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-orange-700 leading-tight">Tiada di MasterData</span>
+          <div class="w-7 h-7 rounded-lg bg-orange-100 text-orange-700 flex items-center justify-center shrink-0">
             <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i>
           </div>
         </div>
-        <div class="text-2xl font-extrabold text-orange-600" id="kpiUnmatchedE">0</div>
-        <p class="text-[11px] text-slate-500 mt-1">Mobile A/B/C tiada di Terminal E</p>
+        <div class="text-xl sm:text-2xl font-extrabold text-orange-600" id="kpiUnmatchedE">0</div>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Mobile tiada di Sheet E</p>
       </div>
 
-      <div onclick="switchTab('unmatched_abc')" class="bg-white rounded-xl border border-amber-200 p-4 shadow-sm cursor-pointer hover:border-amber-400 transition">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700">Tiada Log di A/B/C</span>
-          <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+      <div onclick="switchTab('unmatched_abc')" class="bg-white rounded-xl border border-amber-200 p-3.5 sm:p-4 shadow-sm cursor-pointer hover:border-amber-400 active:scale-[0.99] transition touch-manipulation">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700 leading-tight">Tiada Log A/B/C</span>
+          <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
             <i data-lucide="user-minus" class="w-3.5 h-3.5"></i>
           </div>
         </div>
-        <div class="text-2xl font-extrabold text-amber-600" id="kpiUnmatchedABC">0</div>
-        <p class="text-[11px] text-slate-500 mt-1">Nama Sheet D belum guna peranti</p>
+        <div class="text-xl sm:text-2xl font-extrabold text-amber-600" id="kpiUnmatchedABC">0</div>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Belum guna peranti</p>
       </div>
 
-      <div onclick="switchTab('master_e')" class="bg-white rounded-xl border border-purple-200 p-4 shadow-sm cursor-pointer hover:border-purple-400 transition">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-purple-700">Master Data Sheet E</span>
-          <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
+      <div onclick="switchTab('master_e')" class="bg-white rounded-xl border border-purple-200 p-3.5 sm:p-4 shadow-sm cursor-pointer hover:border-purple-400 active:scale-[0.99] transition touch-manipulation">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-purple-700 leading-tight">Master Sheet E</span>
+          <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
             <i data-lucide="cpu" class="w-3.5 h-3.5"></i>
           </div>
         </div>
-        <div class="text-2xl font-extrabold text-purple-600" id="kpiTotalE">0</div>
-        <p class="text-[11px] text-slate-500 mt-1">Jumlah Terminal Induk di Sheet E</p>
+        <div class="text-xl sm:text-2xl font-extrabold text-purple-600" id="kpiTotalE">0</div>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Terminal Induk Sheet E</p>
       </div>
     </div>
 
     <!-- Interactive Chart.js Analytics Section -->
     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-      <div class="px-4 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+      <div class="px-3.5 sm:px-4 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
           </div>
-          <div>
-            <h2 class="text-xs sm:text-sm font-bold text-slate-800">Analitik Visual: Pecahan Peranti Mengikut Jabatan (Sheet D) & Status (AKTIF / PULANG)</h2>
-            <p class="text-[11px] text-slate-500">Klik pada mana-mana bar Jabatan atau segmen Donut untuk menapis jadual secara automatik</p>
+          <div class="min-w-0">
+            <h2 class="text-xs sm:text-sm font-bold text-slate-800 truncate">Analitik Visual: Pecahan Jabatan & Status</h2>
+            <p class="text-[10px] sm:text-[11px] text-slate-500 truncate">Sentuh/klik bar atau segmen untuk tapis jadual</p>
           </div>
         </div>
-        <button onclick="toggleChartsPanel()" id="toggleChartsBtn" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 transition">
+        <button onclick="toggleChartsPanel()" id="toggleChartsBtn" class="inline-flex items-center gap-1 min-h-[34px] px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 transition shrink-0 touch-manipulation">
           <i data-lucide="chevron-up" id="toggleChartsIcon" class="w-3.5 h-3.5"></i>
-          <span id="toggleChartsText">Sembunyi Carta</span>
+          <span id="toggleChartsText" class="hidden sm:inline">Sembunyi Carta</span>
         </button>
       </div>
 
-      <div id="chartsPanelBody" class="p-4 grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div id="chartsPanelBody" class="p-3.5 sm:p-4 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
         <!-- Left (2 Cols): Stacked Bar Chart by Department & Status -->
-        <div class="lg:col-span-2 bg-slate-50/50 border border-slate-200/80 rounded-xl p-4 flex flex-col">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-slate-700">Taburan Terminal (Sheet E) Mengikut Jabatan (Sheet D)</span>
+        <div class="lg:col-span-2 bg-slate-50/50 border border-slate-200/80 rounded-xl p-3 sm:p-4 flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="text-xs font-bold text-slate-700">Taburan Terminal Mengikut Jabatan</span>
             <div class="flex items-center gap-3 text-[11px] font-semibold">
               <span class="inline-flex items-center gap-1 text-emerald-700">
                 <span class="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block"></span> AKTIF
@@ -208,133 +215,142 @@
               </span>
             </div>
           </div>
-          <div class="relative w-full h-72">
+          <div id="deptChartContainer" class="relative w-full h-72 sm:h-80">
             <canvas id="deptStatusChart"></canvas>
           </div>
         </div>
 
         <!-- Right (1 Col): Doughnut Chart for Terminal Utilization & Status -->
-        <div class="bg-slate-50/50 border border-slate-200/80 rounded-xl p-4 flex flex-col justify-between">
+        <div class="bg-slate-50/50 border border-slate-200/80 rounded-xl p-3 sm:p-4 flex flex-col justify-between">
           <div>
-            <span class="text-xs font-bold text-slate-700 block">Status Operasi & Penggunaan Log (A/B/C)</span>
-            <span class="text-[11px] text-slate-500">Perbandingan peranti aktif berlog, aktif tanpa log & pulang</span>
+            <span class="text-xs font-bold text-slate-700 block">Status Operasi & Log (A/B/C)</span>
+            <span class="text-[11px] text-slate-500">Perbandingan peranti aktif berlog, tanpa log & pulang</span>
           </div>
-          <div class="relative w-full h-56 my-2 flex items-center justify-center">
+          <div class="relative w-full h-52 sm:h-56 my-2 flex items-center justify-center">
             <canvas id="statusDoughnutChart"></canvas>
           </div>
-          <div id="doughnutSummaryFooter" class="pt-2 border-t border-slate-200/80 grid grid-cols-3 gap-2 text-center text-[11px]">
+          <div id="doughnutSummaryFooter" class="pt-2 border-t border-slate-200/80 grid grid-cols-3 gap-1.5 sm:gap-2 text-center text-[11px]">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- BAHAGIAN BARU: Jadual Ringkasan Pecahan Bilangan Terminal Mengikut Jabatan -->
+    <!-- Jadual / Kad Ringkasan Pecahan Bilangan Terminal Mengikut Jabatan (Responsif) -->
     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-      <div class="px-4 py-3 bg-slate-50/80 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center">
+      <div class="px-3.5 sm:px-4 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
             <i data-lucide="building-2" class="w-4 h-4"></i>
           </div>
-          <div>
-            <h2 class="text-xs sm:text-sm font-bold text-slate-800">Ringkasan Pecahan Bilangan Terminal Mengikut Jabatan (Sheet E)</h2>
-            <p class="text-[11px] text-slate-500">Klik baris jabatan atau kod terminal untuk terus menapis senarai Master Data di bawah</p>
+          <div class="min-w-0">
+            <h2 class="text-xs sm:text-sm font-bold text-slate-800 truncate">Pecahan Bilangan Terminal Mengikut Jabatan</h2>
+            <p class="text-[10px] sm:text-[11px] text-slate-500 truncate">Nama diseragamkan • Klik jabatan atau kod untuk tapis</p>
           </div>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="exportDeptBreakdownCSV()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 transition">
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="exportDeptBreakdownCSV()" class="inline-flex items-center gap-1 min-h-[34px] px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 transition touch-manipulation" title="Eksport CSV Pecahan">
             <i data-lucide="download" class="w-3.5 h-3.5 text-purple-600"></i>
-            <span>Eksport Pecahan</span>
+            <span class="hidden sm:inline">Eksport</span>
           </button>
-          <button onclick="toggleDeptSummaryPanel()" id="toggleDeptSummaryBtn" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 transition">
+          <button onclick="toggleDeptSummaryPanel()" id="toggleDeptSummaryBtn" class="inline-flex items-center gap-1 min-h-[34px] px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 transition touch-manipulation">
             <i data-lucide="chevron-up" id="toggleDeptSummaryIcon" class="w-3.5 h-3.5"></i>
-            <span id="toggleDeptSummaryText">Sembunyi Pecahan</span>
+            <span id="toggleDeptSummaryText" class="hidden sm:inline">Sembunyi</span>
           </button>
         </div>
       </div>
 
-      <div id="deptSummaryPanelBody" class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-            <tr>
-              <th class="px-4 py-2.5 w-12">Bil</th>
-              <th class="px-4 py-2.5">Jabatan / Unit (Sheet D/E)</th>
-              <th class="px-4 py-2.5 text-center w-24">Aktif</th>
-              <th class="px-4 py-2.5 text-center w-24">Pulang</th>
-              <th class="px-4 py-2.5 text-center w-28">Jumlah</th>
-              <th class="px-4 py-2.5">Senarai Kod Terminal</th>
-            </tr>
-          </thead>
-          <tbody id="deptBreakdownBody" class="divide-y divide-slate-100 text-xs text-slate-700">
-          </tbody>
-          <tfoot id="deptBreakdownFoot" class="bg-slate-100/90 border-t-2 border-slate-200 text-xs font-bold text-slate-900">
-          </tfoot>
-        </table>
+      <div id="deptSummaryPanelBody">
+        <!-- Paparan Kad Mudah Alih (< md) -->
+        <div id="deptBreakdownMobileCards" class="md:hidden divide-y divide-slate-100"></div>
+        <div id="deptBreakdownMobileFoot" class="md:hidden bg-slate-100 border-t-2 border-slate-200 p-3.5 text-xs font-bold text-slate-900"></div>
+
+        <!-- Paparan Jadual Tablet & Desktop (>= md) -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr>
+                <th class="px-4 py-2.5 w-12">Bil</th>
+                <th class="px-4 py-2.5">Jabatan / Unit (Diseragamkan)</th>
+                <th class="px-4 py-2.5 text-center w-24">Aktif</th>
+                <th class="px-4 py-2.5 text-center w-24">Pulang</th>
+                <th class="px-4 py-2.5 text-center w-28">Jumlah</th>
+                <th class="px-4 py-2.5">Senarai Kod Terminal</th>
+              </tr>
+            </thead>
+            <tbody id="deptBreakdownBody" class="divide-y divide-slate-100 text-xs text-slate-700">
+            </tbody>
+            <tfoot id="deptBreakdownFoot" class="bg-slate-100/90 border-t-2 border-slate-200 text-xs font-bold text-slate-900">
+            </tfoot>
+          </table>
+        </div>
       </div>
     </div>
 
     <!-- Main Filter Tabs & Search + Dropdown Bar -->
     <div id="mainDataSection" class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-      <!-- Row 1: Navigation Tabs -->
-      <div class="border-b border-slate-200 bg-slate-50/70 px-4 pt-3 flex items-center gap-1.5 overflow-x-auto">
-        <button onclick="switchTab('full_match')" id="tab-full_match" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-semibold border-b-2 border-emerald-600 text-emerald-700 bg-white whitespace-nowrap transition">
-          1. ✅ Sepadan Penuh: D ↔ A/B/C ↔ E (<span id="badge-full_match">0</span>)
+      <!-- Row 1: Navigation Tabs (Horizontal Swipe pada Telefon) -->
+      <div class="border-b border-slate-200 bg-slate-50/70 px-2.5 sm:px-4 pt-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <button onclick="switchTab('full_match')" id="tab-full_match" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-semibold border-b-2 border-emerald-600 text-emerald-700 bg-white whitespace-nowrap transition shrink-0 touch-manipulation">
+          1. ✅ Sepadan Penuh (<span id="badge-full_match">0</span>)
         </button>
-        <button onclick="switchTab('unmatched_e')" id="tab-unmatched_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-orange-700 whitespace-nowrap transition">
-          2. ⚠️ Tiada Rekod Handheld di MasterData (<span id="badge-unmatched_e">0</span>)
+        <button onclick="switchTab('unmatched_e')" id="tab-unmatched_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-orange-700 whitespace-nowrap transition shrink-0 touch-manipulation">
+          2. ⚠️ Tiada di MasterData (<span id="badge-unmatched_e">0</span>)
         </button>
-        <button onclick="switchTab('unmatched_abc')" id="tab-unmatched_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-amber-700 whitespace-nowrap transition">
-          3. ⏳ Tiada Rekod di A/B/C (<span id="badge-unmatched_abc">0</span>)
+        <button onclick="switchTab('unmatched_abc')" id="tab-unmatched_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-amber-700 whitespace-nowrap transition shrink-0 touch-manipulation">
+          3. ⏳ Tiada Log A/B/C (<span id="badge-unmatched_abc">0</span>)
         </button>
-        <button onclick="switchTab('master_e')" id="tab-master_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-purple-700 whitespace-nowrap transition">
-          4. 🗄️ Data Master Sheet E (<span id="badge-master_e">0</span>)
+        <button onclick="switchTab('master_e')" id="tab-master_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-purple-700 whitespace-nowrap transition shrink-0 touch-manipulation">
+          4. 🗄️ Master Sheet E (<span id="badge-master_e">0</span>)
         </button>
-        <button onclick="switchTab('orphan_abc')" id="tab-orphan_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-rose-700 whitespace-nowrap transition">
-          5. ❌ Pengguna A/B/C Tiada di D (<span id="badge-orphan_abc">0</span>)
+        <button onclick="switchTab('orphan_abc')" id="tab-orphan_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-rose-700 whitespace-nowrap transition shrink-0 touch-manipulation">
+          5. ❌ Tiada di Sheet D (<span id="badge-orphan_abc">0</span>)
         </button>
       </div>
 
       <!-- Row 2: Search Box + Jabatan Filter + Terminal Status Filter -->
-      <div class="px-4 py-3 bg-white border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
-        <div class="flex flex-wrap items-center gap-2 w-full">
+      <div class="p-3 sm:px-4 sm:py-3 bg-white border-b border-slate-200">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-wrap items-center gap-2 w-full">
           <!-- Mobile Sheet Filter -->
-          <select id="logSheetFilterMobile" onchange="syncSheetSelect(this.value)" class="md:hidden bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700">
-            <option value="ALL">Semua A+B+C</option>
-            <option value="A">Sheet A</option>
-            <option value="B">Sheet B</option>
-            <option value="C">Sheet C</option>
-          </select>
+          <div class="md:hidden">
+            <select id="logSheetFilterMobile" onchange="syncSheetSelect(this.value)" class="w-full min-h-[38px] bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-sm sm:text-xs font-semibold text-slate-700">
+              <option value="ALL">Sumber Log: Semua (Sheet A + B + C)</option>
+              <option value="A">Sumber Log: Sheet A Sahaja</option>
+              <option value="B">Sumber Log: Sheet B Sahaja</option>
+              <option value="C">Sumber Log: Sheet C Sahaja</option>
+            </select>
+          </div>
 
-          <!-- Search Box -->
-          <div class="relative flex-1 min-w-[220px] sm:max-w-xs">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <!-- Search Box (text-base pada mudah alih elak auto-zoom iOS/Android) -->
+          <div class="relative flex-1 min-w-0 lg:max-w-xs">
+            <i data-lucide="search" class="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
             <input
               type="text"
               id="searchInput"
               oninput="handleSearch()"
-              placeholder="Cari Nama, TID/Terminal, Serial Number..."
-              class="w-full pl-8 pr-3 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
+              placeholder="Cari Nama, TID/Terminal, Siri..."
+              class="w-full min-h-[38px] pl-9 sm:pl-8 pr-3 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
             />
           </div>
 
           <!-- Dropdown Penapis Jabatan -->
-          <div class="relative flex-1 min-w-[200px] sm:max-w-xs">
-            <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          <div class="relative flex-1 min-w-0 lg:max-w-xs">
+            <i data-lucide="building-2" class="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
             <select
               id="jabatanFilter"
               onchange="handleDropdownFilter()"
-              class="w-full pl-8 pr-7 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer truncate"
+              class="w-full min-h-[38px] pl-8 pr-7 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-sm sm:text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer truncate"
             >
               <option value="ALL">Semua Jabatan / Unit</option>
             </select>
           </div>
 
           <!-- Dropdown Penapis Status Terminal -->
-          <div class="relative min-w-[165px]">
-            <i data-lucide="activity" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+          <div class="relative min-w-0 sm:min-w-[165px]">
+            <i data-lucide="activity" class="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
             <select
               id="statusTerminalFilter"
               onchange="handleDropdownFilter()"
-              class="w-full pl-8 pr-7 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer"
+              class="w-full min-h-[38px] pl-8 pr-7 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-sm sm:text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer"
             >
               <option value="ALL">Status: Semua</option>
               <option value="AKTIF">Status: AKTIF Sahaja</option>
@@ -346,23 +362,27 @@
           <button
             id="resetFiltersBtn"
             onclick="resetAllFilters()"
-            class="hidden inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
+            class="hidden inline-flex items-center justify-center gap-1.5 min-h-[38px] px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition touch-manipulation"
             title="Set semula semua penapis"
           >
             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-            <span>Set Semula</span>
+            <span>Set Semula Penapis</span>
           </button>
         </div>
       </div>
 
       <!-- Contextual Info Bar for Active Tab -->
-      <div id="tabContextBar" class="px-4 py-2.5 bg-emerald-50/60 border-b border-emerald-100 text-xs text-emerald-900 flex flex-wrap items-center justify-between gap-2">
-        <span id="tabContextText">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal di Master Data Sheet E.</span>
-        <span id="resultCountLabel" class="font-semibold text-slate-700">0 rekod dipaparkan</span>
+      <div id="tabContextBar" class="px-3.5 sm:px-4 py-2.5 bg-emerald-50/60 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+        <span id="tabContextText" class="leading-relaxed">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal di Master Data Sheet E.</span>
+        <span id="resultCountLabel" class="font-bold text-slate-800 shrink-0">0 rekod dipaparkan</span>
       </div>
 
-      <!-- Table Container -->
-      <div class="overflow-x-auto">
+      <!-- Paparan Kad Mudah Alih untuk Rekod Utama (< md) -->
+      <div id="mobileCardsContainer" class="md:hidden divide-y divide-slate-200 bg-slate-50/40">
+      </div>
+
+      <!-- Paparan Jadual Penuh Tablet & Desktop (>= md) -->
+      <div class="hidden md:block overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead id="tableHead" class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
           </thead>
@@ -372,14 +392,14 @@
       </div>
 
       <!-- Pagination Footer -->
-      <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
-        <div id="paginationInfo">Menunjukkan 0 - 0 daripada 0</div>
-        <div class="flex items-center gap-1.5">
-          <button onclick="changePage(-1)" id="prevPageBtn" class="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+      <div class="px-3.5 sm:px-4 py-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-600">
+        <div id="paginationInfo" class="text-center sm:text-left">Menunjukkan 0 - 0 daripada 0</div>
+        <div class="flex items-center gap-2 w-full sm:w-auto justify-center">
+          <button onclick="changePage(-1)" id="prevPageBtn" class="flex-1 sm:flex-initial min-h-[36px] px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium touch-manipulation">
             Sebelumnya
           </button>
-          <span id="pageIndicator" class="px-2 font-semibold text-slate-800">Halaman 1</span>
-          <button onclick="changePage(1)" id="nextPageBtn" class="px-2.5 py-1 rounded border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium">
+          <span id="pageIndicator" class="px-2 font-semibold text-slate-800 whitespace-nowrap">Halaman 1</span>
+          <button onclick="changePage(1)" id="nextPageBtn" class="flex-1 sm:flex-initial min-h-[36px] px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed font-medium touch-manipulation">
             Seterusnya
           </button>
         </div>
@@ -387,24 +407,24 @@
     </div>
   </main>
 
-  <!-- Modal: Detail Comparison -->
-  <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden fade-in max-h-[90vh] flex flex-col">
-      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
-        <div>
-          <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-300">Perincian Padanan Berangkai 3 Lapisan</span>
-          <h3 id="modalUserName" class="text-base font-bold mt-0.5">NAMA PENGGUNA</h3>
+  <!-- Modal: Detail Comparison (Bottom-Sheet pada Telefon, Centered Modal pada Desktop) -->
+  <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-2xl sm:rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden fade-in max-h-[92vh] sm:max-h-[90vh] flex flex-col">
+      <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-900 text-white flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <span class="text-[10px] uppercase tracking-wider font-bold text-indigo-300 block">Perincian Padanan Berangkai 3 Lapisan</span>
+          <h3 id="modalUserName" class="text-sm sm:text-base font-bold mt-0.5 truncate">NAMA PENGGUNA</h3>
         </div>
-        <button onclick="closeDetailModal()" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white">
+        <button onclick="closeDetailModal()" class="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white shrink-0 touch-manipulation">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div id="modalBody" class="p-5 overflow-y-auto space-y-5 text-xs">
+      <div id="modalBody" class="p-4 sm:p-5 overflow-y-auto space-y-4 sm:space-y-5 text-xs">
       </div>
 
-      <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
-        <button onclick="closeDetailModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700">
+      <div class="px-4 sm:px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
+        <button onclick="closeDetailModal()" class="w-full sm:w-auto min-h-[38px] px-5 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700 touch-manipulation">
           Tutup
         </button>
       </div>
@@ -412,24 +432,24 @@
   </div>
 
   <!-- Modal: Upload CSV Backup -->
-  <div id="uploadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden fade-in">
-      <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
+  <div id="uploadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="bg-white rounded-t-2xl sm:rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden fade-in">
+      <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-900 text-white flex items-center justify-between">
         <div class="flex items-center gap-2">
           <i data-lucide="file-spreadsheet" class="w-5 h-5 text-indigo-400"></i>
           <h3 class="text-sm font-bold">Muat Naik CSV Helaian (A, B, C, D atau E)</h3>
         </div>
-        <button onclick="closeUploadModal()" class="p-1 rounded-lg hover:bg-slate-800 text-slate-300">
+        <button onclick="closeUploadModal()" class="p-1.5 rounded-lg hover:bg-slate-800 text-slate-300 touch-manipulation">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <div class="p-5 space-y-4 text-xs">
+      <div class="p-4 sm:p-5 space-y-4 text-xs">
         <p class="text-slate-600 leading-relaxed">
           Jika sambungan terus Google Sheets disekat oleh pelayar/tetapan perkongsian, muat turun helaian sebagai <strong>.CSV</strong> dan muat naik di sini untuk mengemas kini padanan serta-merta.
         </p>
         <div>
           <label class="block font-semibold text-slate-700 mb-1">1. Pilih Sasaran Helaian</label>
-          <select id="uploadTargetSheet" class="w-full border border-slate-300 rounded-lg px-3 py-2 font-medium bg-white">
+          <select id="uploadTargetSheet" class="w-full min-h-[38px] border border-slate-300 rounded-lg px-3 py-2 text-sm sm:text-xs font-medium bg-white">
             <option value="D">Sheet D — Master Nama Pengguna (Kunci Utama)</option>
             <option value="E">Sheet E — Master Data Terminal & Peranti</option>
             <option value="A">Sheet A — Log Penggunaan (Nama Pengguna & Mobile)</option>
@@ -439,11 +459,11 @@
         </div>
         <div>
           <label class="block font-semibold text-slate-700 mb-1">2. Pilih Fail CSV</label>
-          <input type="file" id="csvFileInput" accept=".csv" class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50" />
+          <input type="file" id="csvFileInput" accept=".csv" class="w-full border border-slate-300 rounded-lg p-2 bg-slate-50 text-xs" />
         </div>
-        <div class="pt-2 flex justify-end gap-2">
-          <button onclick="closeUploadModal()" class="px-3.5 py-2 rounded-lg border border-slate-300 font-medium text-slate-700 hover:bg-slate-50">Batal</button>
-          <button onclick="processUploadedCSV()" class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-500">Import & Padankan</button>
+        <div class="pt-2 flex flex-col-reverse sm:flex-row justify-end gap-2">
+          <button onclick="closeUploadModal()" class="w-full sm:w-auto min-h-[38px] px-4 py-2 rounded-lg border border-slate-300 font-medium text-slate-700 hover:bg-slate-50 touch-manipulation">Batal</button>
+          <button onclick="processUploadedCSV()" class="w-full sm:w-auto min-h-[38px] px-4 py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-500 touch-manipulation">Import & Padankan</button>
         </div>
       </div>
     </div>
@@ -606,6 +626,10 @@
       orphanABC: []
     };
 
+    function isMobileViewport() {
+      return window.innerWidth < 640;
+    }
+
     function normalizeName(str) {
       return (str || '')
         .toString()
@@ -614,6 +638,26 @@
         .replace(/[^A-Z0-9@\/\s]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
+    }
+
+    function normalizeDepartmentName(str) {
+      let clean = (str || '').toString().toUpperCase().trim();
+      if (!clean || clean === '-') return '-';
+
+      clean = clean
+        .replace(/\s*&\s*/g, ' DAN ')
+        .replace(/\bJBT\.?\b/g, 'JABATAN')
+        .replace(/\bBHGN\.?\b/g, 'BAHAGIAN')
+        .replace(/\bPBGN\.?\b/g, 'PEMBANGUNAN')
+        .replace(/\bKOM\.?\b/g, 'KOMUNITI')
+        .replace(/\bKSJHTRAAN\.?\b/g, 'KESEJAHTERAAN')
+        .replace(/\bBDR\.?\b/g, 'BANDAR')
+        .replace(/\bJPKKB\b/g, 'JABATAN PEMBANGUNAN KOMUNITI DAN KESEJAHTERAAN BANDAR')
+        .replace(/\bJPPH\b/g, 'JABATAN PENILAIAN DAN PENGURUSAN HARTA')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      return clean;
     }
 
     function normalizeTerminal(str) {
@@ -632,13 +676,12 @@
         .replace(/>/g, '&gt;');
     }
 
-    // Helper: Peta Jabatan dari Sheet D mengikut Kod Terminal & Nama Pengguna
     function buildSheetDDepartmentLookup() {
       const deptByTerminal = new Map();
       const deptByName = new Map();
 
       sheetD_Names.forEach(d => {
-        const jab = (d.jabatan || '').trim();
+        const jab = normalizeDepartmentName(d.jabatan);
         if (!jab || jab === '-') return;
 
         const nameKey = normalizeName(d.nama);
@@ -659,10 +702,12 @@
       const deptSet = new Set();
 
       sheetD_Names.forEach(d => {
-        if (d.jabatan && d.jabatan !== '-') deptSet.add(d.jabatan.trim().toUpperCase());
+        const normJab = normalizeDepartmentName(d.jabatan);
+        if (normJab && normJab !== '-') deptSet.add(normJab);
       });
       sheetE_Terminals.forEach(e => {
-        if (e.jabatan && e.jabatan !== '-') deptSet.add(e.jabatan.trim().toUpperCase());
+        const normJab = normalizeDepartmentName(e.jabatan);
+        if (normJab && normJab !== '-') deptSet.add(normJab);
       });
 
       const sortedDepts = Array.from(deptSet).sort();
@@ -690,11 +735,11 @@
         const termLogs = filteredLogs.filter(l => normalizeTerminal(l.mobile) === keyTerm);
         const usersInLogs = [...new Set(termLogs.map(l => l.namaPengguna))];
 
-        let resolvedJabatan = (item.jabatan && item.jabatan !== '-') ? item.jabatan : '';
-        if (!resolvedJabatan && deptByTerminal.has(keyTerm)) {
+        let resolvedJabatan = normalizeDepartmentName(item.jabatan);
+        if ((!resolvedJabatan || resolvedJabatan === '-') && deptByTerminal.has(keyTerm)) {
           resolvedJabatan = deptByTerminal.get(keyTerm);
         }
-        if (!resolvedJabatan && usersInLogs.length > 0) {
+        if ((!resolvedJabatan || resolvedJabatan === '-') && usersInLogs.length > 0) {
           for (const u of usersInLogs) {
             const uJab = deptByName.get(normalizeName(u));
             if (uJab) { resolvedJabatan = uJab; break; }
@@ -712,7 +757,7 @@
           status: (item.status || 'AKTIF').toUpperCase(),
           totalLogs: termLogs.length,
           usersInLogs,
-          _searchIndex: `${item.terminal} ${resolvedTID} ${item.noSiriDBKL} ${item.noSiriMuamalat} ${item.imei} ${resolvedJabatan} ${usersInLogs.join(' ')}`.toUpperCase()
+          _searchIndex: `${item.terminal} ${resolvedTID} ${item.noSiriDBKL} ${item.noSiriMuamalat} ${item.imei} ${resolvedJabatan} ${item.jabatan} ${usersInLogs.join(' ')}`.toUpperCase()
         };
 
         if (keyTerm) mapE.set(keyTerm, enriched);
@@ -737,6 +782,7 @@
 
       sheetD_Names.forEach((dRow, idx) => {
         const keyNama = normalizeName(dRow.nama);
+        const normJabatanD = normalizeDepartmentName(dRow.jabatan);
         matchedDNamesSet.add(keyNama);
         const userLogs = logsByName.get(keyNama) || [];
 
@@ -748,7 +794,8 @@
           const item = {
             index: idx + 1,
             namaD: dRow.nama,
-            jabatanD: dRow.jabatan || '-',
+            jabatanD: normJabatanD,
+            jabatanRawD: dRow.jabatan || '-',
             perantiRujukanD: dRow.perantiRujukan || '-',
             stage1Status: 'UNMATCHED_ABC',
             stage2Status: 'N/A',
@@ -759,7 +806,7 @@
             terminalMatches: [],
             terminalStatuses: statuses,
             logs: [],
-            _searchIndex: `${dRow.nama} ${dRow.jabatan} ${dRow.perantiRujukan}`.toUpperCase()
+            _searchIndex: `${dRow.nama} ${normJabatanD} ${dRow.jabatan} ${dRow.perantiRujukan}`.toUpperCase()
           };
           allD.push(item);
           unmatchedABC.push(item);
@@ -769,8 +816,8 @@
 
           const terminalMatches = uniqueMobiles.map(mob => {
             const masterRec = mapE.get(mob) || null;
-            if (masterRec && (!masterRec.jabatan || masterRec.jabatan === '-') && dRow.jabatan && dRow.jabatan !== '-') {
-              masterRec.jabatan = dRow.jabatan;
+            if (masterRec && (!masterRec.jabatan || masterRec.jabatan === '-') && normJabatanD !== '-') {
+              masterRec.jabatan = normJabatanD;
             }
             return {
               mobileABC: mob,
@@ -786,12 +833,13 @@
             .map(tm => tm.masterE.status.toUpperCase());
 
           const siriList = terminalMatches.map(t => t.masterE ? `${t.masterE.noSiriDBKL} ${t.masterE.noSiriMuamalat} ${t.masterE.imei}` : '').join(' ');
-          const searchIndex = `${dRow.nama} ${dRow.jabatan} ${uniqueMobiles.join(' ')} ${siriList}`.toUpperCase();
+          const searchIndex = `${dRow.nama} ${normJabatanD} ${dRow.jabatan} ${uniqueMobiles.join(' ')} ${siriList}`.toUpperCase();
 
           const item = {
             index: idx + 1,
             namaD: dRow.nama,
-            jabatanD: dRow.jabatan || '-',
+            jabatanD: normJabatanD,
+            jabatanRawD: dRow.jabatan || '-',
             perantiRujukanD: dRow.perantiRujukan || '-',
             stage1Status: 'MATCHED_ABC',
             stage2Status: allTerminalsInE ? 'MATCHED_E' : 'MISSING_IN_E',
@@ -827,7 +875,7 @@
             .map(tm => tm.masterE.status.toUpperCase());
           const depts = terminalMatches
             .filter(tm => tm.matchedInE && tm.masterE.jabatan && tm.masterE.jabatan !== '-')
-            .map(tm => tm.masterE.jabatan.toUpperCase());
+            .map(tm => normalizeDepartmentName(tm.masterE.jabatan));
 
           orphanABC.push({
             namaPengguna: logs[0].namaPengguna,
@@ -875,24 +923,25 @@
       const icon = document.getElementById('toggleDeptSummaryIcon');
       if (deptSummaryVisible) {
         body.classList.remove('hidden');
-        text.textContent = 'Sembunyi Pecahan';
+        text.textContent = 'Sembunyi';
         icon.setAttribute('data-lucide', 'chevron-up');
       } else {
         body.classList.add('hidden');
-        text.textContent = 'Papar Pecahan';
+        text.textContent = 'Papar';
         icon.setAttribute('data-lucide', 'chevron-down');
       }
       lucide.createIcons();
     }
 
-    // FUNGSI BARU: Bina & papar jadual ringkasan pecahan terminal mengikut jabatan
+    // Bina & papar jadual (Desktop) + Kad (Mudah Alih) ringkasan pecahan terminal mengikut jabatan
     function renderDeptBreakdownTable() {
       const { masterE } = computedResults;
       const deptMap = new Map();
 
       masterE.forEach(item => {
-        const deptName = (item.jabatan && item.jabatan !== '-')
-          ? item.jabatan.trim().toUpperCase()
+        const normDept = normalizeDepartmentName(item.jabatan);
+        const deptName = (normDept && normDept !== '-')
+          ? normDept
           : 'TIADA JABATAN (SHEET D)';
 
         if (!deptMap.has(deptName)) {
@@ -919,10 +968,14 @@
 
       const tbody = document.getElementById('deptBreakdownBody');
       const tfoot = document.getElementById('deptBreakdownFoot');
+      const mobileCards = document.getElementById('deptBreakdownMobileCards');
+      const mobileFoot = document.getElementById('deptBreakdownMobileFoot');
 
       if (sortedList.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400">Tiada data terminal dalam Sheet E.</td></tr>`;
         tfoot.innerHTML = '';
+        mobileCards.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">Tiada data terminal dalam Sheet E.</div>`;
+        mobileFoot.innerHTML = '';
         return;
       }
 
@@ -930,7 +983,10 @@
       let grandPulang = 0;
       let grandTotal = 0;
 
-      tbody.innerHTML = sortedList.map((row, idx) => {
+      const desktopRows = [];
+      const mobileCardItems = [];
+
+      sortedList.forEach((row, idx) => {
         grandAktif += row.aktif;
         grandPulang += row.pulang;
         grandTotal += row.total;
@@ -940,10 +996,10 @@
           const badgeClass = isPulang
             ? 'bg-amber-100 text-amber-800 border-amber-300 hover:bg-amber-200'
             : 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100';
-          return `<button type="button" data-code="${escapeAttr(t.code)}" onclick="event.stopPropagation(); filterByTerminalFromBreakdown(this.dataset.code);" class="inline-flex items-center px-1.5 py-0.5 rounded border font-mono text-[11px] font-semibold transition ${badgeClass}" title="Klik untuk cari ${escapeAttr(t.code)} (${escapeAttr(t.status)})">${escapeAttr(t.code)}${isPulang ? '*' : ''}</button>`;
+          return `<button type="button" data-code="${escapeAttr(t.code)}" onclick="event.stopPropagation(); filterByTerminalFromBreakdown(this.dataset.code);" class="inline-flex items-center px-2 py-0.5 rounded border font-mono text-[11px] font-semibold transition touch-manipulation ${badgeClass}" title="Klik untuk cari ${escapeAttr(t.code)} (${escapeAttr(t.status)})">${escapeAttr(t.code)}${isPulang ? '*' : ''}</button>`;
         }).join(' ');
 
-        return `
+        desktopRows.push(`
           <tr data-dept="${escapeAttr(row.dept)}" onclick="filterByDeptFromBreakdown(this.dataset.dept)" class="hover:bg-indigo-50/50 cursor-pointer transition">
             <td class="px-4 py-2.5 text-slate-500 font-medium">${idx + 1}</td>
             <td class="px-4 py-2.5 font-bold text-slate-800">${escapeAttr(row.dept)}</td>
@@ -960,8 +1016,31 @@
               <div class="flex flex-wrap gap-1">${termBadges}</div>
             </td>
           </tr>
-        `;
-      }).join('');
+        `);
+
+        mobileCardItems.push(`
+          <div data-dept="${escapeAttr(row.dept)}" onclick="filterByDeptFromBreakdown(this.dataset.dept)" class="p-3.5 hover:bg-indigo-50/40 active:bg-indigo-50/70 cursor-pointer transition space-y-2 touch-manipulation">
+            <div class="flex items-start justify-between gap-2">
+              <div class="text-xs font-bold text-slate-800 leading-snug">
+                <span class="text-slate-400 font-medium mr-1">${idx + 1}.</span>${escapeAttr(row.dept)}
+              </div>
+              <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-slate-800 text-white shrink-0">
+                ${row.total} unit
+              </span>
+            </div>
+            <div class="flex items-center gap-2 text-[11px]">
+              <span class="px-2 py-0.5 rounded-md font-semibold ${row.aktif > 0 ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-400'}">Aktif: ${row.aktif}</span>
+              <span class="px-2 py-0.5 rounded-md font-semibold ${row.pulang > 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-400'}">Pulang: ${row.pulang}</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
+              ${termBadges}
+            </div>
+          </div>
+        `);
+      });
+
+      tbody.innerHTML = desktopRows.join('');
+      mobileCards.innerHTML = mobileCardItems.join('');
 
       tfoot.innerHTML = `
         <tr>
@@ -971,6 +1050,19 @@
           <td class="px-4 py-2.5 text-center text-indigo-700 text-sm">${grandTotal}</td>
           <td class="px-4 py-2.5 text-[11px] font-normal text-slate-500">* Tanda asterisk menandakan status PULANG</td>
         </tr>
+      `;
+
+      mobileFoot.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span>JUMLAH (${sortedList.length} Jabatan)</span>
+          <div class="flex items-center gap-2">
+            <span class="text-emerald-700">Aktif: ${grandAktif}</span>
+            <span>•</span>
+            <span class="text-amber-700">Pulang: ${grandPulang}</span>
+            <span>•</span>
+            <span class="text-indigo-700">Total: ${grandTotal}</span>
+          </div>
+        </div>
       `;
     }
 
@@ -1003,7 +1095,7 @@
     }
 
     function exportDeptBreakdownCSV() {
-      const headers = ['Bil', 'Jabatan / Unit', 'Aktif', 'Pulang', 'Jumlah Terminal', 'Senarai Kod Terminal'];
+      const headers = ['Bil', 'Jabatan / Unit (Diseragamkan)', 'Aktif', 'Pulang', 'Jumlah Terminal', 'Senarai Kod Terminal'];
       const lines = [headers.join(',')];
       currentDeptBreakdownList.forEach((row, idx) => {
         const codes = row.terminals.map(t => `${t.code}${t.status === 'PULANG' ? ' (PULANG)' : ''}`).join(' | ');
@@ -1021,6 +1113,7 @@
 
     function renderCharts() {
       const { masterE } = computedResults;
+      const isMobile = isMobileViewport();
 
       const deptMap = new Map();
       let aktifWithLogs = 0;
@@ -1028,7 +1121,8 @@
       let pulangCount = 0;
 
       masterE.forEach(item => {
-        const dept = (item.jabatan && item.jabatan !== '-') ? item.jabatan.trim().toUpperCase() : 'TIADA JABATAN (SHEET D)';
+        const normDept = normalizeDepartmentName(item.jabatan);
+        const dept = (normDept && normDept !== '-') ? normDept : 'TIADA JABATAN (SHEET D)';
         if (!deptMap.has(dept)) {
           deptMap.set(dept, { dept, aktif: 0, pulang: 0, total: 0 });
         }
@@ -1045,11 +1139,19 @@
         entry.total += 1;
       });
 
-      const sortedDepts = Array.from(deptMap.values()).sort((a, b) => b.total - a.total);
+      const sortedDepts = Array.from(deptMap.values()).sort((a, b) => b.total - a.total || a.dept.localeCompare(b.dept));
       const fullDeptLabels = sortedDepts.map(d => d.dept);
-      const shortDeptLabels = sortedDepts.map(d => d.dept.length > 26 ? d.dept.slice(0, 24) + '...' : d.dept);
+      const maxLabelLen = isMobile ? 18 : 28;
+      const shortDeptLabels = sortedDepts.map(d => d.dept.length > maxLabelLen ? d.dept.slice(0, maxLabelLen - 2) + '...' : d.dept);
       const aktifData = sortedDepts.map(d => d.aktif);
       const pulangData = sortedDepts.map(d => d.pulang);
+
+      // Laraskan ketinggian kontena carta mengikut bilangan jabatan & peranti
+      const chartContainer = document.getElementById('deptChartContainer');
+      if (chartContainer) {
+        const dynamicHeight = Math.max(isMobile ? 260 : 290, sortedDepts.length * (isMobile ? 28 : 30));
+        chartContainer.style.height = `${dynamicHeight}px`;
+      }
 
       if (deptChartInstance) deptChartInstance.destroy();
       if (statusChartInstance) statusChartInstance.destroy();
@@ -1105,12 +1207,12 @@
             x: {
               stacked: true,
               beginAtZero: true,
-              ticks: { stepSize: 1, font: { size: 11 } },
+              ticks: { stepSize: 1, font: { size: isMobile ? 10 : 11 } },
               grid: { color: '#e2e8f0' }
             },
             y: {
               stacked: true,
-              ticks: { font: { size: 10, weight: '600' }, color: '#334155' },
+              ticks: { font: { size: isMobile ? 9 : 10, weight: '600' }, color: '#334155' },
               grid: { display: false }
             }
           }
@@ -1154,8 +1256,8 @@
               position: 'bottom',
               labels: {
                 boxWidth: 10,
-                padding: 10,
-                font: { size: 11, weight: '600' }
+                padding: isMobile ? 8 : 10,
+                font: { size: isMobile ? 10 : 11, weight: '600' }
               }
             }
           }
@@ -1202,7 +1304,7 @@
       currentPage = 1;
 
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.className = 'tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition';
+        btn.className = 'tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition shrink-0 touch-manipulation';
       });
 
       const activeBtn = document.getElementById(`tab-${tabId}`);
@@ -1214,30 +1316,30 @@
           master_e: 'border-purple-600 text-purple-700',
           orphan_abc: 'border-rose-600 text-rose-700'
         };
-        activeBtn.className = `tab-btn px-3 py-2 rounded-t-lg text-xs font-semibold border-b-2 ${colorMap[tabId]} bg-white whitespace-nowrap transition`;
+        activeBtn.className = `tab-btn px-3 py-2 rounded-t-lg text-xs font-semibold border-b-2 ${colorMap[tabId]} bg-white whitespace-nowrap transition shrink-0 touch-manipulation`;
       }
 
       const contextBar = document.getElementById('tabContextBar');
       const contextText = document.getElementById('tabContextText');
       const contexts = {
         full_match: {
-          cls: 'px-4 py-2.5 bg-emerald-50/70 border-b border-emerald-100 text-xs text-emerald-900 flex flex-wrap items-center justify-between gap-2',
+          cls: 'px-3.5 sm:px-4 py-2.5 bg-emerald-50/70 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
           txt: '✅ Sepadan Penuh: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal di Master Data Sheet E.'
         },
         unmatched_e: {
-          cls: 'px-4 py-2.5 bg-orange-50/80 border-b border-orange-100 text-xs text-orange-900 flex flex-wrap items-center justify-between gap-2',
+          cls: 'px-3.5 sm:px-4 py-2.5 bg-orange-50/80 border-b border-orange-100 text-xs text-orange-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
           txt: '⚠️ Tiada Rekod Handheld di MasterData: Nama sah di Sheet D & ada log di A/B/C, tetapi kod Mobile tidak ditemui dalam senarai TERMINAL Sheet E.'
         },
         unmatched_abc: {
-          cls: 'px-4 py-2.5 bg-amber-50/80 border-b border-amber-100 text-xs text-amber-900 flex flex-wrap items-center justify-between gap-2',
+          cls: 'px-3.5 sm:px-4 py-2.5 bg-amber-50/80 border-b border-amber-100 text-xs text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
           txt: '⏳ Tiada Rekod di A/B/C: Nama berdaftar dalam Sheet D tetapi tiada rekod penggunaan ditemui dalam Sheet A, B, atau C.'
         },
         master_e: {
-          cls: 'px-4 py-2.5 bg-purple-50/80 border-b border-purple-100 text-xs text-purple-900 flex flex-wrap items-center justify-between gap-2',
-          txt: '🗄️ Master Data Sheet E: Senarai induk Terminal berdaftar (TID = TERMINAL, Serial Number Muamalat, Jabatan Sheet D, IMEI, SIM & Status).'
+          cls: 'px-3.5 sm:px-4 py-2.5 bg-purple-50/80 border-b border-purple-100 text-xs text-purple-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
+          txt: '🗄️ Master Data Sheet E: Senarai induk Terminal berdaftar (TID = TERMINAL, Serial Number Muamalat, Jabatan Diseragamkan, IMEI, SIM & Status).'
         },
         orphan_abc: {
-          cls: 'px-4 py-2.5 bg-rose-50/80 border-b border-rose-100 text-xs text-rose-900 flex flex-wrap items-center justify-between gap-2',
+          cls: 'px-3.5 sm:px-4 py-2.5 bg-rose-50/80 border-b border-rose-100 text-xs text-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
           txt: '❌ Pengguna A/B/C Tiada di Sheet D: Nama pengguna ini muncul dalam log Sheet A/B/C tetapi tiada dalam kunci utama Sheet D.'
         }
       };
@@ -1310,11 +1412,11 @@
         if (selectedJabatan !== 'ALL') {
           let itemDept = '';
           if (activeTab === 'master_e') {
-            itemDept = (item.jabatan || '').trim().toUpperCase();
+            itemDept = normalizeDepartmentName(item.jabatan);
           } else if (activeTab === 'orphan_abc') {
-            itemDept = (item.jabatanInferred || '').trim().toUpperCase();
+            itemDept = normalizeDepartmentName(item.jabatanInferred);
           } else {
-            itemDept = (item.jabatanD || '').trim().toUpperCase();
+            itemDept = normalizeDepartmentName(item.jabatanD);
           }
           if (itemDept !== selectedJabatan) return false;
         }
@@ -1335,6 +1437,7 @@
     function renderTable() {
       const thead = document.getElementById('tableHead');
       const tbody = document.getElementById('tableBody');
+      const mobileContainer = document.getElementById('mobileCardsContainer');
       const filtered = getFilteredList();
 
       const totalItems = filtered.length;
@@ -1359,7 +1462,7 @@
             <th class="px-4 py-3">Terminal / TID (Sheet E)</th>
             <th class="px-4 py-3">No. Siri Pendaftaran DBKL</th>
             <th class="px-4 py-3">No. Siri Muamalat (Serial Number)</th>
-            <th class="px-4 py-3">Jabatan (Sheet D)</th>
+            <th class="px-4 py-3">Jabatan (Diseragamkan)</th>
             <th class="px-4 py-3">Status Master E</th>
             <th class="px-4 py-3">Penggunaan Log (A/B/C)</th>
           </tr>
@@ -1367,6 +1470,7 @@
 
         if (pageItems.length === 0) {
           tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Tiada rekod terminal dijumpai bagi penapis semasa.</td></tr>`;
+          mobileContainer.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Tiada rekod terminal dijumpai bagi penapis semasa.</div>`;
           return;
         }
 
@@ -1395,6 +1499,31 @@
             </td>
           </tr>
         `).join('');
+
+        mobileContainer.innerHTML = pageItems.map(row => `
+          <div class="p-3.5 bg-white space-y-2 text-xs">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400 font-medium">#${row.index}</span>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-md font-bold bg-purple-100 text-purple-800 border border-purple-200">${escapeAttr(row.terminal)}</span>
+                <span class="text-[11px] text-slate-500">TID: ${escapeAttr(row.tidBank || row.terminal || '-')}</span>
+              </div>
+              ${row.status === 'PULANG'
+                ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">PULANG</span>'
+                : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">AKTIF</span>'}
+            </div>
+            <div class="font-semibold text-slate-800 leading-snug">${escapeAttr(row.jabatan || '-')}</div>
+            <div class="grid grid-cols-1 gap-1 bg-slate-50 p-2 rounded-lg border border-slate-100 text-[11px] text-slate-600">
+              <div><span class="text-slate-400">Siri DBKL:</span> <span class="font-mono font-medium text-slate-800">${escapeAttr(row.noSiriDBKL || '-')}</span></div>
+              <div><span class="text-slate-400">Muamalat:</span> <span class="font-mono font-medium text-slate-800">${escapeAttr(row.noSiriMuamalat || '-')}</span></div>
+            </div>
+            <div class="text-[11px] pt-0.5">
+              ${row.totalLogs > 0
+                ? `<span class="font-semibold text-indigo-700">${row.totalLogs} log transaksi</span> • <span class="text-slate-600">${escapeAttr(row.usersInLogs.join(', '))}</span>`
+                : '<span class="text-slate-400 italic">Tiada log dalam A/B/C</span>'}
+            </div>
+          </div>
+        `).join('');
         return;
       }
 
@@ -1412,6 +1541,7 @@
 
         if (pageItems.length === 0) {
           tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tiada rekod pengguna tidak berdaftar ditemui bagi penapis semasa.</td></tr>`;
+          mobileContainer.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Tiada rekod pengguna tidak berdaftar ditemui bagi penapis semasa.</div>`;
           return;
         }
 
@@ -1446,6 +1576,28 @@
             </td>
           </tr>
         `).join('');
+
+        mobileContainer.innerHTML = pageItems.map((row, i) => `
+          <div class="p-3.5 bg-white space-y-2.5 text-xs">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div class="font-bold text-slate-900">${startIdx + i + 1}. ${escapeAttr(row.namaPengguna)}</div>
+                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 mt-0.5">❌ Tiada dalam Sheet D</span>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold text-[11px] shrink-0">${row.totalLogs} log (${row.sheetsUsed.join(',')})</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5">
+              ${row.mobilesFromABC.map(m => `<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">${escapeAttr(m)}</span>`).join('')}
+              ${row.terminalMatches.map(tm => tm.matchedInE
+                ? `<span class="px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-medium">✓ Di E (${tm.masterE.status})</span>`
+                : `<span class="px-2 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-200 text-[11px] font-medium">⚠ Tiada di E</span>`
+              ).join(' ')}
+            </div>
+            <button data-nama="${escapeAttr(row.namaPengguna)}" data-mobile="${escapeAttr(row.mobilesFromABC[0] || '')}" onclick="quickAddToSheetD(this.dataset.nama, this.dataset.mobile)" class="w-full min-h-[36px] px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm transition touch-manipulation">
+              + Daftar ke Sheet D
+            </button>
+          </div>
+        `).join('');
         return;
       }
 
@@ -1462,10 +1614,14 @@
 
       if (pageItems.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tiada rekod padanan ditemui bagi penapis semasa.</td></tr>`;
+        mobileContainer.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Tiada rekod padanan ditemui bagi penapis semasa.</div>`;
         return;
       }
 
-      tbody.innerHTML = pageItems.map(row => {
+      const desktopRows = [];
+      const mobileCards = [];
+
+      pageItems.forEach(row => {
         let stage1HTML = '';
         if (row.stage1Status === 'UNMATCHED_ABC') {
           stage1HTML = `<span class="text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-medium">Tiada rekod di A/B/C</span>`;
@@ -1501,10 +1657,10 @@
               `;
             } else {
               return `
-                <div class="flex items-center gap-1.5 mb-1 last:mb-0">
+                <div class="flex flex-wrap items-center gap-1.5 mb-1 last:mb-0">
                   <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-bold text-[11px]">${escapeAttr(tm.mobileABC)}</span>
                   <span class="text-[11px] text-orange-700 font-semibold">Tiada di MasterData</span>
-                  <button data-mobile="${escapeAttr(tm.mobileABC)}" data-jabatan="${escapeAttr(row.jabatanD)}" onclick="quickAddToSheetE(this.dataset.mobile, this.dataset.jabatan)" class="ml-1 px-1.5 py-0.5 rounded bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-semibold">
+                  <button data-mobile="${escapeAttr(tm.mobileABC)}" data-jabatan="${escapeAttr(row.jabatanD)}" onclick="quickAddToSheetE(this.dataset.mobile, this.dataset.jabatan)" class="px-2 py-0.5 rounded bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-semibold touch-manipulation">
                     + Daftar E
                   </button>
                 </div>
@@ -1515,14 +1671,14 @@
 
         let badgeHTML = '';
         if (row.overallStatus === 'FULL_MATCH') {
-          badgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">✅ Sepadan Penuh</span>`;
+          badgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 shrink-0">✅ Sepadan</span>`;
         } else if (row.overallStatus === 'UNMATCHED_E') {
-          badgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-orange-100 text-orange-800">⚠️ Tiada Rekod Handheld di MasterData</span>`;
+          badgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-orange-100 text-orange-800 shrink-0">⚠️ Tiada di E</span>`;
         } else {
-          badgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">⏳ Tiada di A/B/C</span>`;
+          badgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 shrink-0">⏳ Tiada Log</span>`;
         }
 
-        return `
+        desktopRows.push(`
           <tr class="hover:bg-slate-50/90 transition">
             <td class="px-4 py-3 font-medium text-slate-500">${row.index}</td>
             <td class="px-4 py-3">
@@ -1538,13 +1694,46 @@
               </button>
             </td>
           </tr>
-        `;
-      }).join('');
+        `);
+
+        mobileCards.push(`
+          <div class="p-3.5 bg-white space-y-2.5 text-xs">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="font-bold text-slate-900 leading-snug">
+                  <span class="text-slate-400 font-medium mr-1">${row.index}.</span>${escapeAttr(row.namaD)}
+                </div>
+                <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">${escapeAttr(row.jabatanD)}</div>
+              </div>
+              ${badgeHTML}
+            </div>
+
+            <div class="bg-slate-50 border border-slate-100 rounded-lg p-2.5 space-y-2">
+              <div>
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Peringkat 1 • Log A/B/C</span>
+                ${stage1HTML}
+              </div>
+              <div class="pt-1.5 border-t border-slate-200/70">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Peringkat 2 • Master Sheet E</span>
+                ${stage2HTML}
+              </div>
+            </div>
+
+            <button data-nama="${escapeAttr(row.namaD)}" onclick="openDetailModal(this.dataset.nama)" class="w-full min-h-[36px] px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 text-slate-800 hover:text-indigo-700 border border-slate-200 text-xs font-semibold transition touch-manipulation">
+              Lihat Butiran Padanan
+            </button>
+          </div>
+        `);
+      });
+
+      tbody.innerHTML = desktopRows.join('');
+      mobileContainer.innerHTML = mobileCards.join('');
     }
 
     function changePage(delta) {
       currentPage += delta;
       renderTable();
+      document.getElementById('mainDataSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function quickAddToSheetE(terminalCode, jabatan) {
@@ -1559,7 +1748,7 @@
         noSiriMuamalat: 'DAFTAR-MANUAL',
         imei: '-',
         sim: '-',
-        jabatan: jabatan || 'DBKL',
+        jabatan: normalizeDepartmentName(jabatan) || 'DBKL',
         status: 'AKTIF'
       });
       runChainedMatching();
@@ -1586,7 +1775,7 @@
       document.getElementById('modalUserName').textContent = item.namaD;
 
       const masterCards = item.terminalMatches.length === 0
-        ? `<div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">Tiada kod Mobile diekstrak kerana pengguna ini belum mempunyai log transaksi dalam Sheet A, B, atau C.</div>`
+        ? `<div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">Tiada kod Mobile diekstrak kerana pengguna ini belum mempunyai log transaksi dalam Sheet A, B, atau C.</div>`
         : item.terminalMatches.map(tm => {
             if (tm.matchedInE) {
               const e = tm.masterE;
@@ -1595,31 +1784,31 @@
               const displayJabatan = (item.jabatanD && item.jabatanD !== '-') ? item.jabatanD : (e.jabatan || '-');
 
               return `
-                <div class="p-4 rounded-xl bg-purple-50/60 border border-purple-200 space-y-2">
-                  <div class="flex items-center justify-between">
-                    <span class="font-bold text-purple-900 text-sm">Padanan Terminal: ${escapeAttr(tm.mobileABC)} ➔ ${escapeAttr(e.terminal)}</span>
+                <div class="p-3.5 sm:p-4 rounded-xl bg-purple-50/60 border border-purple-200 space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="font-bold text-purple-900 text-xs sm:text-sm">Padanan Terminal: ${escapeAttr(tm.mobileABC)} ➔ ${escapeAttr(e.terminal)}</span>
                     <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${e.status === 'PULANG' ? 'bg-amber-200 text-amber-900' : 'bg-emerald-100 text-emerald-800'}">
-                      Status Master E: ${escapeAttr(e.status)}
+                      Status: ${escapeAttr(e.status)}
                     </span>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700 pt-1">
-                    <div><span class="text-slate-400">No. Siri DBKL:</span> <strong class="font-mono">${escapeAttr(e.noSiriDBKL || '-')}</strong></div>
-                    <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono">${escapeAttr(displayMuamalat)}</strong></div>
+                    <div><span class="text-slate-400">No. Siri DBKL:</span> <strong class="font-mono break-all">${escapeAttr(e.noSiriDBKL || '-')}</strong></div>
+                    <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono break-all">${escapeAttr(displayMuamalat)}</strong></div>
                     <div><span class="text-slate-400">TID Bank (Terminal):</span> <strong>${escapeAttr(displayTID)}</strong></div>
-                    <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono">${escapeAttr(e.imei || '-')}</strong></div>
-                    <div><span class="text-slate-400">No. SIM:</span> <strong class="font-mono">${escapeAttr(e.sim || '-')}</strong></div>
-                    <div><span class="text-slate-400">Jabatan (Sheet D/E):</span> <strong>${escapeAttr(displayJabatan)}</strong></div>
+                    <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono break-all">${escapeAttr(e.imei || '-')}</strong></div>
+                    <div><span class="text-slate-400">No. SIM:</span> <strong class="font-mono break-all">${escapeAttr(e.sim || '-')}</strong></div>
+                    <div><span class="text-slate-400">Jabatan:</span> <strong>${escapeAttr(displayJabatan)}</strong></div>
                   </div>
                 </div>
               `;
             } else {
               return `
-                <div class="p-4 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-between gap-3">
+                <div class="p-3.5 sm:p-4 rounded-xl bg-orange-50 border border-orange-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <div class="font-bold text-orange-900">Mobile "${escapeAttr(tm.mobileABC)}" — Tiada Rekod Handheld di MasterData</div>
                     <p class="text-orange-700 mt-0.5">Kod peranti ini digunakan oleh pegawai dalam Sheet A/B/C, namun belum wujud dalam senarai induk Sheet E.</p>
                   </div>
-                  <button data-mobile="${escapeAttr(tm.mobileABC)}" data-jabatan="${escapeAttr(item.jabatanD)}" onclick="quickAddToSheetE(this.dataset.mobile, this.dataset.jabatan); closeDetailModal();" class="shrink-0 px-3 py-1.5 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-500">
+                  <button data-mobile="${escapeAttr(tm.mobileABC)}" data-jabatan="${escapeAttr(item.jabatanD)}" onclick="quickAddToSheetE(this.dataset.mobile, this.dataset.jabatan); closeDetailModal();" class="w-full sm:w-auto shrink-0 min-h-[36px] px-3 py-1.5 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-500 touch-manipulation">
                     + Daftar ke Sheet E
                   </button>
                 </div>
@@ -1632,11 +1821,11 @@
         : `
           <div>
             <h4 class="font-bold text-slate-800 mb-2">Rekod Transaksi Log dalam Sheet A, B, C (${item.logs.length} rekod)</h4>
-            <div class="border border-slate-200 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
-              <table class="w-full text-left border-collapse">
+            <div class="border border-slate-200 rounded-xl overflow-x-auto max-h-48 overflow-y-auto">
+              <table class="w-full text-left border-collapse min-w-[420px]">
                 <thead class="bg-slate-100 text-[11px] font-bold text-slate-600">
                   <tr>
-                    <th class="px-3 py-2">Sumber Sheet</th>
+                    <th class="px-3 py-2">Sumber</th>
                     <th class="px-3 py-2">Nama Pengguna</th>
                     <th class="px-3 py-2">Mobile</th>
                     <th class="px-3 py-2">Tarikh & Masa</th>
@@ -1648,7 +1837,7 @@
                       <td class="px-3 py-1.5 font-bold text-indigo-600">Sheet ${escapeAttr(l.sheet)}</td>
                       <td class="px-3 py-1.5">${escapeAttr(l.namaPengguna)}</td>
                       <td class="px-3 py-1.5 font-bold text-blue-700">${escapeAttr(l.mobile)}</td>
-                      <td class="px-3 py-1.5 text-slate-500">${escapeAttr(l.tarikh)}</td>
+                      <td class="px-3 py-1.5 text-slate-500 whitespace-nowrap">${escapeAttr(l.tarikh)}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -1658,13 +1847,13 @@
         `;
 
       document.getElementById('modalBody').innerHTML = `
-        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
           <div>
             <span class="text-slate-400 block">Kunci Utama (Sheet D)</span>
             <strong class="text-slate-900">${escapeAttr(item.namaD)}</strong>
           </div>
           <div>
-            <span class="text-slate-400 block">Jabatan (Sheet D)</span>
+            <span class="text-slate-400 block">Jabatan (Diseragamkan)</span>
             <strong class="text-slate-800">${escapeAttr(item.jabatanD)}</strong>
           </div>
           <div>
@@ -1803,9 +1992,9 @@
             ['PENDAFTARAN', 'DBKL', 'SIRI']
           ) || '-';
 
-          const jabSheetE = pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN'], ['JABATAN', 'BAHAGIAN']);
+          const jabSheetE = normalizeDepartmentName(pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN'], ['JABATAN', 'BAHAGIAN']));
           const jabFromD = deptByTerminal.get(normTerm) || '';
-          const finalJabatan = jabSheetE || jabFromD || '-';
+          const finalJabatan = (jabSheetE && jabSheetE !== '-') ? jabSheetE : (jabFromD || '-');
 
           return {
             terminal: termVal,
@@ -1899,7 +2088,7 @@
     function exportCurrentCSV() {
       const filtered = getFilteredList();
       if (activeTab === 'master_e') {
-        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri DBKL', 'No Siri Muamalat (Serial Number)', 'IMEI', 'SIM', 'Jabatan (Sheet D/E)', 'Status', 'Bil Log'];
+        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri DBKL', 'No Siri Muamalat (Serial Number)', 'IMEI', 'SIM', 'Jabatan (Diseragamkan)', 'Status', 'Bil Log'];
         const lines = [headers.join(',')];
         filtered.forEach(r => {
           lines.push([
@@ -1911,7 +2100,7 @@
         return;
       }
 
-      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Sheet D)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri DBKL', 'Status Terminal', 'Status Keseluruhan'];
+      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Diseragamkan)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri DBKL', 'Status Terminal', 'Status Keseluruhan'];
       const lines = [headers.join(',')];
 
       filtered.forEach((r, idx) => {
@@ -1952,6 +2141,15 @@
       link.download = filename;
       link.click();
     }
+
+    // Kemas kini carta jika orientasi peranti (potret/landskap) berubah
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        renderCharts();
+      }, 200);
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
