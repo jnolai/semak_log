@@ -6,6 +6,7 @@
   <title>IMS eZpay 2026 • Padanan Berangkai Sheet D ➔ A,B,C ➔ Sheet E Master</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     body {
@@ -116,7 +117,6 @@
 
     <!-- 5 Summary KPI Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-      <!-- Card 1: Total Sheet D -->
       <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:border-slate-300 transition">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Kunci Utama Sheet D</span>
@@ -128,7 +128,6 @@
         <p class="text-[11px] text-slate-500 mt-1">Jumlah Nama dalam Sheet D</p>
       </div>
 
-      <!-- Card 2: Full Match (D -> A/B/C -> E) -->
       <div onclick="switchTab('full_match')" class="bg-white rounded-xl border-2 border-emerald-500/80 p-4 shadow-sm cursor-pointer hover:bg-emerald-50/30 transition">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Sepadan Penuh (D➔ABC➔E)</span>
@@ -143,7 +142,6 @@
         <p class="text-[11px] text-slate-500 mt-1">Nama sah & Terminal ada di Sheet E</p>
       </div>
 
-      <!-- Card 3: Matched D->ABC, Unmatched E -->
       <div onclick="switchTab('unmatched_e')" class="bg-white rounded-xl border border-orange-200 p-4 shadow-sm cursor-pointer hover:border-orange-400 transition">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] font-bold uppercase tracking-wider text-orange-700">Tiada Rekod Handheld di MasterData</span>
@@ -155,7 +153,6 @@
         <p class="text-[11px] text-slate-500 mt-1">Mobile A/B/C tiada di Terminal E</p>
       </div>
 
-      <!-- Card 4: Unmatched D -> ABC -->
       <div onclick="switchTab('unmatched_abc')" class="bg-white rounded-xl border border-amber-200 p-4 shadow-sm cursor-pointer hover:border-amber-400 transition">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700">Tiada Log di A/B/C</span>
@@ -167,7 +164,6 @@
         <p class="text-[11px] text-slate-500 mt-1">Nama Sheet D belum guna peranti</p>
       </div>
 
-      <!-- Card 5: Master Sheet E Terminals -->
       <div onclick="switchTab('master_e')" class="bg-white rounded-xl border border-purple-200 p-4 shadow-sm cursor-pointer hover:border-purple-400 transition">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] font-bold uppercase tracking-wider text-purple-700">Master Data Sheet E</span>
@@ -180,46 +176,139 @@
       </div>
     </div>
 
-    <!-- Main Filter Tabs & Search Bar -->
+    <!-- Interactive Chart.js Analytics Section -->
     <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-      <div class="border-b border-slate-200 bg-slate-50/70 px-4 pt-3 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-        <!-- Navigation Tabs (All Rekod Sheet D removed, Sepadan Penuh is Default) -->
-        <div class="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0">
-          <button onclick="switchTab('full_match')" id="tab-full_match" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-semibold border-b-2 border-emerald-600 text-emerald-700 bg-white whitespace-nowrap transition">
-            1. ✅ Sepadan Penuh: D ↔ A/B/C ↔ E (<span id="badge-full_match">0</span>)
-          </button>
-          <button onclick="switchTab('unmatched_e')" id="tab-unmatched_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-orange-700 whitespace-nowrap transition">
-            2. ⚠️ Tiada Rekod Handheld di MasterData (<span id="badge-unmatched_e">0</span>)
-          </button>
-          <button onclick="switchTab('unmatched_abc')" id="tab-unmatched_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-amber-700 whitespace-nowrap transition">
-            3. ⏳ Tiada Rekod di A/B/C (<span id="badge-unmatched_abc">0</span>)
-          </button>
-          <button onclick="switchTab('master_e')" id="tab-master_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-purple-700 whitespace-nowrap transition">
-            4. 🗄️ Data Master Sheet E (<span id="badge-master_e">0</span>)
-          </button>
-          <button onclick="switchTab('orphan_abc')" id="tab-orphan_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-rose-700 whitespace-nowrap transition">
-            5. ❌ Pengguna A/B/C Tiada di D (<span id="badge-orphan_abc">0</span>)
-          </button>
+      <div class="px-4 py-3 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+            <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h2 class="text-xs sm:text-sm font-bold text-slate-800">Analitik Visual: Pecahan Peranti Mengikut Jabatan & Status (AKTIF / PULANG)</h2>
+            <p class="text-[11px] text-slate-500">Klik pada mana-mana bar Jabatan atau segmen Donut untuk menapis jadual secara automatik</p>
+          </div>
+        </div>
+        <button onclick="toggleChartsPanel()" id="toggleChartsBtn" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-300 text-xs font-semibold text-slate-700 transition">
+          <i data-lucide="chevron-up" id="toggleChartsIcon" class="w-3.5 h-3.5"></i>
+          <span id="toggleChartsText">Sembunyi Carta</span>
+        </button>
+      </div>
+
+      <div id="chartsPanelBody" class="p-4 grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Left (2 Cols): Stacked Bar Chart by Department & Status -->
+        <div class="lg:col-span-2 bg-slate-50/50 border border-slate-200/80 rounded-xl p-4 flex flex-col">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-700">Taburan Terminal (Sheet E) Mengikut Jabatan</span>
+            <div class="flex items-center gap-3 text-[11px] font-semibold">
+              <span class="inline-flex items-center gap-1 text-emerald-700">
+                <span class="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block"></span> AKTIF
+              </span>
+              <span class="inline-flex items-center gap-1 text-amber-700">
+                <span class="w-2.5 h-2.5 rounded-xs bg-amber-500 inline-block"></span> PULANG
+              </span>
+            </div>
+          </div>
+          <div class="relative w-full h-72">
+            <canvas id="deptStatusChart"></canvas>
+          </div>
         </div>
 
-        <!-- Search & Mobile Sheet Filter -->
-        <div class="flex items-center gap-2 pb-3 lg:pb-2">
+        <!-- Right (1 Col): Doughnut Chart for Terminal Utilization & Status -->
+        <div class="bg-slate-50/50 border border-slate-200/80 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <span class="text-xs font-bold text-slate-700 block">Status Operasi & Penggunaan Log (A/B/C)</span>
+            <span class="text-[11px] text-slate-500">Perbandingan peranti aktif berlog, aktif tanpa log & pulang</span>
+          </div>
+          <div class="relative w-full h-56 my-2 flex items-center justify-center">
+            <canvas id="statusDoughnutChart"></canvas>
+          </div>
+          <div id="doughnutSummaryFooter" class="pt-2 border-t border-slate-200/80 grid grid-cols-3 gap-2 text-center text-[11px]">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Filter Tabs & Search + Dropdown Bar -->
+    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <!-- Row 1: Navigation Tabs -->
+      <div class="border-b border-slate-200 bg-slate-50/70 px-4 pt-3 flex items-center gap-1.5 overflow-x-auto">
+        <button onclick="switchTab('full_match')" id="tab-full_match" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-semibold border-b-2 border-emerald-600 text-emerald-700 bg-white whitespace-nowrap transition">
+          1. ✅ Sepadan Penuh: D ↔ A/B/C ↔ E (<span id="badge-full_match">0</span>)
+        </button>
+        <button onclick="switchTab('unmatched_e')" id="tab-unmatched_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-orange-700 whitespace-nowrap transition">
+          2. ⚠️ Tiada Rekod Handheld di MasterData (<span id="badge-unmatched_e">0</span>)
+        </button>
+        <button onclick="switchTab('unmatched_abc')" id="tab-unmatched_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-amber-700 whitespace-nowrap transition">
+          3. ⏳ Tiada Rekod di A/B/C (<span id="badge-unmatched_abc">0</span>)
+        </button>
+        <button onclick="switchTab('master_e')" id="tab-master_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-purple-700 whitespace-nowrap transition">
+          4. 🗄️ Data Master Sheet E (<span id="badge-master_e">0</span>)
+        </button>
+        <button onclick="switchTab('orphan_abc')" id="tab-orphan_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-rose-700 whitespace-nowrap transition">
+          5. ❌ Pengguna A/B/C Tiada di D (<span id="badge-orphan_abc">0</span>)
+        </button>
+      </div>
+
+      <!-- Row 2: Search Box + Jabatan Filter + Terminal Status Filter -->
+      <div class="px-4 py-3 bg-white border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+        <div class="flex flex-wrap items-center gap-2 w-full">
+          <!-- Mobile Sheet Filter -->
           <select id="logSheetFilterMobile" onchange="syncSheetSelect(this.value)" class="md:hidden bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700">
             <option value="ALL">Semua A+B+C</option>
             <option value="A">Sheet A</option>
             <option value="B">Sheet B</option>
             <option value="C">Sheet C</option>
           </select>
-          <div class="relative w-full sm:w-72">
+
+          <!-- Search Box -->
+          <div class="relative flex-1 min-w-[220px] sm:max-w-xs">
             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
             <input
               type="text"
               id="searchInput"
               oninput="handleSearch()"
               placeholder="Cari Nama, Mobile, Terminal E, Siri..."
-              class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              class="w-full pl-8 pr-3 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
             />
           </div>
+
+          <!-- Dropdown Penapis Jabatan -->
+          <div class="relative flex-1 min-w-[200px] sm:max-w-xs">
+            <i data-lucide="building-2" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <select
+              id="jabatanFilter"
+              onchange="handleDropdownFilter()"
+              class="w-full pl-8 pr-7 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer truncate"
+            >
+              <option value="ALL">Semua Jabatan / Unit</option>
+            </select>
+          </div>
+
+          <!-- Dropdown Penapis Status Terminal -->
+          <div class="relative min-w-[165px]">
+            <i data-lucide="activity" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <select
+              id="statusTerminalFilter"
+              onchange="handleDropdownFilter()"
+              class="w-full pl-8 pr-7 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer"
+            >
+              <option value="ALL">Status: Semua</option>
+              <option value="AKTIF">Status: AKTIF Sahaja</option>
+              <option value="PULANG">Status: PULANG Sahaja</option>
+            </select>
+          </div>
+
+          <!-- Reset Filter Button -->
+          <button
+            id="resetFiltersBtn"
+            onclick="resetAllFilters()"
+            class="hidden inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
+            title="Set semula semua penapis"
+          >
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Set Semula</span>
+          </button>
         </div>
       </div>
 
@@ -233,10 +322,8 @@
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead id="tableHead" class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-            <!-- Dynamic Header -->
           </thead>
           <tbody id="tableBody" class="divide-y divide-slate-100 text-xs text-slate-700">
-            <!-- Dynamic Rows -->
           </tbody>
         </table>
       </div>
@@ -257,8 +344,8 @@
     </div>
   </main>
 
-  <!-- Modal: Detail Comparison (Sheet D <-> Sheet A/B/C <-> Sheet E) -->
-  <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+  <!-- Modal: Detail Comparison -->
+  <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden fade-in max-h-[90vh] flex flex-col">
       <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
         <div>
@@ -271,7 +358,6 @@
       </div>
 
       <div id="modalBody" class="p-5 overflow-y-auto space-y-5 text-xs">
-        <!-- Dynamic Content -->
       </div>
 
       <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex justify-end">
@@ -283,7 +369,7 @@
   </div>
 
   <!-- Modal: Upload CSV Backup -->
-  <div id="uploadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+  <div id="uploadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden fade-in">
       <div class="px-5 py-4 bg-slate-900 text-white flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -453,12 +539,19 @@
       { sheet: "C", namaPengguna: "INTAN NORAIN BINTI UZIR", mobile: "P5911", tarikh: "29/03/2026 1:50PM" }
     ];
 
-    // State (Default tab is now 'full_match')
+    // State
     let activeTab = 'full_match';
     let selectedLogSheet = 'ALL';
+    let selectedJabatan = 'ALL';
+    let selectedTerminalStatus = 'ALL';
     let searchQuery = '';
     let currentPage = 1;
     const pageSize = 15;
+    let chartsVisible = true;
+
+    // Chart.js instances
+    let deptChartInstance = null;
+    let statusChartInstance = null;
 
     let computedResults = {
       allD: [],
@@ -469,27 +562,72 @@
       orphanABC: []
     };
 
-    function normalizeKey(str) {
-      return (str || '').toString().trim().toUpperCase().replace(/\s+/g, ' ');
+    function normalizeName(str) {
+      return (str || '')
+        .toString()
+        .toUpperCase()
+        .replace(/\(.*?\)/g, '')
+        .replace(/[^A-Z0-9@\/\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
     }
 
-    // Core 2-Stage Matching Engine: Sheet D (Nama) -> Sheet A,B,C (Nama Pengguna & Mobile) -> Sheet E Master (Terminal)
+    function normalizeTerminal(str) {
+      let clean = (str || '').toString().toUpperCase().replace(/\s+/g, '').trim();
+      if (!clean) return '';
+      if (/^\d{4}$/.test(clean)) return 'P' + clean;
+      return clean;
+    }
+
+    function escapeAttr(str) {
+      return (str || '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/'/g, '&#39;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function populateJabatanDropdown() {
+      const select = document.getElementById('jabatanFilter');
+      const currentVal = select.value;
+      const deptSet = new Set();
+
+      sheetD_Names.forEach(d => {
+        if (d.jabatan && d.jabatan !== '-') deptSet.add(d.jabatan.trim().toUpperCase());
+      });
+      sheetE_Terminals.forEach(e => {
+        if (e.jabatan && e.jabatan !== '-') deptSet.add(e.jabatan.trim().toUpperCase());
+      });
+
+      const sortedDepts = Array.from(deptSet).sort();
+      select.innerHTML = `<option value="ALL">Semua Jabatan / Unit (${sortedDepts.length})</option>` +
+        sortedDepts.map(dept => `<option value="${escapeAttr(dept)}">${dept}</option>`).join('');
+
+      if (sortedDepts.includes(currentVal)) {
+        select.value = currentVal;
+      } else {
+        select.value = 'ALL';
+        selectedJabatan = 'ALL';
+      }
+    }
+
     function runChainedMatching() {
+      populateJabatanDropdown();
+
       const filteredLogs = selectedLogSheet === 'ALL'
         ? logRecordsABC
         : logRecordsABC.filter(r => r.sheet === selectedLogSheet);
 
-      // Build Master Sheet E Map keyed by TERMINAL
       const mapE = new Map();
       sheetE_Terminals.forEach(item => {
-        const key = normalizeKey(item.terminal);
+        const key = normalizeTerminal(item.terminal);
         if (key) mapE.set(key, item);
       });
 
-      // Group logs by normalized Nama Pengguna
       const logsByName = new Map();
       filteredLogs.forEach(log => {
-        const key = normalizeKey(log.namaPengguna);
+        const key = normalizeName(log.namaPengguna);
         if (!key) return;
         if (!logsByName.has(key)) logsByName.set(key, []);
         logsByName.get(key).push(log);
@@ -502,11 +640,15 @@
       const matchedDNamesSet = new Set();
 
       sheetD_Names.forEach((dRow, idx) => {
-        const keyNama = normalizeKey(dRow.nama);
+        const keyNama = normalizeName(dRow.nama);
         matchedDNamesSet.add(keyNama);
         const userLogs = logsByName.get(keyNama) || [];
 
         if (userLogs.length === 0) {
+          const refKey = normalizeTerminal(dRow.perantiRujukan);
+          const refMaster = mapE.get(refKey);
+          const statuses = refMaster ? [refMaster.status.toUpperCase()] : [];
+
           const item = {
             index: idx + 1,
             namaD: dRow.nama,
@@ -519,12 +661,14 @@
             sheetsUsed: [],
             mobilesFromABC: [],
             terminalMatches: [],
-            logs: []
+            terminalStatuses: statuses,
+            logs: [],
+            _searchIndex: `${dRow.nama} ${dRow.jabatan} ${dRow.perantiRujukan}`.toUpperCase()
           };
           allD.push(item);
           unmatchedABC.push(item);
         } else {
-          const uniqueMobiles = [...new Set(userLogs.map(l => normalizeKey(l.mobile)).filter(Boolean))];
+          const uniqueMobiles = [...new Set(userLogs.map(l => normalizeTerminal(l.mobile)).filter(Boolean))];
           const sheetsUsed = [...new Set(userLogs.map(l => l.sheet))];
 
           const terminalMatches = uniqueMobiles.map(mob => {
@@ -538,6 +682,12 @@
 
           const allTerminalsInE = terminalMatches.length > 0 && terminalMatches.every(tm => tm.matchedInE);
           const overallStatus = allTerminalsInE ? 'FULL_MATCH' : 'UNMATCHED_E';
+          const statuses = terminalMatches
+            .filter(tm => tm.matchedInE && tm.masterE.status)
+            .map(tm => tm.masterE.status.toUpperCase());
+
+          const siriList = terminalMatches.map(t => t.masterE ? `${t.masterE.noSiriDBKL} ${t.masterE.noSiriMuamalat} ${t.masterE.imei}` : '').join(' ');
+          const searchIndex = `${dRow.nama} ${dRow.jabatan} ${uniqueMobiles.join(' ')} ${siriList}`.toUpperCase();
 
           const item = {
             index: idx + 1,
@@ -551,58 +701,252 @@
             sheetsUsed,
             mobilesFromABC: uniqueMobiles,
             terminalMatches,
+            terminalStatuses: statuses,
             latestTarikh: userLogs[0]?.tarikh || '-',
-            logs: userLogs
+            logs: userLogs,
+            _searchIndex: searchIndex
           };
 
           allD.push(item);
-          if (overallStatus === 'FULL_MATCH') {
-            fullMatch.push(item);
-          } else {
-            unmatchedE.push(item);
-          }
+          if (overallStatus === 'FULL_MATCH') fullMatch.push(item);
+          else unmatchedE.push(item);
         }
       });
 
-      // Find users in Sheet A/B/C who do NOT exist in Sheet D
       const orphanABC = [];
       logsByName.forEach((logs, keyNama) => {
         if (!matchedDNamesSet.has(keyNama)) {
-          const uniqueMobiles = [...new Set(logs.map(l => normalizeKey(l.mobile)).filter(Boolean))];
+          const uniqueMobiles = [...new Set(logs.map(l => normalizeTerminal(l.mobile)).filter(Boolean))];
           const sheetsUsed = [...new Set(logs.map(l => l.sheet))];
           const terminalMatches = uniqueMobiles.map(mob => ({
             mobileABC: mob,
             matchedInE: mapE.has(mob),
             masterE: mapE.get(mob) || null
           }));
+          const statuses = terminalMatches
+            .filter(tm => tm.matchedInE && tm.masterE.status)
+            .map(tm => tm.masterE.status.toUpperCase());
+          const depts = terminalMatches
+            .filter(tm => tm.matchedInE && tm.masterE.jabatan)
+            .map(tm => tm.masterE.jabatan.toUpperCase());
+
           orphanABC.push({
             namaPengguna: logs[0].namaPengguna,
+            jabatanInferred: depts[0] || '-',
             totalLogs: logs.length,
             sheetsUsed,
             mobilesFromABC: uniqueMobiles,
             terminalMatches,
+            terminalStatuses: statuses,
             latestTarikh: logs[0]?.tarikh || '-',
-            logs
+            logs,
+            _searchIndex: `${logs[0].namaPengguna} ${uniqueMobiles.join(' ')} ${depts.join(' ')}`.toUpperCase()
           });
         }
       });
 
-      // Master Sheet E overview with usage links
       const masterE = sheetE_Terminals.map((eRow, idx) => {
-        const keyTerm = normalizeKey(eRow.terminal);
-        const termLogs = filteredLogs.filter(l => normalizeKey(l.mobile) === keyTerm);
+        const keyTerm = normalizeTerminal(eRow.terminal);
+        const termLogs = filteredLogs.filter(l => normalizeTerminal(l.mobile) === keyTerm);
         const usersInLogs = [...new Set(termLogs.map(l => l.namaPengguna))];
         return {
           index: idx + 1,
           ...eRow,
+          status: (eRow.status || 'AKTIF').toUpperCase(),
           totalLogs: termLogs.length,
-          usersInLogs
+          usersInLogs,
+          _searchIndex: `${eRow.terminal} ${eRow.tidBank} ${eRow.noSiriDBKL} ${eRow.noSiriMuamalat} ${eRow.imei} ${eRow.jabatan} ${usersInLogs.join(' ')}`.toUpperCase()
         };
       });
 
       computedResults = { allD, fullMatch, unmatchedE, unmatchedABC, masterE, orphanABC };
       updateKPIsAndBadges();
+      renderCharts();
       renderTable();
+    }
+
+    // Toggle Charts Panel
+    function toggleChartsPanel() {
+      chartsVisible = !chartsVisible;
+      const body = document.getElementById('chartsPanelBody');
+      const text = document.getElementById('toggleChartsText');
+      const icon = document.getElementById('toggleChartsIcon');
+      if (chartsVisible) {
+        body.classList.remove('hidden');
+        text.textContent = 'Sembunyi Carta';
+        icon.setAttribute('data-lucide', 'chevron-up');
+      } else {
+        body.classList.add('hidden');
+        text.textContent = 'Papar Carta';
+        icon.setAttribute('data-lucide', 'chevron-down');
+      }
+      lucide.createIcons();
+    }
+
+    // Render Chart.js Visuals
+    function renderCharts() {
+      const { masterE } = computedResults;
+
+      // 1. Aggregate Master E Terminals by Jabatan & Status (AKTIF / PULANG)
+      const deptMap = new Map();
+      let aktifWithLogs = 0;
+      let aktifNoLogs = 0;
+      let pulangCount = 0;
+
+      masterE.forEach(item => {
+        const dept = (item.jabatan || 'LAIN-LAIN').trim().toUpperCase();
+        if (!deptMap.has(dept)) {
+          deptMap.set(dept, { dept, aktif: 0, pulang: 0, total: 0 });
+        }
+        const entry = deptMap.get(dept);
+        const st = (item.status || 'AKTIF').toUpperCase();
+        if (st === 'PULANG') {
+          entry.pulang += 1;
+          pulangCount += 1;
+        } else {
+          entry.aktif += 1;
+          if (item.totalLogs > 0) aktifWithLogs += 1;
+          else aktifNoLogs += 1;
+        }
+        entry.total += 1;
+      });
+
+      // Sort departments by total devices descending
+      const sortedDepts = Array.from(deptMap.values()).sort((a, b) => b.total - a.total);
+      const fullDeptLabels = sortedDepts.map(d => d.dept);
+      const shortDeptLabels = sortedDepts.map(d => d.dept.length > 26 ? d.dept.slice(0, 24) + '...' : d.dept);
+      const aktifData = sortedDepts.map(d => d.aktif);
+      const pulangData = sortedDepts.map(d => d.pulang);
+
+      // Destroy previous chart instances if exist
+      if (deptChartInstance) deptChartInstance.destroy();
+      if (statusChartInstance) statusChartInstance.destroy();
+
+      // Chart 1: Horizontal Stacked Bar Chart by Jabatan
+      const ctxDept = document.getElementById('deptStatusChart').getContext('2d');
+      deptChartInstance = new Chart(ctxDept, {
+        type: 'bar',
+        data: {
+          labels: shortDeptLabels,
+          datasets: [
+            {
+              label: 'AKTIF',
+              data: aktifData,
+              backgroundColor: '#10b981',
+              borderRadius: 4,
+              barPercentage: 0.7
+            },
+            {
+              label: 'PULANG',
+              data: pulangData,
+              backgroundColor: '#f59e0b',
+              borderRadius: 4,
+              barPercentage: 0.7
+            }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const idx = elements[0].index;
+              const clickedDept = fullDeptLabels[idx];
+              const jabSelect = document.getElementById('jabatanFilter');
+              if (Array.from(jabSelect.options).some(o => o.value === clickedDept)) {
+                jabSelect.value = clickedDept;
+                selectedJabatan = clickedDept;
+                switchTab('master_e');
+                updateResetButtonVisibility();
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => fullDeptLabels[items[0].dataIndex]
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              beginAtZero: true,
+              ticks: { stepSize: 1, font: { size: 11 } },
+              grid: { color: '#e2e8f0' }
+            },
+            y: {
+              stacked: true,
+              ticks: { font: { size: 10, weight: '600' }, color: '#334155' },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+
+      // Chart 2: Doughnut Chart for Status & Utilization
+      const ctxStatus = document.getElementById('statusDoughnutChart').getContext('2d');
+      statusChartInstance = new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: ['AKTIF (Ada Log A/B/C)', 'AKTIF (Tiada Log)', 'PULANG'],
+          datasets: [{
+            data: [aktifWithLogs, aktifNoLogs, pulangCount],
+            backgroundColor: ['#10b981', '#6366f1', '#f59e0b'],
+            borderWidth: 2,
+            borderColor: '#ffffff',
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '64%',
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const idx = elements[0].index;
+              const statusSelect = document.getElementById('statusTerminalFilter');
+              if (idx === 2) {
+                statusSelect.value = 'PULANG';
+                selectedTerminalStatus = 'PULANG';
+              } else {
+                statusSelect.value = 'AKTIF';
+                selectedTerminalStatus = 'AKTIF';
+              }
+              switchTab('master_e');
+              updateResetButtonVisibility();
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 10,
+                padding: 10,
+                font: { size: 11, weight: '600' }
+              }
+            }
+          }
+        }
+      });
+
+      // Update Doughnut Summary Footer
+      document.getElementById('doughnutSummaryFooter').innerHTML = `
+        <div class="bg-emerald-50 rounded-lg p-1.5 border border-emerald-100">
+          <span class="block font-extrabold text-emerald-700 text-sm">${aktifWithLogs}</span>
+          <span class="text-[10px] text-emerald-800 font-medium">Aktif Berlog</span>
+        </div>
+        <div class="bg-indigo-50 rounded-lg p-1.5 border border-indigo-100">
+          <span class="block font-extrabold text-indigo-700 text-sm">${aktifNoLogs}</span>
+          <span class="text-[10px] text-indigo-800 font-medium">Aktif Tiada Log</span>
+        </div>
+        <div class="bg-amber-50 rounded-lg p-1.5 border border-amber-100">
+          <span class="block font-extrabold text-amber-700 text-sm">${pulangCount}</span>
+          <span class="text-[10px] text-amber-800 font-medium">Pulang</span>
+        </div>
+      `;
     }
 
     function updateKPIsAndBadges() {
@@ -688,9 +1032,37 @@
     }
 
     function handleSearch() {
-      searchQuery = normalizeKey(document.getElementById('searchInput').value);
+      searchQuery = document.getElementById('searchInput').value.toUpperCase().trim();
       currentPage = 1;
+      updateResetButtonVisibility();
       renderTable();
+    }
+
+    function handleDropdownFilter() {
+      selectedJabatan = document.getElementById('jabatanFilter').value;
+      selectedTerminalStatus = document.getElementById('statusTerminalFilter').value;
+      currentPage = 1;
+      updateResetButtonVisibility();
+      renderTable();
+    }
+
+    function resetAllFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('jabatanFilter').value = 'ALL';
+      document.getElementById('statusTerminalFilter').value = 'ALL';
+      searchQuery = '';
+      selectedJabatan = 'ALL';
+      selectedTerminalStatus = 'ALL';
+      currentPage = 1;
+      updateResetButtonVisibility();
+      renderTable();
+    }
+
+    function updateResetButtonVisibility() {
+      const btn = document.getElementById('resetFiltersBtn');
+      const hasFilter = searchQuery !== '' || selectedJabatan !== 'ALL' || selectedTerminalStatus !== 'ALL';
+      if (hasFilter) btn.classList.remove('hidden');
+      else btn.classList.add('hidden');
     }
 
     function getFilteredList() {
@@ -701,11 +1073,33 @@
       else if (activeTab === 'master_e') list = computedResults.masterE;
       else if (activeTab === 'orphan_abc') list = computedResults.orphanABC;
 
-      if (!searchQuery) return list;
-
       return list.filter(item => {
-        const blob = JSON.stringify(item).toUpperCase();
-        return blob.includes(searchQuery);
+        if (searchQuery && !item._searchIndex.includes(searchQuery)) {
+          return false;
+        }
+
+        if (selectedJabatan !== 'ALL') {
+          let itemDept = '';
+          if (activeTab === 'master_e') {
+            itemDept = (item.jabatan || '').trim().toUpperCase();
+          } else if (activeTab === 'orphan_abc') {
+            itemDept = (item.jabatanInferred || '').trim().toUpperCase();
+          } else {
+            itemDept = (item.jabatanD || '').trim().toUpperCase();
+          }
+          if (itemDept !== selectedJabatan) return false;
+        }
+
+        if (selectedTerminalStatus !== 'ALL') {
+          if (activeTab === 'master_e') {
+            if ((item.status || '').toUpperCase() !== selectedTerminalStatus) return false;
+          } else {
+            const statuses = item.terminalStatuses || [];
+            if (!statuses.includes(selectedTerminalStatus)) return false;
+          }
+        }
+
+        return true;
       });
     }
 
@@ -729,7 +1123,6 @@
       document.getElementById('prevPageBtn').disabled = currentPage <= 1;
       document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
 
-      // Render Headers & Rows based on Active Tab
       if (activeTab === 'master_e') {
         thead.innerHTML = `
           <tr>
@@ -744,7 +1137,7 @@
         `;
 
         if (pageItems.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Tiada rekod terminal dijumpai dalam Sheet E.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Tiada rekod terminal dijumpai bagi penapis semasa.</td></tr>`;
           return;
         }
 
@@ -753,13 +1146,13 @@
             <td class="px-4 py-3 font-medium text-slate-500">${row.index}</td>
             <td class="px-4 py-3">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-md font-bold bg-purple-100 text-purple-800 border border-purple-200">
-                ${row.terminal}
+                ${escapeAttr(row.terminal)}
               </span>
-              <span class="block text-[10px] text-slate-400 mt-0.5">TID Bank: ${row.tidBank || '-'}</span>
+              <span class="block text-[10px] text-slate-400 mt-0.5">TID Bank: ${escapeAttr(row.tidBank || '-')}</span>
             </td>
-            <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${row.noSiriDBKL || '-'}</td>
-            <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${row.noSiriMuamalat || '-'}</td>
-            <td class="px-4 py-3 text-slate-600 max-w-xs truncate" title="${row.jabatan}">${row.jabatan || '-'}</td>
+            <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${escapeAttr(row.noSiriDBKL || '-')}</td>
+            <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${escapeAttr(row.noSiriMuamalat || '-')}</td>
+            <td class="px-4 py-3 text-slate-600 max-w-xs truncate" title="${escapeAttr(row.jabatan)}">${escapeAttr(row.jabatan || '-')}</td>
             <td class="px-4 py-3">
               ${row.status === 'PULANG'
                 ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">PULANG</span>'
@@ -768,7 +1161,7 @@
             <td class="px-4 py-3">
               ${row.totalLogs > 0
                 ? `<div class="font-semibold text-slate-800">${row.totalLogs} log transaksi</div>
-                   <div class="text-[11px] text-slate-500 truncate max-w-[200px]">${row.usersInLogs.join(', ')}</div>`
+                   <div class="text-[11px] text-slate-500 truncate max-w-[200px]">${escapeAttr(row.usersInLogs.join(', '))}</div>`
                 : '<span class="text-slate-400 italic">Tiada log dalam A/B/C</span>'}
             </td>
           </tr>
@@ -789,7 +1182,7 @@
         `;
 
         if (pageItems.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Semua nama pengguna di Sheet A/B/C telah berdaftar di Sheet D.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tiada rekod pengguna tidak berdaftar ditemui bagi penapis semasa.</td></tr>`;
           return;
         }
 
@@ -797,7 +1190,7 @@
           <tr class="hover:bg-rose-50/30 transition">
             <td class="px-4 py-3 text-slate-500">${startIdx + i + 1}</td>
             <td class="px-4 py-3">
-              <div class="font-bold text-slate-900">${row.namaPengguna}</div>
+              <div class="font-bold text-slate-900">${escapeAttr(row.namaPengguna)}</div>
               <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 mt-0.5">
                 ❌ Tiada dalam kunci utama Sheet D
               </span>
@@ -808,17 +1201,17 @@
             </td>
             <td class="px-4 py-3">
               <div class="flex flex-wrap gap-1">
-                ${row.mobilesFromABC.map(m => `<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">${m}</span>`).join('')}
+                ${row.mobilesFromABC.map(m => `<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">${escapeAttr(m)}</span>`).join('')}
               </div>
             </td>
             <td class="px-4 py-3">
               ${row.terminalMatches.map(tm => tm.matchedInE
-                ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-medium">✓ ${tm.mobileABC} ada di E</span>`
-                : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-200 text-[11px] font-medium">⚠ ${tm.mobileABC} tiada di E</span>`
+                ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[11px] font-medium">✓ ${escapeAttr(tm.mobileABC)} (${tm.masterE.status})</span>`
+                : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-orange-50 text-orange-700 border border-orange-200 text-[11px] font-medium">⚠ ${escapeAttr(tm.mobileABC)} tiada di E</span>`
               ).join(' ')}
             </td>
             <td class="px-4 py-3 text-right">
-              <button onclick="quickAddToSheetD('${row.namaPengguna.replace(/'/g, "\\'")}', '${row.mobilesFromABC[0] || ''}')" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold shadow-xs transition">
+              <button data-nama="${escapeAttr(row.namaPengguna)}" data-mobile="${escapeAttr(row.mobilesFromABC[0] || '')}" onclick="quickAddToSheetD(this.dataset.nama, this.dataset.mobile)" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-semibold shadow-sm transition">
                 + Daftar ke Sheet D
               </button>
             </td>
@@ -827,7 +1220,6 @@
         return;
       }
 
-      // Standard Chained View for: full_match, unmatched_e, unmatched_abc
       thead.innerHTML = `
         <tr>
           <th class="px-4 py-3">No</th>
@@ -845,44 +1237,42 @@
       }
 
       tbody.innerHTML = pageItems.map(row => {
-        // Stage 1 HTML
         let stage1HTML = '';
         if (row.stage1Status === 'UNMATCHED_ABC') {
           stage1HTML = `<span class="text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-medium">Tiada rekod di A/B/C</span>`;
         } else {
           stage1HTML = `
             <div class="flex flex-wrap items-center gap-1">
-              ${row.mobilesFromABC.map(m => `<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">${m}</span>`).join('')}
+              ${row.mobilesFromABC.map(m => `<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[11px]">${escapeAttr(m)}</span>`).join('')}
               <span class="text-[11px] text-slate-500 ml-1">(${row.totalLogs} log • Sheet ${row.sheetsUsed.join(',')})</span>
             </div>
           `;
         }
 
-        // Stage 2 HTML
         let stage2HTML = '';
         if (row.stage1Status === 'UNMATCHED_ABC') {
           stage2HTML = `<span class="text-slate-400 italic text-[11px]">Menunggu padanan A/B/C</span>`;
         } else {
           stage2HTML = row.terminalMatches.map(tm => {
             if (tm.matchedInE) {
-              const pulangTag = tm.masterE.status === 'PULANG'
-                ? `<span class="ml-1 px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 text-[10px] font-bold">PULANG</span>`
-                : '';
+              const statusBadge = tm.masterE.status === 'PULANG'
+                ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-200 text-amber-900 text-[10px] font-bold">PULANG</span>`
+                : `<span class="ml-1 px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">AKTIF</span>`;
               return `
                 <div class="flex flex-col gap-0.5 mb-1 last:mb-0">
-                  <div class="flex items-center gap-1">
-                    <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold text-[11px]">${tm.masterE.terminal}</span>
-                    <span class="text-[11px] font-mono text-slate-600">${tm.masterE.noSiriDBKL}</span>
-                    ${pulangTag}
+                  <div class="flex items-center gap-1 flex-wrap">
+                    <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold text-[11px]">${escapeAttr(tm.masterE.terminal)}</span>
+                    <span class="text-[11px] font-mono text-slate-600">${escapeAttr(tm.masterE.noSiriDBKL)}</span>
+                    ${statusBadge}
                   </div>
                 </div>
               `;
             } else {
               return `
                 <div class="flex items-center gap-1.5 mb-1 last:mb-0">
-                  <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-bold text-[11px]">${tm.mobileABC}</span>
+                  <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-800 font-bold text-[11px]">${escapeAttr(tm.mobileABC)}</span>
                   <span class="text-[11px] text-orange-700 font-semibold">Tiada di MasterData</span>
-                  <button onclick="quickAddToSheetE('${tm.mobileABC}', '${row.jabatanD.replace(/'/g, "\\'")}')" class="ml-1 px-1.5 py-0.5 rounded bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-semibold">
+                  <button data-mobile="${escapeAttr(tm.mobileABC)}" data-jabatan="${escapeAttr(row.jabatanD)}" onclick="quickAddToSheetE(this.dataset.mobile, this.dataset.jabatan)" class="ml-1 px-1.5 py-0.5 rounded bg-orange-600 hover:bg-orange-500 text-white text-[10px] font-semibold">
                     + Daftar E
                   </button>
                 </div>
@@ -891,7 +1281,6 @@
           }).join('');
         }
 
-        // Overall Badge
         let badgeHTML = '';
         if (row.overallStatus === 'FULL_MATCH') {
           badgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">✅ Sepadan Penuh</span>`;
@@ -905,14 +1294,14 @@
           <tr class="hover:bg-slate-50/90 transition">
             <td class="px-4 py-3 font-medium text-slate-500">${row.index}</td>
             <td class="px-4 py-3">
-              <div class="font-bold text-slate-900">${row.namaD}</div>
-              <div class="text-[11px] text-slate-500 truncate max-w-[230px]" title="${row.jabatanD}">${row.jabatanD}</div>
+              <div class="font-bold text-slate-900">${escapeAttr(row.namaD)}</div>
+              <div class="text-[11px] text-slate-500 truncate max-w-[230px]" title="${escapeAttr(row.jabatanD)}">${escapeAttr(row.jabatanD)}</div>
             </td>
             <td class="px-4 py-3">${stage1HTML}</td>
             <td class="px-4 py-3">${stage2HTML}</td>
             <td class="px-4 py-3">${badgeHTML}</td>
             <td class="px-4 py-3 text-right">
-              <button onclick="openDetailModal('${row.namaD.replace(/'/g, "\\'")}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 text-[11px] font-semibold transition">
+              <button data-nama="${escapeAttr(row.namaD)}" onclick="openDetailModal(this.dataset.nama)" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 text-[11px] font-semibold transition">
                 Butiran Padanan
               </button>
             </td>
@@ -926,11 +1315,10 @@
       renderTable();
     }
 
-    // Quick Registration Actions
     function quickAddToSheetE(terminalCode, jabatan) {
-      const cleanCode = normalizeKey(terminalCode);
+      const cleanCode = normalizeTerminal(terminalCode);
       if (!cleanCode) return;
-      if (sheetE_Terminals.some(e => normalizeKey(e.terminal) === cleanCode)) return;
+      if (sheetE_Terminals.some(e => normalizeTerminal(e.terminal) === cleanCode)) return;
 
       sheetE_Terminals.unshift({
         terminal: cleanCode,
@@ -946,9 +1334,9 @@
     }
 
     function quickAddToSheetD(nama, mobile) {
-      const cleanName = normalizeKey(nama);
+      const cleanName = normalizeName(nama);
       if (!cleanName) return;
-      if (sheetD_Names.some(d => normalizeKey(d.nama) === cleanName)) return;
+      if (sheetD_Names.some(d => normalizeName(d.nama) === cleanName)) return;
 
       sheetD_Names.unshift({
         no: sheetD_Names.length + 1,
@@ -959,7 +1347,6 @@
       runChainedMatching();
     }
 
-    // Detail Modal (3-Layer Comparison)
     function openDetailModal(namaD) {
       const item = computedResults.allD.find(r => r.namaD === namaD);
       if (!item) return;
@@ -974,18 +1361,18 @@
               return `
                 <div class="p-4 rounded-xl bg-purple-50/60 border border-purple-200 space-y-2">
                   <div class="flex items-center justify-between">
-                    <span class="font-bold text-purple-900 text-sm">Padanan Terminal: ${tm.mobileABC} ➔ ${e.terminal}</span>
+                    <span class="font-bold text-purple-900 text-sm">Padanan Terminal: ${escapeAttr(tm.mobileABC)} ➔ ${escapeAttr(e.terminal)}</span>
                     <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${e.status === 'PULANG' ? 'bg-amber-200 text-amber-900' : 'bg-emerald-100 text-emerald-800'}">
-                      Status Master E: ${e.status}
+                      Status Master E: ${escapeAttr(e.status)}
                     </span>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700 pt-1">
-                    <div><span class="text-slate-400">No. Siri DBKL:</span> <strong class="font-mono">${e.noSiriDBKL}</strong></div>
-                    <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono">${e.noSiriMuamalat}</strong></div>
-                    <div><span class="text-slate-400">TID Bank:</span> <strong>${e.tidBank}</strong></div>
-                    <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono">${e.imei}</strong></div>
-                    <div><span class="text-slate-400">No. SIM:</span> <strong class="font-mono">${e.sim}</strong></div>
-                    <div><span class="text-slate-400">Jabatan (Sheet E):</span> <strong>${e.jabatan}</strong></div>
+                    <div><span class="text-slate-400">No. Siri DBKL:</span> <strong class="font-mono">${escapeAttr(e.noSiriDBKL)}</strong></div>
+                    <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono">${escapeAttr(e.noSiriMuamalat)}</strong></div>
+                    <div><span class="text-slate-400">TID Bank:</span> <strong>${escapeAttr(e.tidBank)}</strong></div>
+                    <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono">${escapeAttr(e.imei)}</strong></div>
+                    <div><span class="text-slate-400">No. SIM:</span> <strong class="font-mono">${escapeAttr(e.sim)}</strong></div>
+                    <div><span class="text-slate-400">Jabatan (Sheet E):</span> <strong>${escapeAttr(e.jabatan)}</strong></div>
                   </div>
                 </div>
               `;
@@ -993,10 +1380,10 @@
               return `
                 <div class="p-4 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-between gap-3">
                   <div>
-                    <div class="font-bold text-orange-900">Mobile "${tm.mobileABC}" — Tiada Rekod Handheld di MasterData</div>
+                    <div class="font-bold text-orange-900">Mobile "${escapeAttr(tm.mobileABC)}" — Tiada Rekod Handheld di MasterData</div>
                     <p class="text-orange-700 mt-0.5">Kod peranti ini digunakan oleh pegawai dalam Sheet A/B/C, namun belum wujud dalam senarai induk Sheet E.</p>
                   </div>
-                  <button onclick="quickAddToSheetE('${tm.mobileABC}', '${item.jabatanD.replace(/'/g, "\\'")}'); closeDetailModal();" class="shrink-0 px-3 py-1.5 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-500">
+                  <button data-mobile="${escapeAttr(tm.mobileABC)}" data-jabatan="${escapeAttr(item.jabatanD)}" onclick="quickAddToSheetE(this.dataset.mobile, this.dataset.jabatan); closeDetailModal();" class="shrink-0 px-3 py-1.5 rounded-lg bg-orange-600 text-white font-semibold hover:bg-orange-500">
                     + Daftar ke Sheet E
                   </button>
                 </div>
@@ -1022,10 +1409,10 @@
                 <tbody class="divide-y divide-slate-100">
                   ${item.logs.map(l => `
                     <tr>
-                      <td class="px-3 py-1.5 font-bold text-indigo-600">Sheet ${l.sheet}</td>
-                      <td class="px-3 py-1.5">${l.namaPengguna}</td>
-                      <td class="px-3 py-1.5 font-bold text-blue-700">${l.mobile}</td>
-                      <td class="px-3 py-1.5 text-slate-500">${l.tarikh}</td>
+                      <td class="px-3 py-1.5 font-bold text-indigo-600">Sheet ${escapeAttr(l.sheet)}</td>
+                      <td class="px-3 py-1.5">${escapeAttr(l.namaPengguna)}</td>
+                      <td class="px-3 py-1.5 font-bold text-blue-700">${escapeAttr(l.mobile)}</td>
+                      <td class="px-3 py-1.5 text-slate-500">${escapeAttr(l.tarikh)}</td>
                     </tr>
                   `).join('')}
                 </tbody>
@@ -1038,15 +1425,15 @@
         <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <span class="text-slate-400 block">Kunci Utama (Sheet D)</span>
-            <strong class="text-slate-900">${item.namaD}</strong>
+            <strong class="text-slate-900">${escapeAttr(item.namaD)}</strong>
           </div>
           <div>
             <span class="text-slate-400 block">Jabatan (Sheet D)</span>
-            <strong class="text-slate-800">${item.jabatanD}</strong>
+            <strong class="text-slate-800">${escapeAttr(item.jabatanD)}</strong>
           </div>
           <div>
             <span class="text-slate-400 block">Mobile Ditemui (Sheet A/B/C)</span>
-            <strong class="text-blue-700">${item.mobilesFromABC.join(', ') || 'Tiada'}</strong>
+            <strong class="text-blue-700">${escapeAttr(item.mobilesFromABC.join(', ') || 'Tiada')}</strong>
           </div>
         </div>
         <div class="space-y-3">
@@ -1067,7 +1454,6 @@
       modal.classList.remove('flex');
     }
 
-    // Upload CSV Modal
     function openUploadModal() {
       const m = document.getElementById('uploadModal');
       m.classList.remove('hidden');
@@ -1081,24 +1467,54 @@
     }
 
     function parseCSV(text) {
-      const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
-      if (lines.length < 2) return [];
-      const parseLine = (line) => {
-        const res = [];
-        let cur = '';
-        let inQuotes = false;
-        for (let i = 0; i < line.length; i++) {
-          const ch = line[i];
-          if (ch === '"') inQuotes = !inQuotes;
-          else if (ch === ',' && !inQuotes) { res.push(cur.trim()); cur = ''; }
-          else cur += ch;
+      const rows = [];
+      let curRow = [];
+      let curVal = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        const nextCh = text[i + 1];
+
+        if (inQuotes) {
+          if (ch === '"' && nextCh === '"') {
+            curVal += '"';
+            i++;
+          } else if (ch === '"') {
+            inQuotes = false;
+          } else {
+            curVal += ch;
+          }
+        } else {
+          if (ch === '"') {
+            inQuotes = true;
+          } else if (ch === ',') {
+            curRow.push(curVal.trim());
+            curVal = '';
+          } else if (ch === '\r' && nextCh === '\n') {
+            curRow.push(curVal.trim());
+            if (curRow.some(c => c !== '')) rows.push(curRow);
+            curRow = [];
+            curVal = '';
+            i++;
+          } else if (ch === '\n' || ch === '\r') {
+            curRow.push(curVal.trim());
+            if (curRow.some(c => c !== '')) rows.push(curRow);
+            curRow = [];
+            curVal = '';
+          } else {
+            curVal += ch;
+          }
         }
-        res.push(cur.trim());
-        return res;
-      };
-      const headers = parseLine(lines[0]).map(h => h.toUpperCase());
-      return lines.slice(1).map(line => {
-        const vals = parseLine(line);
+      }
+      if (curVal.length > 0 || curRow.length > 0) {
+        curRow.push(curVal.trim());
+        if (curRow.some(c => c !== '')) rows.push(curRow);
+      }
+
+      if (rows.length < 2) return [];
+      const headers = rows[0].map(h => h.toUpperCase().trim());
+      return rows.slice(1).map(vals => {
         const obj = {};
         headers.forEach((h, idx) => { obj[h] = vals[idx] || ''; });
         return obj;
@@ -1164,7 +1580,6 @@
       reader.readAsText(fileInput.files[0]);
     }
 
-    // Live Google Sheets Sync Attempt (Sheets A, B, C, D, E)
     async function syncGoogleSheets(manual = false) {
       const icon = document.getElementById('syncIcon');
       const statusTitle = document.getElementById('statusTitle');
@@ -1202,43 +1617,61 @@
       runChainedMatching();
     }
 
-    // Export CSV
     function exportCurrentCSV() {
-      const { allD } = computedResults;
-      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Sheet D)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal Master (Sheet E)', 'No Siri DBKL', 'Status Keseluruhan'];
+      const filtered = getFilteredList();
+      if (activeTab === 'master_e') {
+        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri DBKL', 'No Siri Muamalat', 'IMEI', 'SIM', 'Jabatan', 'Status', 'Bil Log'];
+        const lines = [headers.join(',')];
+        filtered.forEach(r => {
+          lines.push([
+            r.index, `"${r.terminal}"`, `"${r.tidBank}"`, `"${r.noSiriDBKL}"`, `"${r.noSiriMuamalat}"`,
+            `"${r.imei}"`, `"${r.sim}"`, `"${r.jabatan}"`, `"${r.status}"`, r.totalLogs
+          ].join(','));
+        });
+        downloadCSVFile(lines.join('\n'), `Master_Sheet_E_eZpay2026.csv`);
+        return;
+      }
+
+      const headers = ['No', 'Nama (Sheet D)', 'Jabatan', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal Master (Sheet E)', 'Status Terminal', 'No Siri DBKL', 'Status Keseluruhan'];
       const lines = [headers.join(',')];
 
-      allD.forEach(r => {
-        const mob = r.mobilesFromABC.join(' | ') || '-';
-        const termE = r.terminalMatches.map(t => t.matchedInE ? t.masterE.terminal : 'TIADA').join(' | ') || '-';
-        const siriDBKL = r.terminalMatches.map(t => t.matchedInE ? t.masterE.noSiriDBKL : '-').join(' | ') || '-';
+      filtered.forEach((r, idx) => {
+        const nama = r.namaD || r.namaPengguna || '-';
+        const jab = r.jabatanD || r.jabatanInferred || '-';
+        const mob = (r.mobilesFromABC || []).join(' | ') || '-';
+        const termE = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.terminal : 'TIADA').join(' | ') || '-';
+        const statusTerm = (r.terminalStatuses || []).join(' | ') || '-';
+        const siriDBKL = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.noSiriDBKL : '-').join(' | ') || '-';
         const statusLabel = r.overallStatus === 'FULL_MATCH'
           ? 'Sepadan Penuh'
-          : (r.overallStatus === 'UNMATCHED_E' ? 'Tiada Rekod Handheld di MasterData' : 'Tiada Rekod di A/B/C');
+          : (r.overallStatus === 'UNMATCHED_E' ? 'Tiada Rekod Handheld di MasterData' : (r.overallStatus === 'UNMATCHED_ABC' ? 'Tiada Rekod di A/B/C' : 'Tiada di Sheet D'));
 
-        const row = [
-          r.index,
-          `"${r.namaD}"`,
-          `"${r.jabatanD}"`,
-          r.stage1Status,
+        lines.push([
+          r.index || (idx + 1),
+          `"${nama}"`,
+          `"${jab}"`,
+          r.stage1Status || 'ORPHAN_ABC',
           `"${mob}"`,
-          r.totalLogs,
-          r.stage2Status,
+          r.totalLogs || 0,
+          r.stage2Status || '-',
           `"${termE}"`,
+          `"${statusTerm}"`,
           `"${siriDBKL}"`,
           `"${statusLabel}"`
-        ];
-        lines.push(row.join(','));
+        ].join(','));
       });
 
-      const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      downloadCSVFile(lines.join('\n'), `Padanan_eZpay2026_${activeTab}.csv`);
+    }
+
+    function downloadCSVFile(csvContent, filename) {
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `Padanan_Berangkai_D_ABC_E_eZpay2026.csv`;
+      link.download = filename;
       link.click();
     }
 
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       runChainedMatching();
