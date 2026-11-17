@@ -47,7 +47,7 @@
               Padanan D ➔ A,B,C ➔ E & F
             </span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal (E) & No. Siri Aset (F)</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal (E) & No. Siri Pendaftaran (F)</p>
         </div>
       </div>
 
@@ -141,7 +141,7 @@
         <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
         <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-purple-50 text-purple-800 font-semibold border border-purple-200">
           <i data-lucide="server" class="w-3.5 h-3.5 text-purple-600 shrink-0"></i>
-          <span>Sheet E (Terminal) & Sheet F (NO SIRI ASET)</span>
+          <span>Sheet E (Serial Number) ➔ Sheet F (NO. SIRI PENDAFTARAN)</span>
         </span>
       </div>
     </div>
@@ -203,7 +203,7 @@
           </div>
         </div>
         <div class="text-xl sm:text-2xl font-extrabold text-purple-600" id="kpiTotalE">0</div>
-        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Terminal Induk & Aset</p>
+        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Terminal Induk & Daftar</p>
       </div>
     </div>
 
@@ -351,7 +351,7 @@
               type="text"
               id="searchInput"
               oninput="handleSearch()"
-              placeholder="Cari Nama, TID, No. Siri Aset (F)..."
+              placeholder="Cari Nama, TID, No. Siri Pendaftaran..."
               class="w-full min-h-[38px] pl-9 sm:pl-8 pr-3 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
             />
           </div>
@@ -397,7 +397,7 @@
 
       <!-- Contextual Info Bar for Active Tab -->
       <div id="tabContextBar" class="px-3.5 sm:px-4 py-2.5 bg-emerald-50/60 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-        <span id="tabContextText" class="leading-relaxed">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & NO SIRI ASET (Sheet F).</span>
+        <span id="tabContextText" class="leading-relaxed">Memaparkan padanan lengkap: Nama (Sheet D) ditemui dalam Sheet A/B/C dan No. Siri Muamalat dipadankan dengan NO. SIRI PENDAFTARAN di Sheet F.</span>
         <span id="resultCountLabel" class="font-bold text-slate-800 shrink-0">0 rekod dipaparkan</span>
       </div>
 
@@ -545,7 +545,7 @@
       { terminal: "P5915", tidBank: "P5915", noSiriDBKL: "DBKL/JKEW/01/H/2024/76(S)", noSiriMuamalat: "PB0B22CU20947", imei: "862318060164723", sim: "8944502401191693252", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", status: "AKTIF" }
     ];
 
-    // 2B. MASTER DATA SHEET F (NO SIRI ASET ➔ No. Siri Pendaftaran DBKL)
+    // 2B. MASTER DATA SHEET F (Kunci Rujukan: No. Siri Muamalat / Serial Number ➔ NO. SIRI PENDAFTARAN)
     let sheetF_Assets = [];
 
     // 3. LOG PENGGUNAAN SHEET A, B, C (Nama Pengguna + Mobile)
@@ -662,16 +662,12 @@
       return clean;
     }
 
-    // Menyeragamkan nombor siri Muamalat (termasuk kes typo awalan berganda seperti PPB0B2... vs PB0B2...)
+    // Menyeragamkan kunci No. Siri Muamalat (Serial Number) antara Sheet E dan Sheet F
     function normalizeSerialKey(str) {
       let clean = (str || '').toString().toUpperCase().replace(/[^A-Z0-9]/g, '').trim();
       if (!clean || clean === '-') return '';
       if (clean.startsWith('PPB')) clean = clean.slice(1);
       return clean;
-    }
-
-    function normalizeDigitsKey(str) {
-      return (str || '').toString().replace(/\D/g, '').trim();
     }
 
     function escapeAttr(str) {
@@ -703,39 +699,27 @@
       return { deptByTerminal, deptByName };
     }
 
-    // Padanan No. Siri Pendaftaran DBKL = Sheet F NO SIRI ASET
+    // Padanan No. Siri Pendaftaran DBKL = NO. SIRI PENDAFTARAN di Sheet F (kunci rujukan: No. Siri Muamalat / Serial Number)
     function buildSheetFAssetLookup() {
-      const assetByTerminal = new Map();
       const assetByMuamalat = new Map();
-      const assetByImei = new Map();
-      const assetBySim = new Map();
+      const assetByTerminal = new Map();
 
       sheetF_Assets.forEach(f => {
-        const siriAset = (f.noSiriAset || '').toString().trim();
-        if (!siriAset || siriAset === '-') return;
-
-        const termKey = normalizeTerminal(f.terminal);
-        if (termKey && !assetByTerminal.has(termKey)) {
-          assetByTerminal.set(termKey, siriAset);
-        }
+        const noSiriPendaftaran = (f.noSiriPendaftaran || '').toString().trim();
+        if (!noSiriPendaftaran || noSiriPendaftaran === '-') return;
 
         const serialKey = normalizeSerialKey(f.noSiriMuamalat);
         if (serialKey && !assetByMuamalat.has(serialKey)) {
-          assetByMuamalat.set(serialKey, siriAset);
+          assetByMuamalat.set(serialKey, noSiriPendaftaran);
         }
 
-        const imeiKey = normalizeDigitsKey(f.imei);
-        if (imeiKey && imeiKey.length >= 8 && !assetByImei.has(imeiKey)) {
-          assetByImei.set(imeiKey, siriAset);
-        }
-
-        const simKey = normalizeDigitsKey(f.sim);
-        if (simKey && simKey.length >= 8 && !assetBySim.has(simKey)) {
-          assetBySim.set(simKey, siriAset);
+        const termKey = normalizeTerminal(f.terminal);
+        if (termKey && !assetByTerminal.has(termKey)) {
+          assetByTerminal.set(termKey, noSiriPendaftaran);
         }
       });
 
-      return { assetByTerminal, assetByMuamalat, assetByImei, assetBySim };
+      return { assetByMuamalat, assetByTerminal };
     }
 
     function populateJabatanDropdown() {
@@ -770,14 +754,12 @@
         : logRecordsABC.filter(r => r.sheet === selectedLogSheet);
 
       const { deptByTerminal, deptByName } = buildSheetDDepartmentLookup();
-      const { assetByTerminal, assetByMuamalat, assetByImei, assetBySim } = buildSheetFAssetLookup();
+      const { assetByMuamalat, assetByTerminal } = buildSheetFAssetLookup();
 
       const mapE = new Map();
       const enrichedMasterE = sheetE_Terminals.map((item, idx) => {
         const keyTerm = normalizeTerminal(item.terminal);
         const keyMuamalat = normalizeSerialKey(item.noSiriMuamalat);
-        const keyImei = normalizeDigitsKey(item.imei);
-        const keySim = normalizeDigitsKey(item.sim);
 
         const termLogs = filteredLogs.filter(l => normalizeTerminal(l.mobile) === keyTerm);
         const usersInLogs = [...new Set(termLogs.map(l => l.namaPengguna))];
@@ -796,12 +778,10 @@
 
         const resolvedTID = (item.tidBank && item.tidBank !== '-') ? item.tidBank : (item.terminal || '-');
 
-        // Padanan No. Siri Pendaftaran DBKL daripada Sheet F (NO SIRI ASET)
+        // Kunci rujukan utama pada No. Siri Muamalat (Serial Number) -> NO. SIRI PENDAFTARAN di Sheet F
         const siriFromSheetF =
-          assetByTerminal.get(keyTerm) ||
           assetByMuamalat.get(keyMuamalat) ||
-          assetByImei.get(keyImei) ||
-          assetBySim.get(keySim) ||
+          assetByTerminal.get(keyTerm) ||
           '';
 
         const resolvedSiriDBKL = siriFromSheetF || item.noSiriDBKL || '-';
@@ -1380,7 +1360,7 @@
       const contexts = {
         full_match: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-emerald-50/70 border-b border-emerald-100 text-xs text-emerald-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
-          txt: '✅ Sepadan Penuh: Nama (Sheet D) ditemui dalam Sheet A/B/C dan kod Mobile sepadan dengan Terminal (Sheet E) & NO SIRI ASET (Sheet F).'
+          txt: '✅ Sepadan Penuh: Nama (Sheet D) ditemui dalam Sheet A/B/C dan No. Siri Muamalat dipadankan dengan NO. SIRI PENDAFTARAN di Sheet F.'
         },
         unmatched_e: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-orange-50/80 border-b border-orange-100 text-xs text-orange-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
@@ -1392,7 +1372,7 @@
         },
         master_e: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-purple-50/80 border-b border-purple-100 text-xs text-purple-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
-          txt: '🗄️ Master Data Sheet E & F: Senarai induk Terminal (TID = TERMINAL, No. Siri Pendaftaran DBKL = Sheet F NO SIRI ASET, Serial Number Muamalat & Jabatan).'
+          txt: '🗄️ Master Data Sheet E & F: No. Siri Pendaftaran DBKL = NO. SIRI PENDAFTARAN di Sheet F berdasarkan kunci rujukan No. Siri Muamalat (Serial Number).'
         },
         orphan_abc: {
           cls: 'px-3.5 sm:px-4 py-2.5 bg-rose-50/80 border-b border-rose-100 text-xs text-rose-900 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5',
@@ -1570,8 +1550,8 @@
             </div>
             <div class="font-semibold text-slate-800 leading-snug">${escapeAttr(row.jabatan || '-')}</div>
             <div class="grid grid-cols-1 gap-1 bg-slate-50 p-2 rounded-lg border border-slate-100 text-[11px] text-slate-600">
-              <div><span class="text-slate-400">No. Siri Aset (F):</span> <span class="font-mono font-semibold text-indigo-800">${escapeAttr(row.noSiriDBKL || '-')}</span></div>
-              <div><span class="text-slate-400">Muamalat:</span> <span class="font-mono font-medium text-slate-800">${escapeAttr(row.noSiriMuamalat || '-')}</span></div>
+              <div><span class="text-slate-400">No. Siri Pendaftaran (F):</span> <span class="font-mono font-semibold text-indigo-800">${escapeAttr(row.noSiriDBKL || '-')}</span></div>
+              <div><span class="text-slate-400">No. Siri Muamalat:</span> <span class="font-mono font-medium text-slate-800">${escapeAttr(row.noSiriMuamalat || '-')}</span></div>
             </div>
             <div class="text-[11px] pt-0.5">
               ${row.totalLogs > 0
@@ -1662,7 +1642,7 @@
           <th class="px-4 py-3">No</th>
           <th class="px-4 py-3">Kunci Utama: Nama & Jabatan (Sheet D)</th>
           <th class="px-4 py-3">Peringkat 1: Padanan A/B/C (Mobile)</th>
-          <th class="px-4 py-3">Peringkat 2: Terminal (E) & No. Siri Aset (F)</th>
+          <th class="px-4 py-3">Peringkat 2: Terminal (E) & No. Siri Pendaftaran (F)</th>
           <th class="px-4 py-3">Status Keseluruhan</th>
           <th class="px-4 py-3 text-right">Tindakan</th>
         </tr>
@@ -1848,7 +1828,7 @@
                     </span>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700 pt-1">
-                    <div><span class="text-slate-400">No. Siri DBKL (Sheet F):</span> <strong class="font-mono text-indigo-800 break-all">${escapeAttr(e.noSiriDBKL || '-')}</strong></div>
+                    <div><span class="text-slate-400">No. Siri Pendaftaran (Sheet F):</span> <strong class="font-mono text-indigo-800 break-all">${escapeAttr(e.noSiriDBKL || '-')}</strong></div>
                     <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono break-all">${escapeAttr(displayMuamalat)}</strong></div>
                     <div><span class="text-slate-400">TID Bank (Terminal):</span> <strong>${escapeAttr(displayTID)}</strong></div>
                     <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono break-all">${escapeAttr(e.imei || '-')}</strong></div>
@@ -1918,7 +1898,7 @@
           </div>
         </div>
         <div class="space-y-3">
-          <h4 class="font-bold text-slate-800">Hasil Padanan Master Data Sheet E & NO SIRI ASET Sheet F</h4>
+          <h4 class="font-bold text-slate-800">Hasil Padanan Master Data Sheet E & NO. SIRI PENDAFTARAN Sheet F</h4>
           ${masterCards}
         </div>
         ${logsTable}
@@ -1988,11 +1968,11 @@
 
       if (rows.length < 2) return [];
 
-      // Kesan baris pengepala sebenar dalam 15 baris teratas (jika helaian mempunyai tajuk laporan di baris 1)
+      // Kesan baris pengepala sebenar dalam 15 baris teratas
       const knownHeaderTokens = [
         'NAMA', 'NAMA PENGGUNA', 'NAMA PEGAWAI',
         'TERMINAL', 'TID', 'MOBILE', 'NO PERANTI', 'NO. PERANTI',
-        'SERIAL NUMBER', 'SERAIL NUMBER', 'NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET'
+        'SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SIRI PENDAFTARAN', 'NO SIRI PENDAFTARAN', 'NO SIRI ASET'
       ];
 
       let headerRowIdx = 0;
@@ -2025,7 +2005,7 @@
       });
     }
 
-    function pickCol(rowObj, exactKeys, partialPatterns = []) {
+    function pickCol(rowObj, exactKeys, partialPatterns = [], excludePatterns = []) {
       const normalizedMap = new Map();
       Object.keys(rowObj).forEach(k => {
         if (k === '_rawValues') return;
@@ -2033,37 +2013,71 @@
         normalizedMap.set(normK, rowObj[k]);
       });
 
+      const isExcluded = (colName) =>
+        excludePatterns.some(ex => colName.includes(ex.toUpperCase()));
+
       for (const k of exactKeys) {
         const normTarget = k.toUpperCase().replace(/\s+/g, ' ').trim();
-        if (normalizedMap.has(normTarget) && normalizedMap.get(normTarget) !== '') {
+        if (normalizedMap.has(normTarget) && !isExcluded(normTarget) && normalizedMap.get(normTarget) !== '') {
           return normalizedMap.get(normTarget);
         }
       }
       for (const pat of partialPatterns) {
         const normPat = pat.toUpperCase().replace(/\s+/g, ' ').trim();
         for (const [k, val] of normalizedMap.entries()) {
-          if (k.includes(normPat) && val !== '') return val;
+          if (k.includes(normPat) && !isExcluded(k) && val !== '') return val;
         }
       }
       return '';
     }
 
-    // Imbas sel baris Sheet F untuk mengesan nilai No. Siri Aset DBKL walaupun nama lajur berbeza
-    function extractDBKLAssetNumber(rowObj) {
+    // Semak sama ada nilai tersebut ialah siri perkakasan Muamalat (bukan No. Siri Pendaftaran DBKL)
+    function isHardwareSerialMuamalat(val) {
+      return /^P{1,2}B0B/i.test((val || '').toString().trim());
+    }
+
+    // Baca lajur NO. SIRI PENDAFTARAN di Sheet F (elak terambil lajur No. Siri Muamalat)
+    function extractDBKLRegistrationNumber(rowObj) {
       const explicitVal = pickCol(
         rowObj,
         [
-          'NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET', 'NO SIRI ASET DBKL',
+          'NO. SIRI PENDAFTARAN', 'NO SIRI PENDAFTARAN',
           'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL',
-          'NO SIRI DBKL', 'NO. SIRI DBKL', 'NO SIRI', 'NO. SIRI'
+          'NO SIRI ASET', 'NO. SIRI ASET', 'NO SIRI DBKL', 'NO. SIRI DBKL'
         ],
-        ['NO SIRI ASET', 'NO. SIRI ASET', 'SIRI ASET', 'ASET', 'PENDAFTARAN']
+        ['PENDAFTARAN', 'ASET'],
+        ['MUAMALAT', 'SERIAL', 'SERAIL']
       );
-      if (explicitVal && explicitVal !== '-') return explicitVal;
+
+      if (explicitVal && explicitVal !== '-' && !isHardwareSerialMuamalat(explicitVal)) {
+        return explicitVal;
+      }
 
       const vals = rowObj._rawValues || Object.values(rowObj);
       for (const v of vals) {
-        if (typeof v === 'string' && /DBKL\//i.test(v)) {
+        if (typeof v === 'string' && /DBKL\//i.test(v) && !isHardwareSerialMuamalat(v)) {
+          return v.trim();
+        }
+      }
+      return '';
+    }
+
+    function extractMuamalatSerialFromRow(rowObj) {
+      const explicitSerial = pickCol(
+        rowObj,
+        [
+          'NO. SIRI MUAMALAT', 'NO SIRI MUAMALAT',
+          'SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SERIAL NUMBER', 'NO SERIAL NUMBER',
+          'S/N', 'SN'
+        ],
+        ['MUAMALAT', 'SERIAL', 'SERAIL', 'S/N'],
+        ['PENDAFTARAN', 'ASET', 'DBKL']
+      );
+      if (explicitSerial && explicitSerial !== '-') return explicitSerial;
+
+      const vals = rowObj._rawValues || Object.values(rowObj);
+      for (const v of vals) {
+        if (typeof v === 'string' && isHardwareSerialMuamalat(v)) {
           return v.trim();
         }
       }
@@ -2091,23 +2105,6 @@
       return '';
     }
 
-    function extractMuamalatSerialFromRow(rowObj) {
-      const explicitSerial = pickCol(
-        rowObj,
-        ['SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SERIAL NUMBER', 'NO SERIAL NUMBER', 'NO SIRI MUAMALAT', 'NO. SIRI MUAMALAT', 'S/N', 'SN'],
-        ['SERIAL', 'SERAIL', 'MUAMALAT', 'S/N']
-      );
-      if (explicitSerial) return explicitSerial;
-
-      const vals = rowObj._rawValues || Object.values(rowObj);
-      for (const v of vals) {
-        if (typeof v === 'string' && /^P{1,2}B0B/i.test(v.trim())) {
-          return v.trim();
-        }
-      }
-      return '';
-    }
-
     function applyParsedSheetData(sheetName, rows) {
       if (!rows || rows.length === 0) return false;
 
@@ -2127,14 +2124,8 @@
           const normTerm = normalizeTerminal(termVal);
 
           const tidVal = termVal || pickCol(r, ["TID(0000') BANK", 'TID BANK', 'TID'], ['TID']) || '-';
-
           const muamalatVal = extractMuamalatSerialFromRow(r) || '-';
-
-          const siriDBKLVal = pickCol(
-            r,
-            ['NO SIRI ASET', 'NO. SIRI ASET', 'NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO. SIRI DBKL'],
-            ['ASET', 'PENDAFTARAN', 'DBKL']
-          ) || '-';
+          const siriDBKLVal = extractDBKLRegistrationNumber(r) || '-';
 
           const jabSheetE = normalizeDepartmentName(pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN'], ['JABATAN', 'BAHAGIAN']));
           const jabFromD = deptByTerminal.get(normTerm) || '';
@@ -2156,20 +2147,16 @@
 
       } else if (sheetName === 'F') {
         const mapped = rows.map(r => {
-          const siriAsetVal = extractDBKLAssetNumber(r);
-          const termVal = extractTerminalFromRow(r);
+          const noSiriPendaftaranVal = extractDBKLRegistrationNumber(r);
           const muamalatVal = extractMuamalatSerialFromRow(r);
-          const imeiVal = pickCol(r, ['IMEI1', 'IMEI 1', 'IMEI', 'NO IMEI', 'NO. IMEI'], ['IMEI']) || '';
-          const simVal = pickCol(r, ['SIMCARD NUMBER', 'SIM CARD NUMBER', 'NO SIM', 'NO. SIM', 'SIM', 'ICCID'], ['SIM', 'ICCID']) || '';
+          const termVal = extractTerminalFromRow(r);
 
           return {
-            terminal: termVal,
             noSiriMuamalat: muamalatVal,
-            imei: imeiVal,
-            sim: simVal,
-            noSiriAset: siriAsetVal
+            terminal: termVal,
+            noSiriPendaftaran: noSiriPendaftaranVal
           };
-        }).filter(x => x.noSiriAset && (x.terminal || x.noSiriMuamalat || x.imei || x.sim));
+        }).filter(x => x.noSiriPendaftaran && (x.noSiriMuamalat || x.terminal));
 
         if (mapped.length > 0) {
           sheetF_Assets = mapped;
@@ -2226,7 +2213,7 @@
 
       const timeStr = new Date().toLocaleTimeString('ms-MY');
       if (syncedCount > 0) {
-        statusTitle.textContent = `Sync Langsung Berjaya (${syncedCount} Sheet • ${sheetF_Assets.length} Rekod Aset F)`;
+        statusTitle.textContent = `Sync Langsung Berjaya (${syncedCount} Sheet • ${sheetF_Assets.length} Rekod Sheet F)`;
         statusDesc.textContent = `• Auto-Sync setiap 1 minit • Kemas kini: ${timeStr}`;
       } else {
         statusTitle.textContent = `Menggunakan Data Tempatan Disegerakkan (Sheet A, B, C, D, E & F)`;
