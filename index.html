@@ -100,7 +100,7 @@
         <span class="font-semibold text-slate-500 uppercase tracking-wider mr-1">Aliran Padanan:</span>
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 font-semibold border border-slate-200">
           <i data-lucide="user-check" class="w-3.5 h-3.5 text-indigo-600"></i>
-          Sheet D (Kunci: NAMA)
+          Sheet D (Kunci: NAMA & JABATAN)
         </span>
         <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400"></i>
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 font-semibold border border-blue-200">
@@ -110,7 +110,7 @@
         <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400"></i>
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-purple-50 text-purple-800 font-semibold border border-purple-200">
           <i data-lucide="server" class="w-3.5 h-3.5 text-purple-600"></i>
-          Master Data Sheet E (Padan MOBILE = TERMINAL)
+          Master Data Sheet E (TID = TERMINAL, SERIAL NUMBER)
         </span>
       </div>
     </div>
@@ -184,7 +184,7 @@
             <i data-lucide="bar-chart-3" class="w-4 h-4"></i>
           </div>
           <div>
-            <h2 class="text-xs sm:text-sm font-bold text-slate-800">Analitik Visual: Pecahan Peranti Mengikut Jabatan & Status (AKTIF / PULANG)</h2>
+            <h2 class="text-xs sm:text-sm font-bold text-slate-800">Analitik Visual: Pecahan Peranti Mengikut Jabatan (Sheet D) & Status (AKTIF / PULANG)</h2>
             <p class="text-[11px] text-slate-500">Klik pada mana-mana bar Jabatan atau segmen Donut untuk menapis jadual secara automatik</p>
           </div>
         </div>
@@ -198,7 +198,7 @@
         <!-- Left (2 Cols): Stacked Bar Chart by Department & Status -->
         <div class="lg:col-span-2 bg-slate-50/50 border border-slate-200/80 rounded-xl p-4 flex flex-col">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-slate-700">Taburan Terminal (Sheet E) Mengikut Jabatan</span>
+            <span class="text-xs font-bold text-slate-700">Taburan Terminal (Sheet E) Mengikut Jabatan (Sheet D)</span>
             <div class="flex items-center gap-3 text-[11px] font-semibold">
               <span class="inline-flex items-center gap-1 text-emerald-700">
                 <span class="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block"></span> AKTIF
@@ -223,7 +223,6 @@
             <canvas id="statusDoughnutChart"></canvas>
           </div>
           <div id="doughnutSummaryFooter" class="pt-2 border-t border-slate-200/80 grid grid-cols-3 gap-2 text-center text-[11px]">
-            <!-- Populated dynamically -->
           </div>
         </div>
       </div>
@@ -268,7 +267,7 @@
               type="text"
               id="searchInput"
               oninput="handleSearch()"
-              placeholder="Cari Nama, Mobile, Terminal E, Siri..."
+              placeholder="Cari Nama, TID/Terminal, Serial Number..."
               class="w-full pl-8 pr-3 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
             />
           </div>
@@ -409,7 +408,7 @@
   <script>
     const SPREADSHEET_ID = '1G_KQVUCY5q-YhA_XIm4my44nMXgYAc0CW5NDe6qLqK8';
 
-    // 1. MASTER DATA SHEET D (Kunci Utama: Nama)
+    // 1. MASTER DATA SHEET D (Kunci Utama: Nama & Jabatan)
     let sheetD_Names = [
       { no: 1, nama: "HANI NAJWA BINTI HANIP", jabatan: "Bahagian Hasil", perantiRujukan: "P5846" },
       { no: 2, nama: "MOHD KAMARUL BIN MANSOR", jabatan: "Bahagian Hasil", perantiRujukan: "P5847" },
@@ -457,42 +456,42 @@
       { no: 44, nama: "KHAIRUDIN BIN RAMLI", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5915" }
     ];
 
-    // 2. MASTER DATA SHEET E (Kunci Rujukan: TERMINAL)
+    // 2. MASTER DATA SHEET E (TID = TERMINAL, No. Siri Muamalat = SERIAL NUMBER, Jabatan = Jabatan Sheet D)
     let sheetE_Terminals = [
-      { terminal: "P5846", tidBank: "5846", noSiriDBKL: "DBKL/JKEW/01/H/2024/07(S)", noSiriMuamalat: "PB0B22CU20514", imei: "862318060158709", sim: "8944502401191693096", jabatan: "Bahagian Hasil", status: "AKTIF" },
-      { terminal: "P5847", tidBank: "5847", noSiriDBKL: "DBKL/JKEW/01/H/2024/08(S)", noSiriMuamalat: "PB0B22CU20868", imei: "862318060166223", sim: "8944502401191693088", jabatan: "Bahagian Hasil", status: "AKTIF" },
-      { terminal: "P5851", tidBank: "5851", noSiriDBKL: "DBKL/JKEW/01/H/2024/12(S)", noSiriMuamalat: "PB0B22CT20040", imei: "862318060136887", sim: "8944502401191692932", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5855", tidBank: "5855", noSiriDBKL: "DBKL/JKEW/01/H/2024/16(S)", noSiriMuamalat: "PB0B22CT20077", imei: "862318060137661", sim: "8944502401191692940", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5857", tidBank: "5857", noSiriDBKL: "DBKL/JKEW/01/H/2024/18(S)", noSiriMuamalat: "PB0B22CU20697", imei: "862318060157289", sim: "8944502401191693120", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5858", tidBank: "5858", noSiriDBKL: "DBKL/JKEW/01/H/2024/19(S)", noSiriMuamalat: "PB0B22CT20263", imei: "862318060141481", sim: "8944502401191693112", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5859", tidBank: "5859", noSiriDBKL: "DBKL/JKEW/01/H/2024/20(S)", noSiriMuamalat: "PB0B22CU20776", imei: "862318060164509", sim: "8944502401191693153", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5860", tidBank: "5860", noSiriDBKL: "DBKL/JKEW/01/H/2024/21(S)", noSiriMuamalat: "PB0B22CU20136", imei: "862318060148882", sim: "8944502401191693146", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5861", tidBank: "5861", noSiriDBKL: "DBKL/JKEW/01/H/2024/22(S)", noSiriMuamalat: "PB0B231320002", imei: "862318060160325", sim: "8944502401191693187", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5862", tidBank: "5862", noSiriDBKL: "DBKL/JKEW/01/H/2024/23(S)", noSiriMuamalat: "PB0B22CT20048", imei: "862318060136788", sim: "8944502401191693203", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5863", tidBank: "5863", noSiriDBKL: "DBKL/JKEW/01/H/2024/24(S)", noSiriMuamalat: "PB0B22CT20001", imei: "862318060136044", sim: "8944502401191693195", jabatan: "JPKKB, UKA, KAUNTER BAYARAN", status: "AKTIF" },
-      { terminal: "P5864", tidBank: "5864", noSiriDBKL: "DBKL/JKEW/01/H/2024/25(S)", noSiriMuamalat: "PB0B22CT20281", imei: "862318060141820", sim: "8944502401191693161", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
-      { terminal: "P5865", tidBank: "5865", noSiriDBKL: "DBKL/JKEW/01/H/2024/26(S)", noSiriMuamalat: "PB0B22CU21122", imei: "862318060170183", sim: "8944502401191693179", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
-      { terminal: "P5866", tidBank: "5866", noSiriDBKL: "DBKL/JKEW/01/H/2024/27(S)", noSiriMuamalat: "PB0B22CT20068", imei: "862318060137448", sim: "8944502401191693377", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5867", tidBank: "5867", noSiriDBKL: "DBKL/JKEW/01/H/2024/28(S)", noSiriMuamalat: "PB0B22CT20112", imei: "862318060138901", sim: "8944502401191693385", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5868", tidBank: "5868", noSiriDBKL: "DBKL/JKEW/01/H/2024/29(S)", noSiriMuamalat: "PB0B22CT20145", imei: "862318060139110", sim: "8944502401191693351", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5869", tidBank: "5869", noSiriDBKL: "DBKL/JKEW/01/H/2024/30(S)", noSiriMuamalat: "PB0B22CS20045", imei: "862318060135665", sim: "8944502401191693393", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
-      { terminal: "P5870", tidBank: "5870", noSiriDBKL: "DBKL/JKEW/01/H/2024/31(S)", noSiriMuamalat: "PB0B22CT20319", imei: "862318060142119", sim: "8944502401191693427", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5871", tidBank: "5871", noSiriDBKL: "DBKL/JKEW/01/H/2024/32(S)", noSiriMuamalat: "PB0B22CT20350", imei: "862318060142885", sim: "8944502401191693435", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
-      { terminal: "P5872", tidBank: "5872", noSiriDBKL: "DBKL/JKEW/01/H/2024/33(S)", noSiriMuamalat: "PB0B22CT20418", imei: "862318060144626", sim: "8944502401191693419", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
-      { terminal: "P5873", tidBank: "5873", noSiriDBKL: "DBKL/JKEW/01/H/2024/34(S)", noSiriMuamalat: "PB0B22CT20375", imei: "862318060143362", sim: "8944502401191693401", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
-      { terminal: "P5878", tidBank: "5878", noSiriDBKL: "DBKL/JKEW/01/H/2024/39(S)", noSiriMuamalat: "PB0B22CU20077", imei: "862318060145763", sim: "8944502401191693047", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", status: "AKTIF" },
-      { terminal: "P5879", tidBank: "5879", noSiriDBKL: "DBKL/JKEW/01/H/2024/40(S)", noSiriMuamalat: "PB0B22CT20183", imei: "862318060139725", sim: "8944502401191693039", jabatan: "STOR SITAAN, JALAN TUN RAZAK", status: "AKTIF" },
-      { terminal: "P5880", tidBank: "5880", noSiriDBKL: "DBKL/JKEW/01/H/2024/41(S)", noSiriMuamalat: "PB0B22CU20080", imei: "862318060145821", sim: "8944502401191693021", jabatan: "KAUNTER BAYARAN MENARA DBKL 1", status: "PULANG" },
-      { terminal: "P5882", tidBank: "5882", noSiriDBKL: "DBKL/JKEW/01/H/2024/43(S)", noSiriMuamalat: "PB0B22CS20043", imei: "862318060135707", sim: "8944502401191692922", jabatan: "JBT KESIHATAN & ALAM SEKITAR", status: "AKTIF" },
-      { terminal: "P5883", tidBank: "5883", noSiriDBKL: "DBKL/JKEW/01/H/2024/44(S)", noSiriMuamalat: "PB0B22CT20344", imei: "862318060142901", sim: "8944502401191692981", jabatan: "PERPUSTAKAAN KUALA LUMPUR", status: "AKTIF" },
-      { terminal: "P5887", tidBank: "5887", noSiriDBKL: "DBKL/JKEW/01/H/2024/48(S)", noSiriMuamalat: "PB0B22CV20036", imei: "862318060144063", sim: "8944502401191693369", jabatan: "JBT KESIHATAN & ALAM SEKITAR", status: "AKTIF" },
-      { terminal: "P5888", tidBank: "5888", noSiriDBKL: "DBKL/JKEW/01/H/2024/49(S)", noSiriMuamalat: "PB0B231320009", imei: "862318060172262", sim: "8944502401191694995", jabatan: "JBT KESIHATAN & ALAM SEKITAR", status: "AKTIF" },
-      { terminal: "P5889", tidBank: "5889", noSiriDBKL: "DBKL/JKEW/01/H/2024/50(S)", noSiriMuamalat: "PB0B22CU20495", imei: "862318060154807", sim: "8944502401191693559", jabatan: "KAUNTER BAYARAN MENARA DBKL 1", status: "PULANG" },
-      { terminal: "P5891", tidBank: "5891", noSiriDBKL: "DBKL/JKEW/01/H/2024/52(S)", noSiriMuamalat: "PB0B22CU20541", imei: "862318060159012", sim: "8944502401191693617", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", status: "AKTIF" },
-      { terminal: "P5901", tidBank: "5901", noSiriDBKL: "DBKL/JKEW/01/H/2024/62(S)", noSiriMuamalat: "PB0B22CU20426", imei: "862318060155242", sim: "8944502401191693609", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", status: "AKTIF" },
-      { terminal: "P5911", tidBank: "5911", noSiriDBKL: "DBKL/JKEW/01/H/2024/72(S)", noSiriMuamalat: "PB0B22CU21197", imei: "862318060166264", sim: "8944502401191693229", jabatan: "JABATAN PERANCANGAN BANDARAYA", status: "AKTIF" },
-      { terminal: "P5914", tidBank: "5914", noSiriDBKL: "DBKL/JKEW/01/H/2024/75(S)", noSiriMuamalat: "PB0B22CU20042", imei: "862318060146647", sim: "8944502401191693260", jabatan: "JABATAN PELESENAN DAN PEMBANGUNAN PERNIAGAAN", status: "AKTIF" },
-      { terminal: "P5915", tidBank: "5915", noSiriDBKL: "DBKL/JKEW/01/H/2024/76(S)", noSiriMuamalat: "PB0B22CU20947", imei: "862318060164723", sim: "8944502401191693252", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", status: "AKTIF" }
+      { terminal: "P5846", tidBank: "P5846", noSiriDBKL: "DBKL/JKEW/01/H/2024/07(S)", noSiriMuamalat: "PB0B22CU20514", imei: "862318060158709", sim: "8944502401191693096", jabatan: "Bahagian Hasil", status: "AKTIF" },
+      { terminal: "P5847", tidBank: "P5847", noSiriDBKL: "DBKL/JKEW/01/H/2024/08(S)", noSiriMuamalat: "PB0B22CU20868", imei: "862318060166223", sim: "8944502401191693088", jabatan: "Bahagian Hasil", status: "AKTIF" },
+      { terminal: "P5851", tidBank: "P5851", noSiriDBKL: "DBKL/JKEW/01/H/2024/12(S)", noSiriMuamalat: "PB0B22CT20040", imei: "862318060136887", sim: "8944502401191692932", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5855", tidBank: "P5855", noSiriDBKL: "DBKL/JKEW/01/H/2024/16(S)", noSiriMuamalat: "PB0B22CT20077", imei: "862318060137661", sim: "8944502401191692940", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5857", tidBank: "P5857", noSiriDBKL: "DBKL/JKEW/01/H/2024/18(S)", noSiriMuamalat: "PB0B22CU20697", imei: "862318060157289", sim: "8944502401191693120", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5858", tidBank: "P5858", noSiriDBKL: "DBKL/JKEW/01/H/2024/19(S)", noSiriMuamalat: "PB0B22CT20263", imei: "862318060141481", sim: "8944502401191693112", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5859", tidBank: "P5859", noSiriDBKL: "DBKL/JKEW/01/H/2024/20(S)", noSiriMuamalat: "PB0B22CU20776", imei: "862318060164509", sim: "8944502401191693153", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5860", tidBank: "P5860", noSiriDBKL: "DBKL/JKEW/01/H/2024/21(S)", noSiriMuamalat: "PB0B22CU20136", imei: "862318060148882", sim: "8944502401191693146", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5861", tidBank: "P5861", noSiriDBKL: "DBKL/JKEW/01/H/2024/22(S)", noSiriMuamalat: "PB0B231320002", imei: "862318060160325", sim: "8944502401191693187", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5862", tidBank: "P5862", noSiriDBKL: "DBKL/JKEW/01/H/2024/23(S)", noSiriMuamalat: "PB0B22CT20048", imei: "862318060136788", sim: "8944502401191693203", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5863", tidBank: "P5863", noSiriDBKL: "DBKL/JKEW/01/H/2024/24(S)", noSiriMuamalat: "PB0B22CT20001", imei: "862318060136044", sim: "8944502401191693195", jabatan: "JPKKB, UKA, KAUNTER BAYARAN", status: "AKTIF" },
+      { terminal: "P5864", tidBank: "P5864", noSiriDBKL: "DBKL/JKEW/01/H/2024/25(S)", noSiriMuamalat: "PB0B22CT20281", imei: "862318060141820", sim: "8944502401191693161", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
+      { terminal: "P5865", tidBank: "P5865", noSiriDBKL: "DBKL/JKEW/01/H/2024/26(S)", noSiriMuamalat: "PB0B22CU21122", imei: "862318060170183", sim: "8944502401191693179", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
+      { terminal: "P5866", tidBank: "P5866", noSiriDBKL: "DBKL/JKEW/01/H/2024/27(S)", noSiriMuamalat: "PB0B22CT20068", imei: "862318060137448", sim: "8944502401191693377", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5867", tidBank: "P5867", noSiriDBKL: "DBKL/JKEW/01/H/2024/28(S)", noSiriMuamalat: "PB0B22CT20112", imei: "862318060138901", sim: "8944502401191693385", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5868", tidBank: "P5868", noSiriDBKL: "DBKL/JKEW/01/H/2024/29(S)", noSiriMuamalat: "PB0B22CT20145", imei: "862318060139110", sim: "8944502401191693351", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5869", tidBank: "P5869", noSiriDBKL: "DBKL/JKEW/01/H/2024/30(S)", noSiriMuamalat: "PB0B22CS20045", imei: "862318060135665", sim: "8944502401191693393", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
+      { terminal: "P5870", tidBank: "P5870", noSiriDBKL: "DBKL/JKEW/01/H/2024/31(S)", noSiriMuamalat: "PB0B22CT20319", imei: "862318060142119", sim: "8944502401191693427", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5871", tidBank: "P5871", noSiriDBKL: "DBKL/JKEW/01/H/2024/32(S)", noSiriMuamalat: "PB0B22CT20350", imei: "862318060142885", sim: "8944502401191693435", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", status: "AKTIF" },
+      { terminal: "P5872", tidBank: "P5872", noSiriDBKL: "DBKL/JKEW/01/H/2024/33(S)", noSiriMuamalat: "PB0B22CT20418", imei: "862318060144626", sim: "8944502401191693419", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
+      { terminal: "P5873", tidBank: "P5873", noSiriDBKL: "DBKL/JKEW/01/H/2024/34(S)", noSiriMuamalat: "PB0B22CT20375", imei: "862318060143362", sim: "8944502401191693401", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", status: "AKTIF" },
+      { terminal: "P5878", tidBank: "P5878", noSiriDBKL: "DBKL/JKEW/01/H/2024/39(S)", noSiriMuamalat: "PB0B22CU20077", imei: "862318060145763", sim: "8944502401191693047", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", status: "AKTIF" },
+      { terminal: "P5879", tidBank: "P5879", noSiriDBKL: "DBKL/JKEW/01/H/2024/40(S)", noSiriMuamalat: "PB0B22CT20183", imei: "862318060139725", sim: "8944502401191693039", jabatan: "STOR SITAAN, JALAN TUN RAZAK", status: "AKTIF" },
+      { terminal: "P5880", tidBank: "P5880", noSiriDBKL: "DBKL/JKEW/01/H/2024/41(S)", noSiriMuamalat: "PB0B22CU20080", imei: "862318060145821", sim: "8944502401191693021", jabatan: "KAUNTER BAYARAN MENARA DBKL 1", status: "PULANG" },
+      { terminal: "P5882", tidBank: "P5882", noSiriDBKL: "DBKL/JKEW/01/H/2024/43(S)", noSiriMuamalat: "PB0B22CS20043", imei: "862318060135707", sim: "8944502401191692922", jabatan: "JBT KESIHATAN & ALAM SEKITAR", status: "AKTIF" },
+      { terminal: "P5883", tidBank: "P5883", noSiriDBKL: "DBKL/JKEW/01/H/2024/44(S)", noSiriMuamalat: "PB0B22CT20344", imei: "862318060142901", sim: "8944502401191692981", jabatan: "PERPUSTAKAAN KUALA LUMPUR", status: "AKTIF" },
+      { terminal: "P5887", tidBank: "P5887", noSiriDBKL: "DBKL/JKEW/01/H/2024/48(S)", noSiriMuamalat: "PB0B22CV20036", imei: "862318060144063", sim: "8944502401191693369", jabatan: "JBT KESIHATAN & ALAM SEKITAR", status: "AKTIF" },
+      { terminal: "P5888", tidBank: "P5888", noSiriDBKL: "DBKL/JKEW/01/H/2024/49(S)", noSiriMuamalat: "PB0B231320009", imei: "862318060172262", sim: "8944502401191694995", jabatan: "JBT KESIHATAN & ALAM SEKITAR", status: "AKTIF" },
+      { terminal: "P5889", tidBank: "P5889", noSiriDBKL: "DBKL/JKEW/01/H/2024/50(S)", noSiriMuamalat: "PB0B22CU20495", imei: "862318060154807", sim: "8944502401191693559", jabatan: "KAUNTER BAYARAN MENARA DBKL 1", status: "PULANG" },
+      { terminal: "P5891", tidBank: "P5891", noSiriDBKL: "DBKL/JKEW/01/H/2024/52(S)", noSiriMuamalat: "PB0B22CU20541", imei: "862318060159012", sim: "8944502401191693617", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", status: "AKTIF" },
+      { terminal: "P5901", tidBank: "P5901", noSiriDBKL: "DBKL/JKEW/01/H/2024/62(S)", noSiriMuamalat: "PB0B22CU20426", imei: "862318060155242", sim: "8944502401191693609", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", status: "AKTIF" },
+      { terminal: "P5911", tidBank: "P5911", noSiriDBKL: "DBKL/JKEW/01/H/2024/72(S)", noSiriMuamalat: "PB0B22CU21197", imei: "862318060166264", sim: "8944502401191693229", jabatan: "JABATAN PERANCANGAN BANDARAYA", status: "AKTIF" },
+      { terminal: "P5914", tidBank: "P5914", noSiriDBKL: "DBKL/JKEW/01/H/2024/75(S)", noSiriMuamalat: "PB0B22CU20042", imei: "862318060146647", sim: "8944502401191693260", jabatan: "JABATAN PELESENAN DAN PEMBANGUNAN PERNIAGAAN", status: "AKTIF" },
+      { terminal: "P5915", tidBank: "P5915", noSiriDBKL: "DBKL/JKEW/01/H/2024/76(S)", noSiriMuamalat: "PB0B22CU20947", imei: "862318060164723", sim: "8944502401191693252", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", status: "AKTIF" }
     ];
 
     // 3. LOG PENGGUNAAN SHEET A, B, C (Nama Pengguna + Mobile)
@@ -549,7 +548,6 @@
     const pageSize = 15;
     let chartsVisible = true;
 
-    // Chart.js instances
     let deptChartInstance = null;
     let statusChartInstance = null;
 
@@ -588,6 +586,27 @@
         .replace(/>/g, '&gt;');
     }
 
+    // Helper: Peta Jabatan dari Sheet D mengikut Kod Terminal & Nama Pengguna
+    function buildSheetDDepartmentLookup() {
+      const deptByTerminal = new Map();
+      const deptByName = new Map();
+
+      sheetD_Names.forEach(d => {
+        const jab = (d.jabatan || '').trim();
+        if (!jab || jab === '-') return;
+
+        const nameKey = normalizeName(d.nama);
+        if (nameKey) deptByName.set(nameKey, jab);
+
+        const termKey = normalizeTerminal(d.perantiRujukan);
+        if (termKey && !deptByTerminal.has(termKey)) {
+          deptByTerminal.set(termKey, jab);
+        }
+      });
+
+      return { deptByTerminal, deptByName };
+    }
+
     function populateJabatanDropdown() {
       const select = document.getElementById('jabatanFilter');
       const currentVal = select.value;
@@ -613,17 +632,54 @@
     }
 
     function runChainedMatching() {
-      populateJabatanDropdown();
-
       const filteredLogs = selectedLogSheet === 'ALL'
         ? logRecordsABC
         : logRecordsABC.filter(r => r.sheet === selectedLogSheet);
 
+      const { deptByTerminal, deptByName } = buildSheetDDepartmentLookup();
+
+      // Peta Master Sheet E dengan pemetaan:
+      // 1. TID = TERMINAL di Sheet E
+      // 2. No. Siri Muamalat = SERIAL NUMBER / SERAIL NUMBER di Sheet E
+      // 3. Jabatan (Sheet E) = Jabatan di Sheet D (jika kosong di Sheet E atau dipautkan terus)
       const mapE = new Map();
-      sheetE_Terminals.forEach(item => {
-        const key = normalizeTerminal(item.terminal);
-        if (key) mapE.set(key, item);
+      const enrichedMasterE = sheetE_Terminals.map((item, idx) => {
+        const keyTerm = normalizeTerminal(item.terminal);
+        const termLogs = filteredLogs.filter(l => normalizeTerminal(l.mobile) === keyTerm);
+        const usersInLogs = [...new Set(termLogs.map(l => l.namaPengguna))];
+
+        // Cari Jabatan daripada Sheet D (melalui peranti rujukan atau pengguna log)
+        let resolvedJabatan = (item.jabatan && item.jabatan !== '-') ? item.jabatan : '';
+        if (!resolvedJabatan && deptByTerminal.has(keyTerm)) {
+          resolvedJabatan = deptByTerminal.get(keyTerm);
+        }
+        if (!resolvedJabatan && usersInLogs.length > 0) {
+          for (const u of usersInLogs) {
+            const uJab = deptByName.get(normalizeName(u));
+            if (uJab) { resolvedJabatan = uJab; break; }
+          }
+        }
+        if (!resolvedJabatan) resolvedJabatan = '-';
+
+        // TID = TERMINAL di Sheet E
+        const resolvedTID = (item.tidBank && item.tidBank !== '-') ? item.tidBank : (item.terminal || '-');
+
+        const enriched = {
+          index: idx + 1,
+          ...item,
+          tidBank: resolvedTID,
+          jabatan: resolvedJabatan,
+          status: (item.status || 'AKTIF').toUpperCase(),
+          totalLogs: termLogs.length,
+          usersInLogs,
+          _searchIndex: `${item.terminal} ${resolvedTID} ${item.noSiriDBKL} ${item.noSiriMuamalat} ${item.imei} ${resolvedJabatan} ${usersInLogs.join(' ')}`.toUpperCase()
+        };
+
+        if (keyTerm) mapE.set(keyTerm, enriched);
+        return enriched;
       });
+
+      populateJabatanDropdown();
 
       const logsByName = new Map();
       filteredLogs.forEach(log => {
@@ -673,6 +729,10 @@
 
           const terminalMatches = uniqueMobiles.map(mob => {
             const masterRec = mapE.get(mob) || null;
+            // Pastikan Jabatan (Sheet E) mengambil Jabatan Sheet D jika belum terisi
+            if (masterRec && (!masterRec.jabatan || masterRec.jabatan === '-') && dRow.jabatan && dRow.jabatan !== '-') {
+              masterRec.jabatan = dRow.jabatan;
+            }
             return {
               mobileABC: mob,
               matchedInE: Boolean(masterRec),
@@ -727,7 +787,7 @@
             .filter(tm => tm.matchedInE && tm.masterE.status)
             .map(tm => tm.masterE.status.toUpperCase());
           const depts = terminalMatches
-            .filter(tm => tm.matchedInE && tm.masterE.jabatan)
+            .filter(tm => tm.matchedInE && tm.masterE.jabatan && tm.masterE.jabatan !== '-')
             .map(tm => tm.masterE.jabatan.toUpperCase());
 
           orphanABC.push({
@@ -745,27 +805,12 @@
         }
       });
 
-      const masterE = sheetE_Terminals.map((eRow, idx) => {
-        const keyTerm = normalizeTerminal(eRow.terminal);
-        const termLogs = filteredLogs.filter(l => normalizeTerminal(l.mobile) === keyTerm);
-        const usersInLogs = [...new Set(termLogs.map(l => l.namaPengguna))];
-        return {
-          index: idx + 1,
-          ...eRow,
-          status: (eRow.status || 'AKTIF').toUpperCase(),
-          totalLogs: termLogs.length,
-          usersInLogs,
-          _searchIndex: `${eRow.terminal} ${eRow.tidBank} ${eRow.noSiriDBKL} ${eRow.noSiriMuamalat} ${eRow.imei} ${eRow.jabatan} ${usersInLogs.join(' ')}`.toUpperCase()
-        };
-      });
-
-      computedResults = { allD, fullMatch, unmatchedE, unmatchedABC, masterE, orphanABC };
+      computedResults = { allD, fullMatch, unmatchedE, unmatchedABC, masterE: enrichedMasterE, orphanABC };
       updateKPIsAndBadges();
       renderCharts();
       renderTable();
     }
 
-    // Toggle Charts Panel
     function toggleChartsPanel() {
       chartsVisible = !chartsVisible;
       const body = document.getElementById('chartsPanelBody');
@@ -783,18 +828,16 @@
       lucide.createIcons();
     }
 
-    // Render Chart.js Visuals
     function renderCharts() {
       const { masterE } = computedResults;
 
-      // 1. Aggregate Master E Terminals by Jabatan & Status (AKTIF / PULANG)
       const deptMap = new Map();
       let aktifWithLogs = 0;
       let aktifNoLogs = 0;
       let pulangCount = 0;
 
       masterE.forEach(item => {
-        const dept = (item.jabatan || 'LAIN-LAIN').trim().toUpperCase();
+        const dept = (item.jabatan && item.jabatan !== '-') ? item.jabatan.trim().toUpperCase() : 'TIADA JABATAN (SHEET D)';
         if (!deptMap.has(dept)) {
           deptMap.set(dept, { dept, aktif: 0, pulang: 0, total: 0 });
         }
@@ -811,18 +854,15 @@
         entry.total += 1;
       });
 
-      // Sort departments by total devices descending
       const sortedDepts = Array.from(deptMap.values()).sort((a, b) => b.total - a.total);
       const fullDeptLabels = sortedDepts.map(d => d.dept);
       const shortDeptLabels = sortedDepts.map(d => d.dept.length > 26 ? d.dept.slice(0, 24) + '...' : d.dept);
       const aktifData = sortedDepts.map(d => d.aktif);
       const pulangData = sortedDepts.map(d => d.pulang);
 
-      // Destroy previous chart instances if exist
       if (deptChartInstance) deptChartInstance.destroy();
       if (statusChartInstance) statusChartInstance.destroy();
 
-      // Chart 1: Horizontal Stacked Bar Chart by Jabatan
       const ctxDept = document.getElementById('deptStatusChart').getContext('2d');
       deptChartInstance = new Chart(ctxDept, {
         type: 'bar',
@@ -886,7 +926,6 @@
         }
       });
 
-      // Chart 2: Doughnut Chart for Status & Utilization
       const ctxStatus = document.getElementById('statusDoughnutChart').getContext('2d');
       statusChartInstance = new Chart(ctxStatus, {
         type: 'doughnut',
@@ -932,7 +971,6 @@
         }
       });
 
-      // Update Doughnut Summary Footer
       document.getElementById('doughnutSummaryFooter').innerHTML = `
         <div class="bg-emerald-50 rounded-lg p-1.5 border border-emerald-100">
           <span class="block font-extrabold text-emerald-700 text-sm">${aktifWithLogs}</span>
@@ -1005,7 +1043,7 @@
         },
         master_e: {
           cls: 'px-4 py-2.5 bg-purple-50/80 border-b border-purple-100 text-xs text-purple-900 flex flex-wrap items-center justify-between gap-2',
-          txt: '🗄️ Master Data Sheet E: Senarai induk Terminal berdaftar (No. Siri DBKL, TID Bank, No. Siri Muamalat, IMEI, SIM & Status).'
+          txt: '🗄️ Master Data Sheet E: Senarai induk Terminal berdaftar (TID = TERMINAL, Serial Number Muamalat, Jabatan Sheet D, IMEI, SIM & Status).'
         },
         orphan_abc: {
           cls: 'px-4 py-2.5 bg-rose-50/80 border-b border-rose-100 text-xs text-rose-900 flex flex-wrap items-center justify-between gap-2',
@@ -1127,10 +1165,10 @@
         thead.innerHTML = `
           <tr>
             <th class="px-4 py-3">No</th>
-            <th class="px-4 py-3">Terminal (Sheet E)</th>
+            <th class="px-4 py-3">Terminal / TID (Sheet E)</th>
             <th class="px-4 py-3">No. Siri Pendaftaran DBKL</th>
-            <th class="px-4 py-3">No. Siri Muamalat</th>
-            <th class="px-4 py-3">Jabatan</th>
+            <th class="px-4 py-3">No. Siri Muamalat (Serial Number)</th>
+            <th class="px-4 py-3">Jabatan (Sheet D)</th>
             <th class="px-4 py-3">Status Master E</th>
             <th class="px-4 py-3">Penggunaan Log (A/B/C)</th>
           </tr>
@@ -1148,7 +1186,7 @@
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-md font-bold bg-purple-100 text-purple-800 border border-purple-200">
                 ${escapeAttr(row.terminal)}
               </span>
-              <span class="block text-[10px] text-slate-400 mt-0.5">TID Bank: ${escapeAttr(row.tidBank || '-')}</span>
+              <span class="block text-[10px] text-slate-500 mt-0.5">TID: ${escapeAttr(row.tidBank || row.terminal || '-')}</span>
             </td>
             <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${escapeAttr(row.noSiriDBKL || '-')}</td>
             <td class="px-4 py-3 font-mono text-[11px] text-slate-700">${escapeAttr(row.noSiriMuamalat || '-')}</td>
@@ -1223,7 +1261,7 @@
       thead.innerHTML = `
         <tr>
           <th class="px-4 py-3">No</th>
-          <th class="px-4 py-3">Kunci Utama: Nama (Sheet D)</th>
+          <th class="px-4 py-3">Kunci Utama: Nama & Jabatan (Sheet D)</th>
           <th class="px-4 py-3">Peringkat 1: Padanan A/B/C (Mobile)</th>
           <th class="px-4 py-3">Peringkat 2: Padanan Master Sheet E (Terminal)</th>
           <th class="px-4 py-3">Status Keseluruhan</th>
@@ -1258,11 +1296,14 @@
               const statusBadge = tm.masterE.status === 'PULANG'
                 ? `<span class="ml-1 px-1.5 py-0.5 rounded bg-amber-200 text-amber-900 text-[10px] font-bold">PULANG</span>`
                 : `<span class="ml-1 px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-bold">AKTIF</span>`;
+              const subInfo = tm.masterE.noSiriDBKL && tm.masterE.noSiriDBKL !== '-'
+                ? tm.masterE.noSiriDBKL
+                : (tm.masterE.noSiriMuamalat && tm.masterE.noSiriMuamalat !== '-' ? tm.masterE.noSiriMuamalat : '');
               return `
                 <div class="flex flex-col gap-0.5 mb-1 last:mb-0">
                   <div class="flex items-center gap-1 flex-wrap">
                     <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold text-[11px]">${escapeAttr(tm.masterE.terminal)}</span>
-                    <span class="text-[11px] font-mono text-slate-600">${escapeAttr(tm.masterE.noSiriDBKL)}</span>
+                    ${subInfo ? `<span class="text-[11px] font-mono text-slate-600">${escapeAttr(subInfo)}</span>` : ''}
                     ${statusBadge}
                   </div>
                 </div>
@@ -1322,7 +1363,7 @@
 
       sheetE_Terminals.unshift({
         terminal: cleanCode,
-        tidBank: cleanCode.replace(/\D/g, ''),
+        tidBank: cleanCode, // 1. TID = TERMINAL di sheet E
         noSiriDBKL: `DBKL/JKEW/01/H/2026/BARU-${cleanCode}`,
         noSiriMuamalat: 'DAFTAR-MANUAL',
         imei: '-',
@@ -1358,6 +1399,13 @@
         : item.terminalMatches.map(tm => {
             if (tm.matchedInE) {
               const e = tm.masterE;
+              // 1. TID = TERMINAL di Sheet E
+              const displayTID = (e.tidBank && e.tidBank !== '-') ? e.tidBank : (e.terminal || '-');
+              // 2. No. Siri Muamalat = SERIAL NUMBER di Sheet E
+              const displayMuamalat = e.noSiriMuamalat || '-';
+              // 3. Jabatan (Sheet E) = Jabatan di Sheet D
+              const displayJabatan = (item.jabatanD && item.jabatanD !== '-') ? item.jabatanD : (e.jabatan || '-');
+
               return `
                 <div class="p-4 rounded-xl bg-purple-50/60 border border-purple-200 space-y-2">
                   <div class="flex items-center justify-between">
@@ -1367,12 +1415,12 @@
                     </span>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-700 pt-1">
-                    <div><span class="text-slate-400">No. Siri DBKL:</span> <strong class="font-mono">${escapeAttr(e.noSiriDBKL)}</strong></div>
-                    <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono">${escapeAttr(e.noSiriMuamalat)}</strong></div>
-                    <div><span class="text-slate-400">TID Bank:</span> <strong>${escapeAttr(e.tidBank)}</strong></div>
-                    <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono">${escapeAttr(e.imei)}</strong></div>
-                    <div><span class="text-slate-400">No. SIM:</span> <strong class="font-mono">${escapeAttr(e.sim)}</strong></div>
-                    <div><span class="text-slate-400">Jabatan (Sheet E):</span> <strong>${escapeAttr(e.jabatan)}</strong></div>
+                    <div><span class="text-slate-400">No. Siri DBKL:</span> <strong class="font-mono">${escapeAttr(e.noSiriDBKL || '-')}</strong></div>
+                    <div><span class="text-slate-400">No. Siri Muamalat:</span> <strong class="font-mono">${escapeAttr(displayMuamalat)}</strong></div>
+                    <div><span class="text-slate-400">TID Bank (Terminal):</span> <strong>${escapeAttr(displayTID)}</strong></div>
+                    <div><span class="text-slate-400">No. IMEI:</span> <strong class="font-mono">${escapeAttr(e.imei || '-')}</strong></div>
+                    <div><span class="text-slate-400">No. SIM:</span> <strong class="font-mono">${escapeAttr(e.sim || '-')}</strong></div>
+                    <div><span class="text-slate-400">Jabatan (Sheet D/E):</span> <strong>${escapeAttr(displayJabatan)}</strong></div>
                   </div>
                 </div>
               `;
@@ -1521,35 +1569,83 @@
       });
     }
 
+    // Helper: Cari nilai kolum berdasarkan senarai kemungkinan nama pengepala (fleksibel)
+    function pickCol(rowObj, exactKeys, partialPatterns = []) {
+      for (const k of exactKeys) {
+        if (rowObj[k] !== undefined && rowObj[k].toString().trim() !== '') {
+          return rowObj[k].toString().trim();
+        }
+      }
+      const keys = Object.keys(rowObj);
+      for (const pat of partialPatterns) {
+        const foundKey = keys.find(k => k.includes(pat) && rowObj[k].toString().trim() !== '');
+        if (foundKey) return rowObj[foundKey].toString().trim();
+      }
+      return '';
+    }
+
     function applyParsedSheetData(sheetName, rows) {
       if (!rows || rows.length === 0) return false;
+
       if (sheetName === 'D') {
         const mapped = rows.map((r, i) => ({
           no: i + 1,
-          nama: r['NAMA'] || r['NAMA PENGGUNA'] || Object.values(r)[1] || Object.values(r)[0] || '',
-          jabatan: r['JABATAN'] || r['UNIT'] || '-',
-          perantiRujukan: r['NO PERANTI'] || r['MOBILE'] || r['TERMINAL'] || '-'
+          nama: pickCol(r, ['NAMA', 'NAMA PENGGUNA', 'NAMA PEGAWAI'], ['NAMA']) || Object.values(r)[1] || Object.values(r)[0] || '',
+          jabatan: pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN', 'JABATAN / UNIT'], ['JABATAN', 'BAHAGIAN', 'UNIT']) || '-',
+          perantiRujukan: pickCol(r, ['NO PERANTI', 'NO. PERANTI', 'MOBILE', 'TERMINAL', 'TID'], ['PERANTI', 'TERMINAL', 'MOBILE']) || '-'
         })).filter(x => x.nama);
         if (mapped.length > 0) { sheetD_Names = mapped; return true; }
+
       } else if (sheetName === 'E') {
-        const mapped = rows.map(r => ({
-          terminal: r['TERMINAL'] || r['NO PERANTI'] || r['MOBILE'] || Object.values(r)[0] || '',
-          tidBank: r["TID(0000') BANK"] || r['TID'] || '-',
-          noSiriDBKL: r['NO. SIRI PENDAFTARAN DBKL'] || r['NO SIRI DBKL'] || '-',
-          noSiriMuamalat: r['NO SIRI MUAMALAT'] || '-',
-          imei: r['IMEI1'] || r['IMEI'] || '-',
-          sim: r['SIMCARD NUMBER'] || r['SIM'] || '-',
-          jabatan: r['JABATAN'] || '-',
-          status: (r['STATUS'] || 'AKTIF').toUpperCase()
-        })).filter(x => x.terminal);
+        const { deptByTerminal } = buildSheetDDepartmentLookup();
+        const mapped = rows.map(r => {
+          const termVal = pickCol(r, ['TERMINAL', 'NO PERANTI', 'NO. PERANTI', 'MOBILE', 'TID'], ['TERMINAL', 'PERANTI']) || Object.values(r)[0] || '';
+          const normTerm = normalizeTerminal(termVal);
+
+          // 1. TID = TERMINAL di Sheet E
+          const tidVal = termVal || pickCol(r, ["TID(0000') BANK", 'TID BANK', 'TID'], ['TID']) || '-';
+
+          // 2. No. Siri Muamalat = SERIAL NUMBER / SERAIL NUMBER di Sheet E
+          const muamalatVal = pickCol(
+            r,
+            ['SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SERIAL NUMBER', 'NO SERIAL NUMBER', 'NO SIRI MUAMALAT', 'NO. SIRI MUAMALAT'],
+            ['SERIAL', 'SERAIL', 'MUAMALAT']
+          ) || '-';
+
+          // No. Siri Pendaftaran DBKL
+          const siriDBKLVal = pickCol(
+            r,
+            ['NO. SIRI PENDAFTARAN DBKL', 'NO SIRI PENDAFTARAN DBKL', 'NO SIRI DBKL', 'NO. SIRI DBKL', 'NO SIRI', 'NO. SIRI'],
+            ['PENDAFTARAN', 'DBKL', 'SIRI']
+          ) || '-';
+
+          // 3. Jabatan (Sheet E) = Jabatan di Sheet D (jika kosong di Sheet E, terus ambil daripada Sheet D)
+          const jabSheetE = pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN'], ['JABATAN', 'BAHAGIAN']);
+          const jabFromD = deptByTerminal.get(normTerm) || '';
+          const finalJabatan = jabSheetE || jabFromD || '-';
+
+          return {
+            terminal: termVal,
+            tidBank: tidVal,
+            noSiriDBKL: siriDBKLVal,
+            noSiriMuamalat: muamalatVal,
+            imei: pickCol(r, ['IMEI1', 'IMEI 1', 'IMEI', 'NO IMEI', 'NO. IMEI'], ['IMEI']) || '-',
+            sim: pickCol(r, ['SIMCARD NUMBER', 'SIM CARD NUMBER', 'NO SIM', 'NO. SIM', 'SIM', 'ICCID'], ['SIM', 'ICCID']) || '-',
+            jabatan: finalJabatan,
+            status: (pickCol(r, ['STATUS', 'STATUS PERANTI'], ['STATUS']) || 'AKTIF').toUpperCase()
+          };
+        }).filter(x => x.terminal);
+
         if (mapped.length > 0) { sheetE_Terminals = mapped; return true; }
+
       } else if (['A', 'B', 'C'].includes(sheetName)) {
         const mapped = rows.map(r => ({
           sheet: sheetName,
-          namaPengguna: r['NAMA PENGGUNA'] || r['NAMA'] || Object.values(r)[1] || '',
-          mobile: r['MOBILE'] || r['TERMINAL'] || Object.values(r)[2] || '',
-          tarikh: r['TARIKH'] || Object.values(r)[4] || '-'
+          namaPengguna: pickCol(r, ['NAMA PENGGUNA', 'NAMA', 'USER'], ['NAMA']) || Object.values(r)[1] || '',
+          mobile: pickCol(r, ['MOBILE', 'TERMINAL', 'TID', 'NO PERANTI'], ['MOBILE', 'TERMINAL']) || Object.values(r)[2] || '',
+          tarikh: pickCol(r, ['TARIKH', 'TARIKH & MASA', 'TIMESTAMP', 'DATE'], ['TARIKH', 'DATE', 'MASA']) || Object.values(r)[4] || '-'
         })).filter(x => x.namaPengguna);
+
         if (mapped.length > 0) {
           logRecordsABC = logRecordsABC.filter(x => x.sheet !== sheetName).concat(mapped);
           return true;
@@ -1586,6 +1682,7 @@
       const statusDesc = document.getElementById('statusDesc');
       icon.classList.add('animate-spin');
 
+      // Muat turun Sheet D dahulu supaya Jabatan Sheet D tersedia semasa Sheet E diproses
       const sheets = ['D', 'E', 'A', 'B', 'C'];
       let syncedCount = 0;
 
@@ -1620,11 +1717,11 @@
     function exportCurrentCSV() {
       const filtered = getFilteredList();
       if (activeTab === 'master_e') {
-        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri DBKL', 'No Siri Muamalat', 'IMEI', 'SIM', 'Jabatan', 'Status', 'Bil Log'];
+        const headers = ['No', 'Terminal', 'TID Bank', 'No Siri DBKL', 'No Siri Muamalat (Serial Number)', 'IMEI', 'SIM', 'Jabatan (Sheet D/E)', 'Status', 'Bil Log'];
         const lines = [headers.join(',')];
         filtered.forEach(r => {
           lines.push([
-            r.index, `"${r.terminal}"`, `"${r.tidBank}"`, `"${r.noSiriDBKL}"`, `"${r.noSiriMuamalat}"`,
+            r.index, `"${r.terminal}"`, `"${r.tidBank || r.terminal}"`, `"${r.noSiriDBKL}"`, `"${r.noSiriMuamalat}"`,
             `"${r.imei}"`, `"${r.sim}"`, `"${r.jabatan}"`, `"${r.status}"`, r.totalLogs
           ].join(','));
         });
@@ -1632,7 +1729,7 @@
         return;
       }
 
-      const headers = ['No', 'Nama (Sheet D)', 'Jabatan', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal Master (Sheet E)', 'Status Terminal', 'No Siri DBKL', 'Status Keseluruhan'];
+      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Sheet D)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri DBKL', 'Status Terminal', 'Status Keseluruhan'];
       const lines = [headers.join(',')];
 
       filtered.forEach((r, idx) => {
@@ -1640,6 +1737,7 @@
         const jab = r.jabatanD || r.jabatanInferred || '-';
         const mob = (r.mobilesFromABC || []).join(' | ') || '-';
         const termE = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.terminal : 'TIADA').join(' | ') || '-';
+        const muamalat = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.noSiriMuamalat : '-').join(' | ') || '-';
         const statusTerm = (r.terminalStatuses || []).join(' | ') || '-';
         const siriDBKL = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.noSiriDBKL : '-').join(' | ') || '-';
         const statusLabel = r.overallStatus === 'FULL_MATCH'
@@ -1655,8 +1753,9 @@
           r.totalLogs || 0,
           r.stage2Status || '-',
           `"${termE}"`,
-          `"${statusTerm}"`,
+          `"${muamalat}"`,
           `"${siriDBKL}"`,
+          `"${statusTerm}"`,
           `"${statusLabel}"`
         ].join(','));
       });
