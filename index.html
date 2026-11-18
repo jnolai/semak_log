@@ -47,7 +47,7 @@
               Padanan D ➔ A,B,C ➔ E & F
             </span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama (D) ➔ Mobile (A,B,C) ➔ Terminal (E) & No. Siri Pendaftaran (F)</p>
+          <p class="text-[10px] sm:text-[11px] text-slate-400 truncate">Nama & No. Tel (D) ➔ Mobile (A,B,C) ➔ Terminal (E) & No. Siri Pendaftaran (F)</p>
         </div>
       </div>
 
@@ -131,7 +131,7 @@
         <span class="font-semibold text-slate-500 uppercase tracking-wider mr-1 w-full sm:w-auto">Aliran Padanan:</span>
         <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-slate-100 text-slate-800 font-semibold border border-slate-200">
           <i data-lucide="user-check" class="w-3.5 h-3.5 text-indigo-600 shrink-0"></i>
-          <span>Sheet D (Nama & Jabatan)</span>
+          <span>Sheet D (Nama, Jabatan & No. Tel)</span>
         </span>
         <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
         <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-blue-50 text-blue-800 font-semibold border border-blue-200">
@@ -315,19 +315,19 @@
       <!-- Row 1: Navigation Tabs -->
       <div class="border-b border-slate-200 bg-slate-50/70 px-2.5 sm:px-4 pt-2.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
         <button onclick="switchTab('full_match')" id="tab-full_match" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-semibold border-b-2 border-emerald-600 text-emerald-700 bg-white whitespace-nowrap transition shrink-0 touch-manipulation">
-          1. ✅ Sepadan Penuh (<span id="badge-full_match">0</span>)
+1. ✅ Sepadan Penuh (<span id="badge-full_match">0</span>)
         </button>
         <button onclick="switchTab('unmatched_e')" id="tab-unmatched_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-orange-700 whitespace-nowrap transition shrink-0 touch-manipulation">
-          2. ⚠️ Tiada di MasterData (<span id="badge-unmatched_e">0</span>)
+2. ⚠️ Tiada di MasterData (<span id="badge-unmatched_e">0</span>)
         </button>
         <button onclick="switchTab('unmatched_abc')" id="tab-unmatched_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-amber-700 whitespace-nowrap transition shrink-0 touch-manipulation">
-          3. ⏳ Rekod ID Tiada Aktiviti (<span id="badge-unmatched_abc">0</span>)
+3. ⏳ Rekod ID Tiada Aktiviti (<span id="badge-unmatched_abc">0</span>)
         </button>
         <button onclick="switchTab('master_e')" id="tab-master_e" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-purple-700 whitespace-nowrap transition shrink-0 touch-manipulation">
-          4. 🗄️ Maklumat Peranti (<span id="badge-master_e">0</span>)
+4. 🗄️ Maklumat Peranti (<span id="badge-master_e">0</span>)
         </button>
         <button onclick="switchTab('orphan_abc')" id="tab-orphan_abc" class="tab-btn px-3 py-2 rounded-t-lg text-xs font-medium border-b-2 border-transparent text-slate-600 hover:text-rose-700 whitespace-nowrap transition shrink-0 touch-manipulation">
-          5. ❌ ID Tidak Didaftar (<span id="badge-orphan_abc">0</span>)
+5. ❌ ID Tidak Didaftar (<span id="badge-orphan_abc">0</span>)
         </button>
       </div>
 
@@ -351,7 +351,7 @@
               type="text"
               id="searchInput"
               oninput="handleSearch()"
-              placeholder="Cari Nama, TID, No. Siri Pendaftaran..."
+              placeholder="Cari Nama, No. Tel, TID, No. Siri..."
               class="w-full min-h-[38px] pl-9 sm:pl-8 pr-3 py-1.5 bg-slate-50 focus:bg-white border border-slate-300 rounded-lg text-base sm:text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition"
             />
           </div>
@@ -459,52 +459,52 @@
     const SPREADSHEET_ID = '1G_KQVUCY5q-YhA_XIm4my44nMXgYAc0CW5NDe6qLqK8';
     const AUTO_SYNC_INTERVAL_SECONDS = 60; // Auto-sync setiap 1 minit
 
-    // 1. MASTER DATA SHEET D (Kunci Utama: Nama & Jabatan)
+    // 1. MASTER DATA SHEET D (Kunci Utama: Nama, Jabatan & No. Telefon)
     let sheetD_Names = [
-      { no: 1, nama: "HANI NAJWA BINTI HANIP", jabatan: "Bahagian Hasil", perantiRujukan: "P5846" },
-      { no: 2, nama: "MOHD KAMARUL BIN MANSOR", jabatan: "Bahagian Hasil", perantiRujukan: "P5847" },
-      { no: 3, nama: "EZATUL AISHAH BINTI SUFFIAN", jabatan: "Bahagian Hasil", perantiRujukan: "P5848" },
-      { no: 4, nama: "MUHAMMAD FAIZUL BIN SEDEK", jabatan: "Bahagian Hasil", perantiRujukan: "P5849" },
-      { no: 5, nama: "SAKINAH BINTI MANSOR", jabatan: "Jabatan Pengurusan Sumber Manusia", perantiRujukan: "P5850" },
-      { no: 6, nama: "MUHAMMAD AFIQ BIN ZULFAHMI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5851" },
-      { no: 7, nama: "AHMAD ASYRAF BIN MOHAMED", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5852" },
-      { no: 8, nama: "FAZLIATON BINTI BAHARI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5853" },
-      { no: 9, nama: "MOHD NOORHAFIZ BIN MASWAN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5854" },
-      { no: 10, nama: "NUR AMIRAH BINTI MOKHTAR", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5855" },
-      { no: 11, nama: "MUHAMAD SHARIE BIN HARIP", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5856" },
-      { no: 12, nama: "KHAIRUL HAFIZ BIN AHMAD PAYUMI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5857" },
-      { no: 13, nama: "ADAM BIN ABDUL RAHIM", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5858" },
-      { no: 14, nama: "ASMARANI BINTI KOSHAERI @ ABDULLAH", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5859" },
-      { no: 15, nama: "SYTI NUR KAMELA BINTI KAMARUDIN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5860" },
-      { no: 16, nama: "NURUL HUSNA BINTI YUSOF", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5861" },
-      { no: 17, nama: "DEWI FAIRUZ RUHAIZA BINTI KAMARUDIN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5862" },
-      { no: 18, nama: "MUHAMAD FARID BIN SINWANI", jabatan: "JPKKB, UKA, KAUNTER BAYARAN", perantiRujukan: "P5863" },
-      { no: 19, nama: "MUHAMMAD FADZRUL AKMAL BIN BISMI", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5864" },
-      { no: 20, nama: "MOHD AMIRUL ILHAM BIN MOHAMED", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5865" },
-      { no: 21, nama: "NURLIYANA BINTI KAMARUDDIN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5866" },
-      { no: 22, nama: "HOSNOL HOTIMAH BINTI MUHAMAD SAINI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5867" },
-      { no: 23, nama: "MUHAMMAD NAZIH BIN ZAINAL", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5868" },
-      { no: 24, nama: "NURAMALINA FARHAH BINTI MOHD JEFRI", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5869" },
-      { no: 25, nama: "NUR FADILA BINTI DOLLAH", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5870" },
-      { no: 26, nama: "NURUL ASMAHANI BINTI GHAZALI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5871" },
-      { no: 27, nama: "AKMALAILA BINTI YAHAYA", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5872" },
-      { no: 28, nama: "NURUL HAZWANI BINTI KHAIRUL ANUR@ANUAR", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5873" },
-      { no: 29, nama: "MUHAMAD SAIFUL AZHAR BIN ZAINUDIN", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", perantiRujukan: "P5878" },
-      { no: 30, nama: "NOORIANA BINTI JAMAL", jabatan: "STOR SITAAN, JALAN TUN RAZAK", perantiRujukan: "P5879" },
-      { no: 31, nama: "AINOL RAFIQY BIN RUSNI", jabatan: "STOR SITAAN, JALAN TUN RAZAK", perantiRujukan: "P5879" },
-      { no: 32, nama: "AHMAD IZZUDDIN BIN ZULKANAIN", jabatan: "KAUNTER BAYARAN MENARA DBKL 1", perantiRujukan: "P5880" },
-      { no: 33, nama: "MUHAMMAD IKMAL HARITH BIN BADRUL HISHAM", jabatan: "JBT KESIHATAN & ALAM SEKITAR", perantiRujukan: "P5882" },
-      { no: 34, nama: "NOR AIDA BINTI AZMAN", jabatan: "PERPUSTAKAAN KUALA LUMPUR", perantiRujukan: "P5883" },
-      { no: 35, nama: "NOOR AZWALINA BINTI AHMAD SUNGIP", jabatan: "JBT KESIHATAN & ALAM SEKITAR", perantiRujukan: "P5887" },
-      { no: 36, nama: "NORNAJWA AMANI BINTI IBRAHIM", jabatan: "JBT KESIHATAN & ALAM SEKITAR", perantiRujukan: "P5888" },
-      { no: 37, nama: "MUHAMMAD SHAFIQ BIN MOHD TAHIR", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5891" },
-      { no: 38, nama: "SITI NAIMAH BINTI NIK YAHYA", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5891" },
-      { no: 39, nama: "MATHAVAN KUTTY A/L PARAMES KUMAR", jabatan: "JBT PENGUATKUASAAN", perantiRujukan: "P5899" },
-      { no: 40, nama: "KAMAL FIKRI BIN KAMAL SUHAIMI", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5900" },
-      { no: 41, nama: "SITI SALWA BINTI AB RAHMAN (JPPH)", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", perantiRujukan: "P5901" },
-      { no: 42, nama: "INTAN NORAIN BINTI UZIR", jabatan: "JABATAN PERANCANGAN BANDARAYA", perantiRujukan: "P5911" },
-      { no: 43, nama: "ASWAN HALIL BIN MOHD WAZIB", jabatan: "JABATAN PELESENAN DAN PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5914" },
-      { no: 44, nama: "KHAIRUDIN BIN RAMLI", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5915" }
+      { no: 1, nama: "HANI NAJWA BINTI HANIP", jabatan: "Bahagian Hasil", perantiRujukan: "P5846", noTelefon: "-" },
+      { no: 2, nama: "MOHD KAMARUL BIN MANSOR", jabatan: "Bahagian Hasil", perantiRujukan: "P5847", noTelefon: "-" },
+      { no: 3, nama: "EZATUL AISHAH BINTI SUFFIAN", jabatan: "Bahagian Hasil", perantiRujukan: "P5848", noTelefon: "-" },
+      { no: 4, nama: "MUHAMMAD FAIZUL BIN SEDEK", jabatan: "Bahagian Hasil", perantiRujukan: "P5849", noTelefon: "-" },
+      { no: 5, nama: "SAKINAH BINTI MANSOR", jabatan: "Jabatan Pengurusan Sumber Manusia", perantiRujukan: "P5850", noTelefon: "-" },
+      { no: 6, nama: "MUHAMMAD AFIQ BIN ZULFAHMI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5851", noTelefon: "-" },
+      { no: 7, nama: "AHMAD ASYRAF BIN MOHAMED", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5852", noTelefon: "-" },
+      { no: 8, nama: "FAZLIATON BINTI BAHARI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5853", noTelefon: "-" },
+      { no: 9, nama: "MOHD NOORHAFIZ BIN MASWAN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5854", noTelefon: "-" },
+      { no: 10, nama: "NUR AMIRAH BINTI MOKHTAR", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5855", noTelefon: "-" },
+      { no: 11, nama: "MUHAMAD SHARIE BIN HARIP", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5856", noTelefon: "-" },
+      { no: 12, nama: "KHAIRUL HAFIZ BIN AHMAD PAYUMI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5857", noTelefon: "-" },
+      { no: 13, nama: "ADAM BIN ABDUL RAHIM", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5858", noTelefon: "-" },
+      { no: 14, nama: "ASMARANI BINTI KOSHAERI @ ABDULLAH", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5859", noTelefon: "-" },
+      { no: 15, nama: "SYTI NUR KAMELA BINTI KAMARUDIN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5860", noTelefon: "-" },
+      { no: 16, nama: "NURUL HUSNA BINTI YUSOF", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5861", noTelefon: "-" },
+      { no: 17, nama: "DEWI FAIRUZ RUHAIZA BINTI KAMARUDIN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5862", noTelefon: "-" },
+      { no: 18, nama: "MUHAMAD FARID BIN SINWANI", jabatan: "JPKKB, UKA, KAUNTER BAYARAN", perantiRujukan: "P5863", noTelefon: "-" },
+      { no: 19, nama: "MUHAMMAD FADZRUL AKMAL BIN BISMI", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5864", noTelefon: "-" },
+      { no: 20, nama: "MOHD AMIRUL ILHAM BIN MOHAMED", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5865", noTelefon: "-" },
+      { no: 21, nama: "NURLIYANA BINTI KAMARUDDIN", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5866", noTelefon: "-" },
+      { no: 22, nama: "HOSNOL HOTIMAH BINTI MUHAMAD SAINI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5867", noTelefon: "-" },
+      { no: 23, nama: "MUHAMMAD NAZIH BIN ZAINAL", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5868", noTelefon: "-" },
+      { no: 24, nama: "NURAMALINA FARHAH BINTI MOHD JEFRI", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5869", noTelefon: "-" },
+      { no: 25, nama: "NUR FADILA BINTI DOLLAH", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5870", noTelefon: "-" },
+      { no: 26, nama: "NURUL ASMAHANI BINTI GHAZALI", jabatan: "JBT PBGN KOM & KSJHTRAAN BDR", perantiRujukan: "P5871", noTelefon: "-" },
+      { no: 27, nama: "AKMALAILA BINTI YAHAYA", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5872", noTelefon: "-" },
+      { no: 28, nama: "NURUL HAZWANI BINTI KHAIRUL ANUR@ANUAR", jabatan: "JPKKB, MENARA DBKL 3 TINGKAT 4", perantiRujukan: "P5873", noTelefon: "-" },
+      { no: 29, nama: "MUHAMAD SAIFUL AZHAR BIN ZAINUDIN", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", perantiRujukan: "P5878", noTelefon: "-" },
+      { no: 30, nama: "NOORIANA BINTI JAMAL", jabatan: "STOR SITAAN, JALAN TUN RAZAK", perantiRujukan: "P5879", noTelefon: "-" },
+      { no: 31, nama: "AINOL RAFIQY BIN RUSNI", jabatan: "STOR SITAAN, JALAN TUN RAZAK", perantiRujukan: "P5879", noTelefon: "-" },
+      { no: 32, nama: "AHMAD IZZUDDIN BIN ZULKANAIN", jabatan: "KAUNTER BAYARAN MENARA DBKL 1", perantiRujukan: "P5880", noTelefon: "-" },
+      { no: 33, nama: "MUHAMMAD IKMAL HARITH BIN BADRUL HISHAM", jabatan: "JBT KESIHATAN & ALAM SEKITAR", perantiRujukan: "P5882", noTelefon: "-" },
+      { no: 34, nama: "NOR AIDA BINTI AZMAN", jabatan: "PERPUSTAKAAN KUALA LUMPUR", perantiRujukan: "P5883", noTelefon: "-" },
+      { no: 35, nama: "NOOR AZWALINA BINTI AHMAD SUNGIP", jabatan: "JBT KESIHATAN & ALAM SEKITAR", perantiRujukan: "P5887", noTelefon: "-" },
+      { no: 36, nama: "NORNAJWA AMANI BINTI IBRAHIM", jabatan: "JBT KESIHATAN & ALAM SEKITAR", perantiRujukan: "P5888", noTelefon: "-" },
+      { no: 37, nama: "MUHAMMAD SHAFIQ BIN MOHD TAHIR", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5891", noTelefon: "-" },
+      { no: 38, nama: "SITI NAIMAH BINTI NIK YAHYA", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5891", noTelefon: "-" },
+      { no: 39, nama: "MATHAVAN KUTTY A/L PARAMES KUMAR", jabatan: "JBT PENGUATKUASAAN", perantiRujukan: "P5899", noTelefon: "-" },
+      { no: 40, nama: "KAMAL FIKRI BIN KAMAL SUHAIMI", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5900", noTelefon: "-" },
+      { no: 41, nama: "SITI SALWA BINTI AB RAHMAN (JPPH)", jabatan: "JBT PENILAIAN & PENGURUSAN HARTA", perantiRujukan: "P5901", noTelefon: "-" },
+      { no: 42, nama: "INTAN NORAIN BINTI UZIR", jabatan: "JABATAN PERANCANGAN BANDARAYA", perantiRujukan: "P5911", noTelefon: "-" },
+      { no: 43, nama: "ASWAN HALIL BIN MOHD WAZIB", jabatan: "JABATAN PELESENAN DAN PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5914", noTelefon: "-" },
+      { no: 44, nama: "KHAIRUDIN BIN RAMLI", jabatan: "JBT PELESENAN & PEMBANGUNAN PERNIAGAAN", perantiRujukan: "P5915", noTelefon: "-" }
     ];
 
     // 2. MASTER DATA SHEET E (TID = TERMINAL, No. Siri Muamalat = SERIAL NUMBER)
@@ -662,6 +662,44 @@
       return clean;
     }
 
+    // Format nombor telefon Malaysia kepada format WhatsApp (601XXXXXXXX) termasuk kes Google Sheets buang '0' depan
+    function formatWhatsAppNumber(rawPhone) {
+      const raw = (rawPhone || '').toString().trim();
+      if (!raw || raw === '-' || raw.toUpperCase() === 'TIADA' || raw.toUpperCase() === 'N/A') {
+        return { display: 'Tiada Rekod', waDigits: '' };
+      }
+
+      // Ambil nombor pertama jika terdapat lebih daripada satu nombor (dipisahkan koma, / atau baris baharu)
+      const primary = raw.split(/[\/,;\n]/)[0].trim();
+      let digits = primary.replace(/\D/g, '');
+
+      // Malaysia nombor mudah alih: 9-11 digit (cth: 123456789 tanpa 0, 0123456789, 60123456789)
+      if (!digits || digits.length < 8 || digits.length > 13) {
+        return { display: primary, waDigits: '' };
+      }
+
+      if (digits.startsWith('0')) {
+        digits = '60' + digits.slice(1);
+      } else if (digits.startsWith('1')) {
+        digits = '60' + digits;
+      }
+
+      // Format paparan mesra baca Malaysia (contoh: 012-345 6789)
+      let displayStr = primary;
+      if (digits.startsWith('60')) {
+        const localNum = '0' + digits.slice(2);
+        if (localNum.length === 10) {
+          displayStr = `${localNum.slice(0, 3)}-${localNum.slice(3)}`;
+        } else if (localNum.length === 11) {
+          displayStr = `${localNum.slice(0, 3)}-${localNum.slice(3)}`;
+        } else {
+          displayStr = localNum;
+        }
+      }
+
+      return { display: displayStr, waDigits: digits };
+    }
+
     // Menyeragamkan kunci No. Siri Muamalat (Serial Number) antara Sheet E dan Sheet F
     function normalizeSerialKey(str) {
       let clean = (str || '').toString().toUpperCase().replace(/[^A-Z0-9]/g, '').trim();
@@ -697,6 +735,22 @@
       });
 
       return { deptByTerminal, deptByName };
+    }
+
+    // Bina carian No. Telefon berasaskan Nama daripada Sheet D (menyokong padanan tepat & padanan separa nama)
+    function buildSheetDPhoneLookup() {
+      const phoneByName = new Map();
+
+      sheetD_Names.forEach(d => {
+        const nameKey = normalizeName(d.nama);
+        const rawPhone = (d.noTelefon || '').toString().trim();
+        const { waDigits } = formatWhatsAppNumber(rawPhone);
+        if (nameKey && waDigits && !phoneByName.has(nameKey)) {
+          phoneByName.set(nameKey, rawPhone);
+        }
+      });
+
+      return phoneByName;
     }
 
     // Padanan No. Siri Pendaftaran DBKL = NO. SIRI PENDAFTARAN di Sheet F (kunci rujukan: No. Siri Muamalat / Serial Number)
@@ -754,6 +808,7 @@
         : logRecordsABC.filter(r => r.sheet === selectedLogSheet);
 
       const { deptByTerminal, deptByName } = buildSheetDDepartmentLookup();
+      const phoneByName = buildSheetDPhoneLookup();
       const { assetByMuamalat, assetByTerminal } = buildSheetFAssetLookup();
 
       const mapE = new Map();
@@ -821,6 +876,17 @@
       sheetD_Names.forEach((dRow, idx) => {
         const keyNama = normalizeName(dRow.nama);
         const normJabatanD = normalizeDepartmentName(dRow.jabatan);
+
+        // Padankan No. Telefon mengikut Nama daripada Sheet D
+        let phoneD = (dRow.noTelefon || '').toString().trim();
+        if (!formatWhatsAppNumber(phoneD).waDigits && phoneByName.has(keyNama)) {
+          phoneD = phoneByName.get(keyNama);
+        }
+        if (!phoneD) phoneD = '-';
+
+        const formattedPhone = formatWhatsAppNumber(phoneD);
+        const searchablePhone = `${phoneD} ${formattedPhone.display} ${formattedPhone.waDigits}`;
+
         matchedDNamesSet.add(keyNama);
         const userLogs = logsByName.get(keyNama) || [];
 
@@ -834,6 +900,7 @@
             namaD: dRow.nama,
             jabatanD: normJabatanD,
             jabatanRawD: dRow.jabatan || '-',
+            noTelefonD: phoneD,
             perantiRujukanD: dRow.perantiRujukan || '-',
             stage1Status: 'UNMATCHED_ABC',
             stage2Status: 'N/A',
@@ -844,7 +911,7 @@
             terminalMatches: [],
             terminalStatuses: statuses,
             logs: [],
-            _searchIndex: `${dRow.nama} ${normJabatanD} ${dRow.jabatan} ${dRow.perantiRujukan}`.toUpperCase()
+            _searchIndex: `${dRow.nama} ${searchablePhone} ${normJabatanD} ${dRow.jabatan} ${dRow.perantiRujukan}`.toUpperCase()
           };
           allD.push(item);
           unmatchedABC.push(item);
@@ -871,13 +938,14 @@
             .map(tm => tm.masterE.status.toUpperCase());
 
           const siriList = terminalMatches.map(t => t.masterE ? `${t.masterE.noSiriDBKL} ${t.masterE.noSiriMuamalat} ${t.masterE.imei}` : '').join(' ');
-          const searchIndex = `${dRow.nama} ${normJabatanD} ${dRow.jabatan} ${uniqueMobiles.join(' ')} ${siriList}`.toUpperCase();
+          const searchIndex = `${dRow.nama} ${searchablePhone} ${normJabatanD} ${dRow.jabatan} ${uniqueMobiles.join(' ')} ${siriList}`.toUpperCase();
 
           const item = {
             index: idx + 1,
             namaD: dRow.nama,
             jabatanD: normJabatanD,
             jabatanRawD: dRow.jabatan || '-',
+            noTelefonD: phoneD,
             perantiRujukanD: dRow.perantiRujukan || '-',
             stage1Status: 'MATCHED_ABC',
             stage2Status: allTerminalsInE ? 'MATCHED_E' : 'MISSING_IN_E',
@@ -1470,6 +1538,18 @@
       });
     }
 
+    function renderWhatsAppChip(phoneRaw, userName, terminalCode) {
+      const { display, waDigits } = formatWhatsAppNumber(phoneRaw);
+      if (!waDigits) return '';
+      const msg = encodeURIComponent(`Salam sejahtera ${userName}, semakan peranti eZpay DBKL (${terminalCode || '-'}) daripada Jabatan Kewangan DBKL.`);
+      return `
+        <a href="https://wa.me/${waDigits}?text=${msg}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" class="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-[11px] font-semibold transition" title="WhatsApp ${escapeAttr(display)}">
+          <i data-lucide="message-circle" class="w-3 h-3 text-emerald-600 shrink-0"></i>
+          <span>${escapeAttr(display)}</span>
+        </a>
+      `;
+    }
+
     function renderTable() {
       const thead = document.getElementById('tableHead');
       const tbody = document.getElementById('tableBody');
@@ -1507,6 +1587,7 @@
         if (pageItems.length === 0) {
           tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Tiada rekod terminal dijumpai bagi penapis semasa.</td></tr>`;
           mobileContainer.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Tiada rekod terminal dijumpai bagi penapis semasa.</div>`;
+          lucide.createIcons();
           return;
         }
 
@@ -1560,6 +1641,7 @@
             </div>
           </div>
         `).join('');
+        lucide.createIcons();
         return;
       }
 
@@ -1578,6 +1660,7 @@
         if (pageItems.length === 0) {
           tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tiada rekod pengguna tidak berdaftar ditemui bagi penapis semasa.</td></tr>`;
           mobileContainer.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Tiada rekod pengguna tidak berdaftar ditemui bagi penapis semasa.</div>`;
+          lucide.createIcons();
           return;
         }
 
@@ -1634,13 +1717,14 @@
             </button>
           </div>
         `).join('');
+        lucide.createIcons();
         return;
       }
 
       thead.innerHTML = `
         <tr>
           <th class="px-4 py-3">No</th>
-          <th class="px-4 py-3">Kunci Utama: Nama & Jabatan (Sheet D)</th>
+          <th class="px-4 py-3">Kunci Utama: Nama, Jabatan & No. Tel (Sheet D)</th>
           <th class="px-4 py-3">Peringkat 1: Padanan A/B/C (Mobile)</th>
           <th class="px-4 py-3">Peringkat 2: Terminal (E) & No. Siri Pendaftaran (F)</th>
           <th class="px-4 py-3">Status Keseluruhan</th>
@@ -1651,6 +1735,7 @@
       if (pageItems.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tiada rekod padanan ditemui bagi penapis semasa.</td></tr>`;
         mobileContainer.innerHTML = `<div class="p-8 text-center text-xs text-slate-400">Tiada rekod padanan ditemui bagi penapis semasa.</div>`;
+        lucide.createIcons();
         return;
       }
 
@@ -1658,6 +1743,9 @@
       const mobileCards = [];
 
       pageItems.forEach(row => {
+        const primaryTerm = row.mobilesFromABC[0] || row.perantiRujukanD || '-';
+        const waChipHTML = renderWhatsAppChip(row.noTelefonD, row.namaD, primaryTerm);
+
         let stage1HTML = '';
         if (row.stage1Status === 'UNMATCHED_ABC') {
           stage1HTML = `<span class="text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-medium">Tiada rekod di A/B/C</span>`;
@@ -1720,6 +1808,7 @@
             <td class="px-4 py-3">
               <div class="font-bold text-slate-900">${escapeAttr(row.namaD)}</div>
               <div class="text-[11px] text-slate-500 truncate max-w-[230px]" title="${escapeAttr(row.jabatanD)}">${escapeAttr(row.jabatanD)}</div>
+              ${waChipHTML}
             </td>
             <td class="px-4 py-3">${stage1HTML}</td>
             <td class="px-4 py-3">${stage2HTML}</td>
@@ -1740,6 +1829,7 @@
                   <span class="text-slate-400 font-medium mr-1">${row.index}.</span>${escapeAttr(row.namaD)}
                 </div>
                 <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">${escapeAttr(row.jabatanD)}</div>
+                ${waChipHTML}
               </div>
               ${badgeHTML}
             </div>
@@ -1764,6 +1854,7 @@
 
       tbody.innerHTML = desktopRows.join('');
       mobileContainer.innerHTML = mobileCards.join('');
+      lucide.createIcons();
     }
 
     function changePage(delta) {
@@ -1799,16 +1890,52 @@
         no: sheetD_Names.length + 1,
         nama: nama.trim().toUpperCase(),
         jabatan: 'Pendaftaran Pantas (Log A/B/C)',
-        perantiRujukan: mobile || '-'
+        perantiRujukan: mobile || '-',
+        noTelefon: '-'
       });
       runChainedMatching();
     }
 
     function openDetailModal(namaD) {
-      const item = computedResults.allD.find(r => r.namaD === namaD);
+      const targetKey = normalizeName(namaD);
+      const item = computedResults.allD.find(r => r.namaD === namaD || normalizeName(r.namaD) === targetKey);
       if (!item) return;
 
       document.getElementById('modalUserName').textContent = item.namaD;
+
+      // Sediakan maklumat No. Telefon & Pautan Terus WhatsApp dari Sheet D mengikut padanan Nama
+      const { display: phoneDisplay, waDigits } = formatWhatsAppNumber(item.noTelefonD);
+      const terminalRef = item.mobilesFromABC.join(', ') || item.perantiRujukanD || '-';
+      const waPrefillText = encodeURIComponent(
+        `Salam sejahtera ${item.namaD},\n\nIni adalah mesej rujukan berkaitan peranti handheld eZpay DBKL (${terminalRef}) di bawah ${item.jabatanD}.`
+      );
+      const waUrl = waDigits ? `https://wa.me/${waDigits}?text=${waPrefillText}` : '';
+
+      const phoneSectionHTML = waDigits
+        ? `
+          <div>
+            <span class="text-slate-400 block">No. Telefon (Sheet D)</span>
+            <div class="flex flex-wrap items-center gap-2 mt-0.5">
+              <strong class="text-slate-900 font-mono text-xs sm:text-[13px]">${escapeAttr(phoneDisplay)}</strong>
+              <a
+                href="${waUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition touch-manipulation"
+                title="Klik untuk terus hantar mesej WhatsApp kepada ${escapeAttr(item.namaD)}"
+              >
+                <i data-lucide="message-circle" class="w-3.5 h-3.5 shrink-0"></i>
+                <span>WhatsApp Terus</span>
+              </a>
+            </div>
+          </div>
+        `
+        : `
+          <div>
+            <span class="text-slate-400 block">No. Telefon (Sheet D)</span>
+            <span class="text-slate-400 italic font-medium">${item.noTelefonD && item.noTelefonD !== '-' ? escapeAttr(item.noTelefonD) : 'Tiada No. Telefon direkodkan'}</span>
+          </div>
+        `;
 
       const masterCards = item.terminalMatches.length === 0
         ? `<div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800">Tiada kod Mobile diekstrak kerana pengguna ini belum mempunyai log transaksi dalam Sheet A, B, atau C.</div>`
@@ -1883,7 +2010,7 @@
         `;
 
       document.getElementById('modalBody').innerHTML = `
-        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+        <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
             <span class="text-slate-400 block">Kunci Utama (Sheet D)</span>
             <strong class="text-slate-900">${escapeAttr(item.namaD)}</strong>
@@ -1892,6 +2019,7 @@
             <span class="text-slate-400 block">Jabatan (Diseragamkan)</span>
             <strong class="text-slate-800">${escapeAttr(item.jabatanD)}</strong>
           </div>
+          ${phoneSectionHTML}
           <div>
             <span class="text-slate-400 block">Mobile Ditemui (Sheet A/B/C)</span>
             <strong class="text-blue-700">${escapeAttr(item.mobilesFromABC.join(', ') || 'Tiada')}</strong>
@@ -1907,6 +2035,7 @@
       const modal = document.getElementById('detailModal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      lucide.createIcons();
     }
 
     function closeDetailModal() {
@@ -1971,6 +2100,7 @@
       // Kesan baris pengepala sebenar dalam 15 baris teratas
       const knownHeaderTokens = [
         'NAMA', 'NAMA PENGGUNA', 'NAMA PEGAWAI',
+        'NO TELEFON', 'NO. TELEFON', 'NO TEL', 'NO. TEL', 'TELEFON', 'PHONE', 'NO HP', 'HP',
         'TERMINAL', 'TID', 'MOBILE', 'NO PERANTI', 'NO. PERANTI',
         'SERIAL NUMBER', 'SERAIL NUMBER', 'NO. SIRI PENDAFTARAN', 'NO SIRI PENDAFTARAN', 'NO SIRI ASET'
       ];
@@ -2029,6 +2159,38 @@
         }
       }
       return '';
+    }
+
+    // Ekstrak No. Telefon daripada baris Sheet D (menyokong format dengan atau tanpa '0' di depan)
+    function extractPhoneFromSheetDRow(rowObj) {
+      const explicitPhone = pickCol(
+        rowObj,
+        [
+          'NO. TELEFON', 'NO TELEFON', 'NO TEL', 'NO. TEL', 'NO.TELEFON', 'NO.TEL',
+          'TELEFON', 'NO HP', 'NO. HP', 'HP', 'PHONE', 'PHONE NUMBER',
+          'CONTACT', 'NO TELEFON BIMBIT', 'NO. TELEFON BIMBIT', 'WHATSAPP', 'NO WHATSAPP'
+        ],
+        ['TELEFON', 'TEL', 'PHONE', 'HP', 'WHATSAPP', 'BIMBIT', 'HUBUNGI'],
+        ['EZPAY', 'ID', 'PERANTI', 'TERMINAL', 'SIRI', 'IMEI', 'SIM', 'PEKERJA', 'GAJI']
+      );
+      if (explicitPhone && explicitPhone !== '-' && formatWhatsAppNumber(explicitPhone).waDigits) {
+        return explicitPhone;
+      }
+
+      // Semakan sandaran pada setiap sel dalam baris (termasuk kes Google Sheets membuang '0' di depan, cth: 123456789)
+      const vals = rowObj._rawValues || Object.values(rowObj);
+      for (const v of vals) {
+        if (typeof v === 'string') {
+          const trimmed = v.trim();
+          // Abaikan kod peranti (P5858) atau nombor siri panjang (IMEI/SIM >= 14 digit)
+          if (/^P\d{4}$/i.test(trimmed)) continue;
+          const clean = trimmed.replace(/[\s\-()+]/g, '');
+          if (/^(601\d{8,9}|01\d{8,9}|1\d{8,9})$/.test(clean)) {
+            return trimmed;
+          }
+        }
+      }
+      return '-';
     }
 
     // Semak sama ada nilai tersebut ialah siri perkakasan Muamalat (bukan No. Siri Pendaftaran DBKL)
@@ -2113,9 +2275,29 @@
           no: i + 1,
           nama: pickCol(r, ['NAMA', 'NAMA PENGGUNA', 'NAMA PEGAWAI'], ['NAMA']) || (r._rawValues && (r._rawValues[1] || r._rawValues[0])) || '',
           jabatan: pickCol(r, ['JABATAN', 'UNIT', 'BAHAGIAN', 'JABATAN / UNIT'], ['JABATAN', 'BAHAGIAN', 'UNIT']) || '-',
-          perantiRujukan: pickCol(r, ['NO PERANTI', 'NO. PERANTI', 'MOBILE', 'TERMINAL', 'TID'], ['PERANTI', 'TERMINAL', 'MOBILE']) || '-'
+          perantiRujukan: pickCol(r, ['NO PERANTI', 'NO. PERANTI', 'MOBILE', 'TERMINAL', 'TID'], ['PERANTI', 'TERMINAL', 'MOBILE']) || '-',
+          noTelefon: extractPhoneFromSheetDRow(r)
         })).filter(x => x.nama);
-        if (mapped.length > 0) { sheetD_Names = mapped; return true; }
+
+        if (mapped.length > 0) {
+          // Pastikan jika nama berulang dalam Sheet D, rekod yang ada No. Telefon tidak hilang
+          const phoneCache = new Map();
+          mapped.forEach(item => {
+            const k = normalizeName(item.nama);
+            if (k && formatWhatsAppNumber(item.noTelefon).waDigits) {
+              phoneCache.set(k, item.noTelefon);
+            }
+          });
+          mapped.forEach(item => {
+            const k = normalizeName(item.nama);
+            if (!formatWhatsAppNumber(item.noTelefon).waDigits && phoneCache.has(k)) {
+              item.noTelefon = phoneCache.get(k);
+            }
+          });
+
+          sheetD_Names = mapped;
+          return true;
+        }
 
       } else if (sheetName === 'E') {
         const { deptByTerminal } = buildSheetDDepartmentLookup();
@@ -2269,11 +2451,12 @@
         return;
       }
 
-      const headers = ['No', 'Nama (Sheet D)', 'Jabatan (Diseragamkan)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri Pendaftaran DBKL (Sheet F)', 'Status Terminal', 'Status Keseluruhan'];
+      const headers = ['No', 'Nama (Sheet D)', 'No Telefon (Sheet D)', 'Jabatan (Diseragamkan)', 'Status Peringkat 1 (A/B/C)', 'Mobile (Sheet A/B/C)', 'Bil Log', 'Status Peringkat 2 (Sheet E)', 'Terminal / TID (Sheet E)', 'No Siri Muamalat', 'No Siri Pendaftaran DBKL (Sheet F)', 'Status Terminal', 'Status Keseluruhan'];
       const lines = [headers.join(',')];
 
       filtered.forEach((r, idx) => {
         const nama = r.namaD || r.namaPengguna || '-';
+        const phone = formatWhatsAppNumber(r.noTelefonD).display !== 'Tiada Rekod' ? formatWhatsAppNumber(r.noTelefonD).display : '-';
         const jab = r.jabatanD || r.jabatanInferred || '-';
         const mob = (r.mobilesFromABC || []).join(' | ') || '-';
         const termE = (r.terminalMatches || []).map(t => t.matchedInE ? t.masterE.terminal : 'TIADA').join(' | ') || '-';
@@ -2287,6 +2470,7 @@
         lines.push([
           r.index || (idx + 1),
           `"${nama}"`,
+          `"${phone}"`,
           `"${jab}"`,
           r.stage1Status || 'ORPHAN_ABC',
           `"${mob}"`,
